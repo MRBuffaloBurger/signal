@@ -1,0 +1,3448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>SIGNAL — Financial Terminal</title>
+
+<!-- PWA meta tags — "Add to Home Screen" support -->
+<meta name="theme-color" content="#0B0E13" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="SIGNAL" />
+<meta name="mobile-web-app-capable" content="yes" />
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' fill='%230B0E13'/><rect x='20' y='20' width='140' height='140' stroke='%2322D3EE' stroke-width='6' fill='none'/><path d='M35 120 L70 75 L95 95 L145 40' stroke='%2322D3EE' stroke-width='6' fill='none'/><circle cx='145' cy='40' r='7' fill='%2322D3EE'/></svg>" />
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230B0E13'/><rect x='3' y='3' width='26' height='26' stroke='%2322D3EE' stroke-width='2' fill='none'/><path d='M7 22 L13 14 L17 17 L25 8' stroke='%2322D3EE' stroke-width='2' fill='none'/></svg>" />
+<link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22SIGNAL%20Financial%20Terminal%22%2C%22short_name%22%3A%22SIGNAL%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22any%22%2C%22background_color%22%3A%22%230B0E13%22%2C%22theme_color%22%3A%22%230B0E13%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bcharset%3Dutf-8%2C%253Csvg%2520xmlns%253D%2527http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2527%2520viewBox%253D%25270%25200%2520512%2520512%2527%253E%253Crect%2520width%253D%2527512%2527%2520height%253D%2527512%2527%2520fill%253D%2527%25230B0E13%2527%252F%253E%253Crect%2520x%253D%252756%2527%2520y%253D%252756%2527%2520width%253D%2527400%2527%2520height%253D%2527400%2527%2520stroke%253D%2527%252322D3EE%2527%2520stroke-width%253D%252716%2527%2520fill%253D%2527none%2527%252F%253E%253Cpath%2520d%253D%2527M100%2520340%2520L200%2520212%2520L272%2520268%2520L412%2520112%2527%2520stroke%253D%2527%252322D3EE%2527%2520stroke-width%253D%252716%2527%2520fill%253D%2527none%2527%252F%253E%253Ccircle%2520cx%253D%2527412%2527%2520cy%253D%2527112%2527%2520r%253D%252720%2527%2520fill%253D%2527%252322D3EE%2527%252F%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0E13; --panel: #131722; --panel-2: #1A1F2E;
+    --border: #232A3A; --border-strong: #2E3648;
+    --text: #E6E9F2; --muted: #7A8299; --dim: #4A5266;
+    --cyan: #22D3EE; --cyan-dim: #0891B2;
+    --bull: #34D399; --bear: #F87171;
+    --warn: #FBBF24; --purple: #C084FC; --blue: #60A5FA;
+  }
+  html, body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; }
+  .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .panel { background: var(--panel); border: 1px solid var(--border); }
+  .panel-2 { background: var(--panel-2); border: 1px solid var(--border); }
+  .hair { border-color: var(--border); }
+  .hair-strong { border-color: var(--border-strong); }
+  .text-muted { color: var(--muted); }
+  .text-dim { color: var(--dim); }
+  .text-bull { color: var(--bull); }
+  .text-bear { color: var(--bear); }
+  .text-cyan { color: var(--cyan); }
+  .text-warn { color: var(--warn); }
+  .text-purple { color: var(--purple); }
+  .text-blue { color: var(--blue); }
+
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--bull);
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
+    70% { box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  }
+
+  .signal-line { position: relative; height: 1px; background: var(--border); overflow: hidden; }
+  .signal-line::after {
+    content: ""; position: absolute; top: 0; left: -20%;
+    width: 20%; height: 100%;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    animation: sweep 4s linear infinite;
+  }
+  @keyframes sweep { 0% { left: -20%; } 100% { left: 120%; } }
+
+  .spark { stroke-width: 1.5; fill: none; }
+  .spark-fill { opacity: 0.15; }
+
+  .card-enter { animation: cardIn 0.35s ease-out both; }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .modal-in { animation: modalIn 0.2s ease-out both; }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+  .chip {
+    padding: 6px 12px; border: 1px solid var(--border); border-radius: 2px;
+    font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
+    font-weight: 500; color: var(--muted); cursor: pointer;
+    transition: all 0.15s; background: transparent;
+  }
+  .chip:hover { color: var(--text); border-color: var(--border-strong); }
+  .chip.active { color: var(--bg); background: var(--cyan); border-color: var(--cyan); }
+
+  .btn-refresh {
+    padding: 8px 14px; border: 1px solid var(--border-strong); border-radius: 2px;
+    font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase;
+    font-weight: 600; color: var(--text); background: var(--panel-2);
+    transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-refresh:hover { border-color: var(--cyan); color: var(--cyan); }
+  .btn-refresh.spinning svg { animation: spin 0.8s linear; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .ring-track { stroke: var(--border); }
+  .ring-fill { stroke: var(--cyan); transition: stroke-dashoffset 1s linear; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.08em; padding: 2px 6px;
+    border: 1px solid var(--border-strong); text-transform: uppercase; color: var(--muted);
+  }
+  .tag-markets { color: var(--cyan); border-color: rgba(34, 211, 238, 0.4); }
+  .tag-crypto { color: var(--purple); border-color: rgba(192, 132, 252, 0.4); }
+  .tag-central { color: var(--warn); border-color: rgba(251, 191, 36, 0.4); }
+
+  .type-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 0.1em; padding: 2px 5px; text-transform: uppercase;
+    border: 1px solid;
+  }
+  .type-stock   { color: var(--cyan);   border-color: rgba(34, 211, 238, 0.4); }
+  .type-fund    { color: var(--bull);   border-color: rgba(52, 211, 153, 0.4); }
+  .type-index   { color: var(--warn);   border-color: rgba(251, 191, 36, 0.4); }
+  .type-crypto  { color: var(--purple); border-color: rgba(192, 132, 252, 0.4); }
+  .type-forex   { color: var(--blue);   border-color: rgba(96, 165, 250, 0.4); }
+  .type-commodity { color: #FCA5A5; border-color: rgba(252, 165, 165, 0.4); }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  .terminal-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .link-src {
+    color: var(--cyan); font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
+    border-bottom: 1px dotted var(--cyan-dim); padding-bottom: 1px;
+  }
+  .link-src:hover { color: #67E8F9; border-bottom-style: solid; }
+
+  .pick-card {
+    background: var(--panel); border: 1px solid var(--border-strong);
+    position: relative; overflow: hidden; transition: border-color 0.2s;
+  }
+  .pick-card:hover { border-color: var(--cyan); }
+  .pick-card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent, var(--cyan));
+  }
+  .pick-card[data-risk="very-low"] { --accent: var(--blue); }
+  .pick-card[data-risk="low"]      { --accent: var(--bull); }
+  .pick-card[data-risk="moderate"] { --accent: var(--cyan); }
+  .pick-card[data-risk="high"]     { --accent: var(--warn); }
+  .pick-card[data-risk="very-high"]{ --accent: var(--bear); }
+
+  .subtab {
+    padding: 4px 10px; font-size: 10px; letter-spacing: 0.06em;
+    text-transform: uppercase; font-weight: 600; color: var(--dim);
+    cursor: pointer; border-bottom: 1px solid transparent; transition: all 0.15s;
+    font-family: 'JetBrains Mono', monospace; background: transparent; border-left: 0; border-right: 0; border-top: 0;
+  }
+  .subtab:hover { color: var(--muted); }
+  .subtab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+  .region {
+    font-size: 9px; font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.1em; color: var(--dim);
+    padding: 1px 4px; border: 1px solid var(--border);
+  }
+
+  .count-pill {
+    font-size: 9px; font-family: 'JetBrains Mono', monospace;
+    color: var(--dim); background: var(--panel-2); padding: 1px 6px;
+    border: 1px solid var(--border);
+  }
+
+  /* SEARCH BAR */
+  .search-trigger {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 2px;
+    color: var(--muted); cursor: pointer; transition: all 0.15s;
+    min-width: 320px;
+  }
+  .search-trigger:hover { border-color: var(--cyan); color: var(--text); }
+  .kbd {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    padding: 2px 6px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 2px; color: var(--dim);
+  }
+
+  /* MODALS */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px); z-index: 100;
+    display: none; align-items: flex-start; justify-content: center;
+    padding-top: 8vh;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-box {
+    background: var(--panel); border: 1px solid var(--border-strong);
+    width: 100%; max-width: 720px; max-height: 80vh;
+    display: flex; flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .search-input {
+    background: transparent; border: none; outline: none;
+    color: var(--text); font-size: 16px; width: 100%;
+    padding: 16px 0;
+  }
+  .search-input::placeholder { color: var(--dim); }
+
+  .search-result {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; cursor: pointer;
+    border-left: 2px solid transparent; transition: all 0.1s;
+  }
+  .search-result:hover, .search-result.focused {
+    background: rgba(34, 211, 238, 0.05); border-left-color: var(--cyan);
+  }
+
+  /* DETAIL MODAL — bigger, tabbed */
+  .detail-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px); z-index: 200;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .detail-backdrop.open { display: flex; }
+  .detail-box {
+    background: var(--panel); border: 1px solid var(--border-strong);
+    width: 100%; max-width: 1000px; max-height: 92vh;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  /* Tabs */
+  .dm-tab {
+    padding: 10px 4px; margin-right: 20px;
+    font-size: 12px; letter-spacing: 0.06em;
+    text-transform: uppercase; font-weight: 600;
+    color: var(--muted); background: transparent; border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer; transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .dm-tab:hover { color: var(--text); }
+  .dm-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+  .tab-panel { padding: 20px 24px; }
+
+  .tf-btn {
+    padding: 4px 10px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    color: var(--muted); background: transparent; border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .tf-btn:hover { color: var(--text); border-color: var(--border-strong); }
+  .tf-btn.active { color: var(--bg); background: var(--cyan); border-color: var(--cyan); }
+
+  .btn-primary {
+    padding: 8px 16px; background: var(--cyan); color: var(--bg);
+    border: none; font-size: 12px; letter-spacing: 0.05em;
+    text-transform: uppercase; font-weight: 700; cursor: pointer;
+    transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover { background: #67E8F9; }
+
+  .btn-ghost {
+    padding: 8px 16px; background: transparent; color: var(--muted);
+    border: 1px solid var(--border-strong); font-size: 12px; letter-spacing: 0.05em;
+    text-transform: uppercase; font-weight: 600; cursor: pointer;
+    transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--cyan); }
+  .btn-ghost.danger:hover { color: var(--bear); border-color: var(--bear); }
+
+  /* Stat cell */
+  .stat {
+    padding: 10px 12px; background: var(--panel-2); border: 1px solid var(--border);
+  }
+  .stat-label { font-size: 10px; font-family: 'JetBrains Mono', monospace;
+                letter-spacing: 0.08em; color: var(--dim); text-transform: uppercase;
+                margin-bottom: 4px; }
+  .stat-value { font-size: 14px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+  /* Range bar (Day range, 52W range) */
+  .range-bar {
+    position: relative; height: 4px; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 2px; margin: 4px 0;
+  }
+  .range-bar-fill {
+    position: absolute; top: 0; bottom: 0; background: var(--cyan);
+    opacity: 0.2;
+  }
+  .range-marker {
+    position: absolute; top: -3px; width: 3px; height: 10px;
+    background: var(--cyan); border-radius: 1px;
+    box-shadow: 0 0 6px rgba(34, 211, 238, 0.6);
+  }
+
+  /* Technical rating meter */
+  .rating-strong-buy { color: var(--bull); }
+  .rating-buy       { color: #86EFAC; }
+  .rating-neutral   { color: var(--muted); }
+  .rating-sell      { color: #FCA5A5; }
+  .rating-strong-sell{ color: var(--bear); }
+
+  .gauge-track {
+    display: flex; height: 24px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .gauge-seg { flex: 1; opacity: 0.15; }
+  .gauge-seg.on { opacity: 1; }
+  .gauge-seg-1 { background: var(--bear); }
+  .gauge-seg-2 { background: #FCA5A5; }
+  .gauge-seg-3 { background: var(--muted); }
+  .gauge-seg-4 { background: #86EFAC; }
+  .gauge-seg-5 { background: var(--bull); }
+
+  /* Indicator row */
+  .ind-row {
+    display: grid; grid-template-columns: 1fr auto auto;
+    align-items: center; gap: 12px; padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ind-row:last-child { border-bottom: none; }
+  .ind-signal {
+    font-size: 10px; letter-spacing: 0.08em; font-family: 'JetBrains Mono', monospace;
+    padding: 2px 6px; border: 1px solid;
+  }
+  .ind-signal-buy   { color: var(--bull); border-color: rgba(52, 211, 153, 0.4); }
+  .ind-signal-sell  { color: var(--bear); border-color: rgba(248, 113, 113, 0.4); }
+  .ind-signal-neutral { color: var(--muted); border-color: var(--border); }
+
+  /* Watchlist */
+  .watchlist-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; cursor: pointer; transition: background 0.1s;
+  }
+  .watchlist-row:hover { background: rgba(34, 211, 238, 0.05); }
+  .remove-btn {
+    color: var(--dim); background: none; border: none; cursor: pointer;
+    padding: 2px 4px; font-size: 12px; opacity: 0; transition: opacity 0.15s;
+  }
+  .watchlist-row:hover .remove-btn { opacity: 1; }
+  .remove-btn:hover { color: var(--bear); }
+
+  .empty-state { padding: 24px 16px; text-align: center; color: var(--dim); font-size: 12px; }
+
+  /* Allocator */
+  .alloc-input {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 8px 12px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; outline: none; width: 100%;
+  }
+  .alloc-input:focus { border-color: var(--cyan); }
+  .alloc-select {
+    background: var(--panel-2); border: 1px solid var(--border); border-right: none;
+    padding: 8px 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; outline: none; cursor: pointer;
+  }
+  .alloc-chip {
+    padding: 6px 10px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    color: var(--muted); background: var(--panel-2); border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .alloc-chip:hover { color: var(--text); border-color: var(--border-strong); }
+  .alloc-chip.active { color: var(--bg); background: var(--cyan); border-color: var(--cyan); }
+  .alloc-plan-row { transition: all 0.15s; }
+
+  /* Pick card interactive */
+  .pick-card.clickable { cursor: pointer; }
+  .pick-card.clickable:hover { transform: translateY(-2px); }
+
+  .prose-muted { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+  /* Related-news mini card */
+  .mini-news {
+    padding: 10px 12px; border-left: 2px solid var(--border);
+    transition: all 0.15s; cursor: pointer;
+  }
+  .mini-news:hover { border-left-color: var(--cyan); background: var(--panel-2); }
+</style>
+</head>
+<body class="min-h-screen terminal-grid">
+
+<!-- HEADER -->
+<header class="border-b hair-strong sticky top-0 z-50 backdrop-blur-sm" style="background: rgba(11, 14, 19, 0.85);">
+  <div class="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between gap-6 flex-wrap">
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-2">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect x="2" y="2" width="24" height="24" stroke="var(--cyan)" stroke-width="1.5"/>
+          <path d="M6 18 L11 12 L15 15 L22 8" stroke="var(--cyan)" stroke-width="1.5" fill="none"/>
+          <circle cx="22" cy="8" r="1.5" fill="var(--cyan)"/>
+        </svg>
+        <div>
+          <div class="font-mono font-bold text-lg tracking-wider leading-none">SIGNAL</div>
+          <div class="text-[10px] text-dim tracking-[0.2em] mt-0.5">FINANCIAL TERMINAL</div>
+        </div>
+      </div>
+
+      <button id="search-trigger" class="search-trigger">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <span class="flex-1 text-left text-xs">Search stocks, funds, indices, crypto…</span>
+        <span class="kbd">Ctrl</span><span class="kbd">K</span>
+      </button>
+    </div>
+
+    <div class="flex items-center gap-6 flex-wrap">
+      <div class="flex items-center gap-2">
+        <div id="live-indicator" class="pulse-dot"></div>
+        <span id="live-label" class="text-xs font-mono tracking-wider text-bull">LIVE</span>
+      </div>
+      <button id="settings-btn" class="btn-refresh" title="Configure live prices">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>
+        </svg>
+        Settings
+      </button>
+      <div class="text-right">
+        <div id="clock" class="font-mono font-semibold text-base leading-none">--:--:--</div>
+        <div id="date" class="text-[10px] text-muted font-mono tracking-wider mt-1">--- -- ---- UTC+8</div>
+      </div>
+    </div>
+  </div>
+  <div class="signal-line"></div>
+</header>
+
+<main class="max-w-[1600px] mx-auto px-6 py-6">
+  <div class="grid grid-cols-12 gap-6">
+
+    <!-- SIDEBAR -->
+    <aside class="col-span-12 lg:col-span-3 space-y-4">
+      <section class="panel">
+        <div class="px-4 py-3 border-b hair flex items-center justify-between">
+          <h2 class="text-[11px] font-mono tracking-[0.2em] text-cyan">MY WATCHLIST</h2>
+          <span class="count-pill" id="watchlist-count">0</span>
+        </div>
+        <div id="watchlist-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="px-4 py-3 border-b hair flex items-center justify-between">
+          <h2 class="text-[11px] font-mono tracking-[0.2em] text-muted">MARKET INDICES</h2>
+          <span class="count-pill" id="indices-count">0</span>
+        </div>
+        <div id="indices-list" class="divide-y divide-[color:var(--border)]"></div>
+      </section>
+
+      <section class="panel">
+        <div class="px-4 py-3 border-b hair flex items-center justify-between">
+          <h2 class="text-[11px] font-mono tracking-[0.2em] text-muted">STOCK MARKET</h2>
+          <span class="count-pill" id="stocks-count">0</span>
+        </div>
+        <div id="stocks-list" class="divide-y divide-[color:var(--border)]"></div>
+      </section>
+
+      <section class="panel">
+        <div class="px-4 py-3 border-b hair flex items-center justify-between">
+          <h2 class="text-[11px] font-mono tracking-[0.2em] text-muted">FUNDS &amp; ETFs</h2>
+          <div class="flex gap-3" id="fund-tabs">
+            <button class="subtab active" data-tab="country">Country</button>
+            <button class="subtab" data-tab="industry">Industry</button>
+          </div>
+        </div>
+        <div id="funds-country" class="divide-y divide-[color:var(--border)]"></div>
+        <div id="funds-industry" class="divide-y divide-[color:var(--border)] hidden"></div>
+      </section>
+
+      <section class="panel">
+        <div class="px-4 py-3 border-b hair flex items-center justify-between">
+          <h2 class="text-[11px] font-mono tracking-[0.2em] text-muted">CRYPTO</h2>
+          <span class="text-[10px] font-mono text-dim">24H</span>
+        </div>
+        <div id="crypto-list" class="divide-y divide-[color:var(--border)]"></div>
+      </section>
+    </aside>
+
+    <!-- MAIN PANEL -->
+    <section class="col-span-12 lg:col-span-9 space-y-4">
+      <div class="panel px-4 py-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-2 flex-wrap" id="filter-bar">
+            <button class="chip active" data-cat="all">All</button>
+            <button class="chip" data-cat="markets">Markets</button>
+            <button class="chip" data-cat="crypto">Crypto</button>
+            <button class="chip" data-cat="central">Central Banks</button>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <div class="text-[10px] font-mono tracking-wider text-dim">LAST UPDATED</div>
+                <div id="last-updated" class="text-xs font-mono text-muted">--:--:--</div>
+              </div>
+              <div class="relative w-10 h-10">
+                <svg width="40" height="40" viewBox="0 0 40 40" class="-rotate-90">
+                  <circle cx="20" cy="20" r="16" class="ring-track" stroke-width="2" fill="none"/>
+                  <circle id="ring-fill" cx="20" cy="20" r="16" class="ring-fill" stroke-width="2" fill="none"
+                          stroke-dasharray="100.53" stroke-dashoffset="0" stroke-linecap="round"/>
+                </svg>
+                <div id="countdown" class="absolute inset-0 flex items-center justify-center font-mono text-[10px] text-cyan">60</div>
+              </div>
+            </div>
+            <button id="refresh-btn" class="btn-refresh">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 12a9 9 0 1 1-3-6.7L21 8"/>
+                <path d="M21 3v5h-5"/>
+              </svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="news-feed" class="space-y-3"></div>
+
+      <section class="mt-8">
+        <div class="flex items-end justify-between mb-4 pb-3 border-b hair-strong">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+                <path d="M12 2L3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z"/>
+              </svg>
+              <h3 class="text-[11px] font-mono tracking-[0.2em] text-cyan">SIGNAL'S TAKE · IDEAS OF THE DAY</h3>
+            </div>
+            <p class="text-xs text-dim font-mono">Ten ideas across the risk spectrum · all directly executable on Moomoo MY</p>
+          </div>
+          <span class="text-[10px] font-mono text-dim tracking-wider">NOT FINANCIAL ADVICE</span>
+        </div>
+
+        <!-- ETF Picks -->
+        <div class="mb-6">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="text-[10px] font-mono tracking-wider text-cyan">ETF PICKS · CORE BUILDING BLOCKS</div>
+            <div class="flex-1 h-px hair"></div>
+          </div>
+          <div id="picks-grid-etf" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Stock Picks -->
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="text-[10px] font-mono tracking-wider text-cyan">INDIVIDUAL STOCK PICKS · CONVICTION TILTS</div>
+            <div class="flex-1 h-px hair"></div>
+          </div>
+          <div id="picks-grid-stock" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+      </section>
+
+      <!-- PORTFOLIO BUILDER -->
+      <section class="mt-8 panel p-6">
+        <div class="flex items-end justify-between mb-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+                <path d="M3 3v18h18"/><path d="M18 9l-6 6-4-4-5 5"/>
+              </svg>
+              <h3 class="text-[11px] font-mono tracking-[0.2em] text-cyan">PORTFOLIO BUILDER · EXECUTION PLAN</h3>
+            </div>
+            <p class="text-xs text-dim font-mono">Enter your capital, pick a risk profile and horizon — get an execution plan mixing ETFs &amp; stocks, all buyable on Moomoo MY.</p>
+          </div>
+        </div>
+
+        <!-- News-driven signals panel -->
+        <div class="mb-6 panel-2 p-4" style="border-color: var(--cyan);">
+          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+                <path d="M3 12h4l3-9 4 18 3-9h4"/>
+              </svg>
+              <div class="text-[11px] font-mono tracking-[0.2em] text-cyan">NEWS-DRIVEN SIGNALS · DAILY REBALANCE</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <div class="text-[9px] font-mono text-dim tracking-wider">LAST COMPUTED</div>
+                <div id="signals-last" class="text-[10px] font-mono text-muted">—</div>
+              </div>
+              <div class="text-right">
+                <div class="text-[9px] font-mono text-dim tracking-wider">NEXT AUTO</div>
+                <div id="signals-next" class="text-[10px] font-mono text-muted">—</div>
+              </div>
+              <button id="signals-refresh-btn" class="btn-refresh">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>
+                </svg>
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          <div id="signals-grid" class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3"></div>
+
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-2 mt-4">DRIVING NEWS</div>
+          <div id="signals-articles" class="space-y-1"></div>
+
+          <p class="text-[10px] text-dim mt-3 font-mono">
+            Signals tilt each position by up to ±3%. Rebalance auto-refreshes every 24h from live news · manual refresh anytime.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div>
+            <label class="text-[10px] font-mono tracking-wider text-dim mb-2 block">AMOUNT TO INVEST</label>
+            <div class="flex">
+              <select id="alloc-currency" class="alloc-select">
+                <option value="USD">USD $</option>
+                <option value="MYR" selected>MYR RM</option>
+              </select>
+              <input id="alloc-amount" type="number" value="10000" min="100" step="100" class="alloc-input flex-1"/>
+            </div>
+            <div id="alloc-conversion" class="text-[10px] font-mono text-dim mt-1">—</div>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-mono tracking-wider text-dim mb-2 block">RISK PROFILE</label>
+            <div class="flex flex-wrap gap-1" id="alloc-risk">
+              <button class="alloc-chip" data-risk="conservative">Conservative</button>
+              <button class="alloc-chip active" data-risk="balanced">Balanced</button>
+              <button class="alloc-chip" data-risk="growth">Growth</button>
+              <button class="alloc-chip" data-risk="aggressive">Aggressive</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-mono tracking-wider text-dim mb-2 block">TIME HORIZON</label>
+            <div class="flex flex-wrap gap-1" id="alloc-horizon">
+              <button class="alloc-chip" data-horizon="short">&lt; 1 yr</button>
+              <button class="alloc-chip" data-horizon="medium">1–3 yr</button>
+              <button class="alloc-chip active" data-horizon="long">3–5 yr</button>
+              <button class="alloc-chip" data-horizon="verylong">5+ yr</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-[10px] font-mono tracking-wider text-dim">ALLOCATION MIX</div>
+            <div id="alloc-summary" class="text-[10px] font-mono text-muted"></div>
+          </div>
+          <div id="alloc-bar" class="flex h-8 border hair-strong overflow-hidden"></div>
+          <div id="alloc-legend" class="flex flex-wrap gap-3 mt-3 text-[10px] font-mono"></div>
+        </div>
+
+        <div class="mb-6">
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-3">EXECUTION PLAN · CLICK ANY ROW FOR DETAILS</div>
+          <div id="alloc-plan" class="space-y-2"></div>
+        </div>
+
+        <div class="mb-2">
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-3">PROJECTED OUTCOMES OVER HORIZON</div>
+          <div id="alloc-outcomes" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+        </div>
+
+        <p class="text-[10px] text-dim mt-4 font-mono tracking-wider">
+          NOT FINANCIAL ADVICE · PROJECTIONS ARE HISTORICAL AVERAGES, NOT GUARANTEES · REAL RETURNS WILL VARY
+        </p>
+        <p class="text-[10px] text-dim mt-2 font-mono">
+          Prices verified against live market data (Aug 13–14, 2026 close). Always refresh Moomoo before executing — real prices move intraday.
+        </p>
+      </section>
+
+      <footer class="text-center py-6">
+        <div class="text-[10px] font-mono tracking-[0.2em] text-dim">SIGNAL TERMINAL · v3.0 · MOCK DATA MODE</div>
+      </footer>
+    </section>
+  </div>
+</main>
+
+<!-- SEARCH MODAL -->
+<div id="search-modal" class="modal-backdrop">
+  <div class="modal-box modal-in">
+    <div class="flex items-center gap-3 px-5 border-b hair">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <input id="search-input" class="search-input" type="text" placeholder="Type a symbol or name — e.g. NVDA, Bitcoin, S&P 500…" autocomplete="off" />
+      <button id="search-close" class="kbd">ESC</button>
+    </div>
+    <div class="flex items-center gap-1 px-3 py-2 border-b hair overflow-x-auto" id="search-filters">
+      <button class="subtab active" data-type="all">All</button>
+      <button class="subtab" data-type="stock">Stocks</button>
+      <button class="subtab" data-type="fund">Funds/ETFs</button>
+      <button class="subtab" data-type="index">Indices</button>
+      <button class="subtab" data-type="crypto">Crypto</button>
+      <button class="subtab" data-type="forex">Forex</button>
+      <button class="subtab" data-type="commodity">Commodities</button>
+    </div>
+    <div id="search-results" class="flex-1 overflow-y-auto"></div>
+    <div class="px-4 py-2 border-t hair flex items-center justify-between text-[10px] font-mono text-dim">
+      <div class="flex items-center gap-3">
+        <span><span class="kbd">↑↓</span> navigate</span>
+        <span><span class="kbd">↵</span> open</span>
+        <span><span class="kbd">ESC</span> close</span>
+      </div>
+      <span id="search-count">0 results</span>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL (TABBED) -->
+<div id="detail-modal" class="detail-backdrop">
+  <div class="detail-box modal-in">
+    <!-- Header -->
+    <div class="px-6 py-4 border-b hair flex items-start justify-between gap-4 flex-shrink-0">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <span id="dm-symbol" class="text-2xl font-mono font-bold">—</span>
+          <span id="dm-type" class="type-badge">—</span>
+          <span id="dm-region" class="region">—</span>
+        </div>
+        <div id="dm-name" class="text-sm text-muted">—</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="dm-watchlist-btn" class="btn-primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          <span id="dm-watchlist-label">Add to Watchlist</span>
+        </button>
+        <button id="dm-close" class="btn-ghost">Close</button>
+      </div>
+    </div>
+
+    <!-- Price bar -->
+    <div class="px-6 py-4 border-b hair flex items-baseline gap-4 flex-shrink-0">
+      <div id="dm-price" class="text-4xl font-mono font-semibold">—</div>
+      <div>
+        <div id="dm-change" class="text-lg font-mono">—</div>
+        <div id="dm-pct" class="text-sm font-mono">—</div>
+      </div>
+      <div class="text-[10px] font-mono text-dim ml-auto">AS OF <span id="dm-time">--:--:--</span></div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="px-6 border-b hair flex-shrink-0 overflow-x-auto">
+      <button class="dm-tab active" data-tab="overview">Overview</button>
+      <button class="dm-tab" data-tab="financials">Financials</button>
+      <button class="dm-tab" data-tab="technicals">Technicals</button>
+      <button class="dm-tab" data-tab="profile">Profile</button>
+      <button class="dm-tab" data-tab="news">News</button>
+    </div>
+
+    <!-- Tab content -->
+    <div class="overflow-y-auto flex-1" id="dm-content"></div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settings-modal" class="modal-backdrop">
+  <div class="modal-box modal-in" style="max-width: 640px;">
+    <div class="flex items-center justify-between px-5 py-4 border-b hair">
+      <div class="flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v6m0 10v6m11-11h-6M7 12H1m17.4-7.4l-4.2 4.2m-6.4 6.4l-4.2 4.2m14.8 0l-4.2-4.2m-6.4-6.4L4.6 4.6"/>
+        </svg>
+        <div class="font-mono text-sm font-semibold tracking-wider">LIVE PRICE SETTINGS</div>
+      </div>
+      <button id="settings-close" class="kbd">ESC</button>
+    </div>
+
+    <div class="p-5 overflow-y-auto">
+      <div id="live-status" class="panel-2 p-3 mb-4 flex items-center justify-between">
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-1">CURRENT STATUS</div>
+          <div id="live-status-text" class="text-sm font-mono">—</div>
+        </div>
+        <div id="live-status-dot" class="w-3 h-3 rounded-full bg-[color:var(--dim)]"></div>
+      </div>
+
+      <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">FINNHUB API KEY</div>
+      <p class="text-xs text-muted mb-3 leading-relaxed">
+        Enter your free Finnhub.io API key to enable live prices. Prices refresh every 30 seconds from the same NYSE/NASDAQ feed Moomoo uses. Sign up at
+        <a href="https://finnhub.io/register" target="_blank" rel="noopener" class="link-src">finnhub.io/register ↗</a>
+        — free tier gives 60 API calls/minute, plenty for this dashboard.
+      </p>
+
+      <div class="flex gap-2 mb-3">
+        <input id="api-key-input" type="password" placeholder="Paste your API key here..." class="alloc-input flex-1" autocomplete="off" />
+        <button id="api-key-toggle" class="btn-ghost" title="Show/hide key">Show</button>
+      </div>
+
+      <div class="flex gap-2 mb-4">
+        <button id="api-key-save" class="btn-primary">Save &amp; Enable</button>
+        <button id="api-key-test" class="btn-ghost">Test Key</button>
+        <button id="api-key-disable" class="btn-ghost danger">Disable Live</button>
+      </div>
+
+      <div id="api-test-result" class="text-xs font-mono mb-4"></div>
+
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-2 mt-4">HOW IT WORKS</div>
+      <ul class="text-xs text-muted space-y-1 leading-relaxed">
+        <li>• When enabled, the 10 Signal's Take picks refresh live every 30s.</li>
+        <li>• Portfolio Builder share calculations use live prices when available.</li>
+        <li>• Sidebar &amp; detail modal show real market data instead of simulated ticks.</li>
+        <li>• Your API key is stored only in your browser's localStorage. Never sent anywhere except Finnhub.</li>
+        <li>• Free tier covers US stocks/ETFs (NYSE, NASDAQ) — matches your Moomoo US universe.</li>
+        <li>• Prices may differ from Moomoo by a few cents due to feed-level latency; this is normal.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SIGNAL — Financial Terminal v3.0
+   Deep detail views, TradingView-inspired
+   ============================================================ */
+
+const CONFIG = {
+  refreshIntervalMs: 60_000,
+  useLiveApi: false,
+  storageKey: 'signal_watchlist_v1',
+  recentSearchKey: 'signal_recent_v1',
+  apiKeyStorageKey: 'signal_finnhub_key_v1',
+  livePriceEndpoint: 'https://finnhub.io/api/v1/quote',
+  livePriceRefreshMs: 30_000,
+};
+
+const state = {
+  activeCategory: 'all',
+  activeFundTab: 'country',
+  activeSearchType: 'all',
+  activeTimeframe: '1M',
+  activeDetailTab: 'overview',
+  news: [],
+  countdown: 60,
+  refreshTimer: null,
+  currentAsset: null,
+  currentPrices: null,   // cached generated price series for consistency across tabs
+  focusedResultIdx: 0,
+  filteredResults: [],
+  watchlist: [],
+  recentSearches: [],
+  apiKey: null,          // Finnhub API key
+  livePrices: {},        // symbol → { price, change, changePct, timestamp }
+  livePriceTimer: null,
+};
+
+/* ============================================================
+   UNIVERSE
+   ============================================================ */
+const UNIVERSE = [
+  // ═══ US STOCKS — prices verified Aug 13-14, 2026 ═══
+  { symbol: 'NVDA',  name: 'NVIDIA Corporation',        type: 'stock', region: 'US', base: 225.30, sector: 'Semiconductors' },
+  { symbol: 'AAPL',  name: 'Apple Inc.',                type: 'stock', region: 'US', base: 302.25, sector: 'Consumer Tech' },
+  { symbol: 'MSFT',  name: 'Microsoft Corporation',     type: 'stock', region: 'US', base: 499.99, sector: 'Software' },
+  { symbol: 'GOOGL', name: 'Alphabet Inc. Class A',     type: 'stock', region: 'US', base: 343.80, sector: 'Internet' },
+  { symbol: 'META',  name: 'Meta Platforms',            type: 'stock', region: 'US', base: 539.03, sector: 'Internet' },
+  { symbol: 'AMZN',  name: 'Amazon.com',                type: 'stock', region: 'US', base: 272.27, sector: 'E-Commerce' },
+  { symbol: 'TSLA',  name: 'Tesla Inc.',                type: 'stock', region: 'US', base: 306.26, sector: 'Automotive' },
+  { symbol: 'AMD',   name: 'Advanced Micro Devices',    type: 'stock', region: 'US', base: 483.01, sector: 'Semiconductors' },
+  { symbol: 'TSM',   name: 'Taiwan Semiconductor',      type: 'stock', region: 'US', base: 403.31, sector: 'Semiconductors' },
+  { symbol: 'AVGO',  name: 'Broadcom Inc.',             type: 'stock', region: 'US', base: 387.84, sector: 'Semiconductors' },
+  { symbol: 'GLW',   name: 'Corning Incorporated',      type: 'stock', region: 'US', base: 158.54, sector: 'Optical Comms' },
+  { symbol: 'MU',    name: 'Micron Technology',         type: 'stock', region: 'US', base: 874.66, sector: 'Semiconductors' },
+  { symbol: 'WDC',   name: 'Western Digital',           type: 'stock', region: 'US', base: 128.44, sector: 'Storage' },
+  { symbol: 'STX',   name: 'Seagate Technology',        type: 'stock', region: 'US', base: 168.72, sector: 'Storage' },
+  { symbol: 'COHR',  name: 'Coherent Corp.',            type: 'stock', region: 'US', base: 142.55, sector: 'Optical Comms' },
+  { symbol: 'MRVL',  name: 'Marvell Technology',        type: 'stock', region: 'US', base: 108.30, sector: 'Semiconductors' },
+  { symbol: 'INTC',  name: 'Intel Corporation',         type: 'stock', region: 'US', base: 91.13,  sector: 'Semiconductors' },
+  { symbol: 'JPM',   name: 'JPMorgan Chase',            type: 'stock', region: 'US', base: 363.25, sector: 'Banking' },
+  { symbol: 'BAC',   name: 'Bank of America',           type: 'stock', region: 'US', base: 58.42,  sector: 'Banking' },
+  { symbol: 'V',     name: 'Visa Inc.',                 type: 'stock', region: 'US', base: 358.71, sector: 'Payments' },
+  { symbol: 'MA',    name: 'Mastercard',                type: 'stock', region: 'US', base: 588.44, sector: 'Payments' },
+  { symbol: 'BRK.B', name: 'Berkshire Hathaway B',      type: 'stock', region: 'US', base: 512.30, sector: 'Diversified' },
+  { symbol: 'UNH',   name: 'UnitedHealth Group',        type: 'stock', region: 'US', base: 421.47, sector: 'Healthcare' },
+  { symbol: 'JNJ',   name: 'Johnson & Johnson',         type: 'stock', region: 'US', base: 172.55, sector: 'Pharma' },
+  { symbol: 'PFE',   name: 'Pfizer Inc.',               type: 'stock', region: 'US', base: 26.88,  sector: 'Pharma' },
+  { symbol: 'XOM',   name: 'Exxon Mobil',               type: 'stock', region: 'US', base: 128.44, sector: 'Energy' },
+  { symbol: 'CVX',   name: 'Chevron Corporation',       type: 'stock', region: 'US', base: 168.30, sector: 'Energy' },
+  { symbol: 'WMT',   name: 'Walmart Inc.',              type: 'stock', region: 'US', base: 115.60, sector: 'Retail' },
+  { symbol: 'COST',  name: 'Costco Wholesale',          type: 'stock', region: 'US', base: 998.44, sector: 'Retail' },
+  { symbol: 'DIS',   name: 'The Walt Disney Company',   type: 'stock', region: 'US', base: 118.30, sector: 'Media' },
+  { symbol: 'NFLX',  name: 'Netflix Inc.',              type: 'stock', region: 'US', base: 1188.55, sector: 'Media' },
+  { symbol: 'CRM',   name: 'Salesforce Inc.',           type: 'stock', region: 'US', base: 288.71, sector: 'Software' },
+  { symbol: 'ORCL',  name: 'Oracle Corporation',        type: 'stock', region: 'US', base: 248.44, sector: 'Software' },
+  { symbol: 'ADBE',  name: 'Adobe Inc.',                type: 'stock', region: 'US', base: 448.30, sector: 'Software' },
+  { symbol: 'PLTR',  name: 'Palantir Technologies',     type: 'stock', region: 'US', base: 179.01, sector: 'Software' },
+  { symbol: 'COIN',  name: 'Coinbase Global',           type: 'stock', region: 'US', base: 148.68, sector: 'Fintech' },
+  { symbol: 'MSTR',  name: 'MicroStrategy',             type: 'stock', region: 'US', base: 268.44, sector: 'Fintech' },
+  { symbol: 'SMCI',  name: 'Super Micro Computer',      type: 'stock', region: 'US', base: 62.14,  sector: 'Hardware' },
+
+  // ═══ MALAYSIAN STOCKS (Bursa Malaysia, prices in MYR) ═══
+  { symbol: 'MAYBANK', name: 'Malayan Banking Bhd',     type: 'stock', region: 'MY', base: 10.42,  sector: 'Banking' },
+  { symbol: 'CIMB',    name: 'CIMB Group Holdings',     type: 'stock', region: 'MY', base: 7.88,   sector: 'Banking' },
+  { symbol: 'PBBANK',  name: 'Public Bank Bhd',         type: 'stock', region: 'MY', base: 4.42,   sector: 'Banking' },
+  { symbol: 'TENAGA',  name: 'Tenaga Nasional',         type: 'stock', region: 'MY', base: 14.30,  sector: 'Utilities' },
+  { symbol: 'PETGAS',  name: 'Petronas Gas Bhd',        type: 'stock', region: 'MY', base: 18.44,  sector: 'Energy' },
+  { symbol: 'PCHEM',   name: 'Petronas Chemicals',      type: 'stock', region: 'MY', base: 6.22,   sector: 'Chemicals' },
+  { symbol: 'IHH',     name: 'IHH Healthcare',          type: 'stock', region: 'MY', base: 7.14,   sector: 'Healthcare' },
+  { symbol: 'GENTING', name: 'Genting Berhad',          type: 'stock', region: 'MY', base: 3.88,   sector: 'Leisure' },
+  { symbol: 'AXIATA',  name: 'Axiata Group',            type: 'stock', region: 'MY', base: 2.44,   sector: 'Telecom' },
+  { symbol: 'MISC',    name: 'MISC Berhad',             type: 'stock', region: 'MY', base: 8.71,   sector: 'Shipping' },
+
+  // ═══ UK / EU STOCKS ═══
+  { symbol: 'SHEL', name: 'Shell plc',         type: 'stock', region: 'UK', base: 2842.44, sector: 'Energy' },
+  { symbol: 'AZN',  name: 'AstraZeneca',       type: 'stock', region: 'UK', base: 12842.30,sector: 'Pharma' },
+  { symbol: 'HSBA', name: 'HSBC Holdings',     type: 'stock', region: 'UK', base: 998.22, sector: 'Banking' },
+  { symbol: 'ULVR', name: 'Unilever',          type: 'stock', region: 'UK', base: 4622.44,sector: 'Consumer' },
+  { symbol: 'ASML', name: 'ASML Holding',      type: 'stock', region: 'EU', base: 812.30, sector: 'Semiconductors' },
+  { symbol: 'SAP',  name: 'SAP SE',            type: 'stock', region: 'EU', base: 278.44, sector: 'Software' },
+  { symbol: 'LVMH', name: 'LVMH Moet Hennessy',type: 'stock', region: 'EU', base: 698.30, sector: 'Luxury' },
+
+  // ═══ ASIA STOCKS ═══
+  { symbol: '7203.T', name: 'Toyota Motor Corp',      type: 'stock', region: 'JP', base: 3142.44, sector: 'Automotive' },
+  { symbol: '6758.T', name: 'Sony Group Corporation', type: 'stock', region: 'JP', base: 3818.30, sector: 'Consumer Tech' },
+  { symbol: '9984.T', name: 'SoftBank Group',         type: 'stock', region: 'JP', base: 12842.44, sector: 'Diversified' },
+  { symbol: 'BABA',   name: 'Alibaba Group',          type: 'stock', region: 'CN', base: 138.30, sector: 'E-Commerce' },
+  { symbol: 'TCEHY',  name: 'Tencent Holdings',       type: 'stock', region: 'CN', base: 72.44,  sector: 'Internet' },
+  { symbol: 'BYD',    name: 'BYD Company',            type: 'stock', region: 'CN', base: 388.30, sector: 'Automotive' },
+
+  // ═══ FUNDS / ETFs — prices verified Aug 13-14, 2026 ═══
+  { symbol: 'VOO',  name: 'Vanguard S&P 500 ETF',            type: 'fund', region: 'US', base: 714.95, sector: 'US Large-Cap' },
+  { symbol: 'SPY',  name: 'SPDR S&P 500 ETF Trust',          type: 'fund', region: 'US', base: 777.88, sector: 'US Large-Cap' },
+  { symbol: 'QQQ',  name: 'Invesco QQQ Trust (Nasdaq 100)',  type: 'fund', region: 'US', base: 730.28, sector: 'US Tech' },
+  { symbol: 'VTI',  name: 'Vanguard Total Stock Market',     type: 'fund', region: 'US', base: 388.71, sector: 'US Total Market' },
+  { symbol: 'IWM',  name: 'iShares Russell 2000 ETF',        type: 'fund', region: 'US', base: 302.44, sector: 'US Small-Cap' },
+  { symbol: 'DIA',  name: 'SPDR Dow Jones Industrial',       type: 'fund', region: 'US', base: 538.40, sector: 'US Blue-Chip' },
+  { symbol: 'SCHD', name: 'Schwab US Dividend Equity ETF',   type: 'fund', region: 'US', base: 28.55,  sector: 'US Dividend' },
+  { symbol: 'VYM',  name: 'Vanguard High Dividend Yield',    type: 'fund', region: 'US', base: 148.30, sector: 'US Dividend' },
+  { symbol: 'ISF',  name: 'iShares Core FTSE 100 UCITS',     type: 'fund', region: 'UK', base: 10.77,  sector: 'UK Large-Cap' },
+  { symbol: 'EWJ',  name: 'iShares MSCI Japan ETF',          type: 'fund', region: 'JP', base: 88.14,  sector: 'Japan' },
+  { symbol: 'MCHI', name: 'iShares MSCI China ETF',          type: 'fund', region: 'CN', base: 62.88,  sector: 'China' },
+  { symbol: 'FXI',  name: 'iShares China Large-Cap ETF',     type: 'fund', region: 'CN', base: 38.44,  sector: 'China Large-Cap' },
+  { symbol: 'EWM',  name: 'iShares MSCI Malaysia ETF',       type: 'fund', region: 'MY', base: 24.30,  sector: 'Malaysia' },
+  { symbol: 'INDA', name: 'iShares MSCI India ETF',          type: 'fund', region: 'IN', base: 62.31,  sector: 'India' },
+  { symbol: 'VWO',  name: 'Vanguard FTSE Emerging Markets',  type: 'fund', region: 'EM', base: 52.22,  sector: 'Emerging Markets' },
+  { symbol: 'VGK',  name: 'Vanguard FTSE Europe ETF',        type: 'fund', region: 'EU', base: 78.71,  sector: 'Europe' },
+  { symbol: 'EWZ',  name: 'iShares MSCI Brazil ETF',         type: 'fund', region: 'BR', base: 28.44,  sector: 'Brazil' },
+  { symbol: 'EWT',  name: 'iShares MSCI Taiwan ETF',         type: 'fund', region: 'TW', base: 72.30,  sector: 'Taiwan' },
+  { symbol: 'EWY',  name: 'iShares MSCI South Korea ETF',    type: 'fund', region: 'KR', base: 68.22,  sector: 'South Korea' },
+  { symbol: 'EWA',  name: 'iShares MSCI Australia ETF',      type: 'fund', region: 'AU', base: 28.71,  sector: 'Australia' },
+  { symbol: 'SMH',  name: 'VanEck Semiconductor ETF',        type: 'fund', region: 'GBL',base: 585.06, sector: 'Semiconductors' },
+  { symbol: 'SOXX', name: 'iShares Semiconductor ETF',       type: 'fund', region: 'GBL',base: 548.41, sector: 'Semiconductors' },
+  { symbol: 'XLK',  name: 'Technology Select Sector SPDR',   type: 'fund', region: 'US', base: 288.55, sector: 'Technology' },
+  { symbol: 'XLF',  name: 'Financial Select Sector SPDR',    type: 'fund', region: 'US', base: 62.42,  sector: 'Financials' },
+  { symbol: 'XLE',  name: 'Energy Select Sector SPDR',       type: 'fund', region: 'US', base: 61.03,  sector: 'Energy' },
+  { symbol: 'XLV',  name: 'Health Care Select Sector SPDR',  type: 'fund', region: 'US', base: 148.71, sector: 'Healthcare' },
+  { symbol: 'XLI',  name: 'Industrials Select Sector SPDR',  type: 'fund', region: 'US', base: 158.55, sector: 'Industrials' },
+  { symbol: 'XLU',  name: 'Utilities Select Sector SPDR',    type: 'fund', region: 'US', base: 88.30,  sector: 'Utilities' },
+  { symbol: 'XLP',  name: 'Consumer Staples SPDR',           type: 'fund', region: 'US', base: 82.44,  sector: 'Consumer Staples' },
+  { symbol: 'XLY',  name: 'Consumer Discretionary SPDR',     type: 'fund', region: 'US', base: 238.30, sector: 'Consumer Discretionary' },
+  { symbol: 'VNQ',  name: 'Vanguard Real Estate ETF',        type: 'fund', region: 'US', base: 88.12,  sector: 'Real Estate' },
+  { symbol: 'GLD',  name: 'SPDR Gold Shares',                type: 'fund', region: 'GBL',base: 400.22, sector: 'Gold' },
+  { symbol: 'SLV',  name: 'iShares Silver Trust',            type: 'fund', region: 'GBL',base: 59.06,  sector: 'Silver' },
+  { symbol: 'IBB',  name: 'iShares Biotechnology ETF',       type: 'fund', region: 'US', base: 148.44, sector: 'Biotech' },
+  { symbol: 'ARKK', name: 'ARK Innovation ETF',              type: 'fund', region: 'US', base: 82.30,  sector: 'Innovation' },
+  { symbol: 'SGOV', name: 'iShares 0-3 Month Treasury',      type: 'fund', region: 'US', base: 100.50, sector: 'Bonds' },
+  { symbol: 'TLT',  name: 'iShares 20+ Year Treasury Bond',  type: 'fund', region: 'US', base: 88.55,  sector: 'Bonds' },
+  { symbol: 'BND',  name: 'Vanguard Total Bond Market ETF',  type: 'fund', region: 'US', base: 72.30,  sector: 'Bonds' },
+  { symbol: 'IBIT', name: 'iShares Bitcoin Trust',           type: 'fund', region: 'US', base: 36.13,  sector: 'Crypto' },
+  { symbol: 'ETHE', name: 'Grayscale Ethereum Trust',        type: 'fund', region: 'US', base: 18.44,  sector: 'Crypto' },
+
+  // ═══ INDICES — prices verified Aug 13, 2026 close ═══
+  { symbol: 'SPX',   name: 'S&P 500 Index',           type: 'index', region: 'US', base: 7798.99 },
+  { symbol: 'IXIC',  name: 'Nasdaq Composite',        type: 'index', region: 'US', base: 26803.03 },
+  { symbol: 'DJI',   name: 'Dow Jones Industrial Avg',type: 'index', region: 'US', base: 53839.99 },
+  { symbol: 'RUT',   name: 'Russell 2000 Index',      type: 'index', region: 'US', base: 3052.85 },
+  { symbol: 'UKX',   name: 'FTSE 100 Index',          type: 'index', region: 'UK', base: 10772.67 },
+  { symbol: 'GDAXI', name: 'DAX Index',               type: 'index', region: 'DE', base: 26331.07 },
+  { symbol: 'FCHI',  name: 'CAC 40 Index',            type: 'index', region: 'FR', base: 8674.94 },
+  { symbol: 'N225',  name: 'Nikkei 225 Index',        type: 'index', region: 'JP', base: 68308.59 },
+  { symbol: 'HSI',   name: 'Hang Seng Index',         type: 'index', region: 'HK', base: 25396.51 },
+  { symbol: 'SSEC',  name: 'Shanghai Composite',      type: 'index', region: 'CN', base: 3926.96 },
+  { symbol: 'KLSE',  name: 'FTSE Bursa Malaysia KLCI',type: 'index', region: 'MY', base: 1734.71 },
+  { symbol: 'STI',   name: 'Straits Times Index',     type: 'index', region: 'SG', base: 5674.89 },
+  { symbol: 'KS11',  name: 'KOSPI Composite Index',   type: 'index', region: 'KR', base: 6813.34 },
+  { symbol: 'AXJO',  name: 'S&P/ASX 200 Index',       type: 'index', region: 'AU', base: 9188.50 },
+  { symbol: 'BSESN', name: 'BSE SENSEX Index',        type: 'index', region: 'IN', base: 82412.30 },
+  { symbol: 'VIX',   name: 'CBOE Volatility Index',   type: 'index', region: 'US', base: 14.52 },
+
+  // ═══ CRYPTO — prices verified Aug 13, 2026 ═══
+  { symbol: 'BTC', name: 'Bitcoin', type: 'crypto', base: 63558.45 },
+  { symbol: 'ETH', name: 'Ethereum', type: 'crypto', base: 1880.00 },
+  { symbol: 'SOL', name: 'Solana', type: 'crypto', base: 76.14 },
+  { symbol: 'BNB', name: 'BNB', type: 'crypto', base: 610.51 },
+  { symbol: 'XRP', name: 'XRP', type: 'crypto', base: 1.01 },
+  { symbol: 'ADA', name: 'Cardano', type: 'crypto', base: 0.18 },
+  { symbol: 'DOGE',name: 'Dogecoin', type: 'crypto', base: 0.070 },
+  { symbol: 'AVAX',name: 'Avalanche', type: 'crypto', base: 18.44 },
+  { symbol: 'DOT', name: 'Polkadot', type: 'crypto', base: 3.22 },
+  { symbol: 'MATIC',name: 'Polygon', type: 'crypto', base: 0.22 },
+  { symbol: 'LINK', name: 'Chainlink', type: 'crypto', base: 8.86 },
+  { symbol: 'UNI',  name: 'Uniswap', type: 'crypto', base: 6.30 },
+  { symbol: 'ATOM', name: 'Cosmos', type: 'crypto', base: 3.88 },
+  { symbol: 'LTC',  name: 'Litecoin', type: 'crypto', base: 78.44 },
+  { symbol: 'BCH',  name: 'Bitcoin Cash', type: 'crypto', base: 328.30 },
+  { symbol: 'NEAR', name: 'NEAR Protocol', type: 'crypto', base: 2.44 },
+  { symbol: 'ICP',  name: 'Internet Computer', type: 'crypto', base: 4.22 },
+  { symbol: 'ARB',  name: 'Arbitrum', type: 'crypto', base: 0.32 },
+  { symbol: 'OP',   name: 'Optimism', type: 'crypto', base: 0.68 },
+  { symbol: 'APT',  name: 'Aptos', type: 'crypto', base: 4.44 },
+
+  // ═══ FOREX — approximate spot rates Aug 2026 ═══
+  { symbol: 'EUR/USD', name: 'Euro / US Dollar', type: 'forex', base: 1.1642 },
+  { symbol: 'GBP/USD', name: 'British Pound / US Dollar', type: 'forex', base: 1.3544 },
+  { symbol: 'USD/JPY', name: 'US Dollar / Japanese Yen', type: 'forex', base: 148.32 },
+  { symbol: 'USD/MYR', name: 'US Dollar / Malaysian Ringgit', type: 'forex', base: 4.2212 },
+  { symbol: 'USD/SGD', name: 'US Dollar / Singapore Dollar', type: 'forex', base: 1.2888 },
+  { symbol: 'USD/CNY', name: 'US Dollar / Chinese Yuan', type: 'forex', base: 7.1844 },
+  { symbol: 'AUD/USD', name: 'Australian Dollar / USD', type: 'forex', base: 0.6622 },
+  { symbol: 'USD/CHF', name: 'US Dollar / Swiss Franc', type: 'forex', base: 0.8544 },
+  { symbol: 'USD/CAD', name: 'US Dollar / Canadian Dollar', type: 'forex', base: 1.3888 },
+  { symbol: 'NZD/USD', name: 'New Zealand Dollar / USD', type: 'forex', base: 0.5922 },
+
+  // ═══ COMMODITIES — verified Aug 13, 2026 ═══
+  { symbol: 'GOLD',    name: 'Gold Spot (XAU/USD)',    type: 'commodity', base: 4387.00 },
+  { symbol: 'SILVER',  name: 'Silver Spot (XAG/USD)',  type: 'commodity', base: 73.06 },
+  { symbol: 'WTI',     name: 'WTI Crude Oil Futures',  type: 'commodity', base: 81.25 },
+  { symbol: 'BRENT',   name: 'Brent Crude Oil Futures',type: 'commodity', base: 87.07 },
+  { symbol: 'NATGAS',  name: 'Natural Gas Futures',    type: 'commodity', base: 3.44 },
+  { symbol: 'COPPER',  name: 'Copper Futures',         type: 'commodity', base: 4.68 },
+  { symbol: 'PLATINUM',name: 'Platinum Spot',          type: 'commodity', base: 1268.30 },
+  { symbol: 'PALLADIUM',name:'Palladium Spot',         type: 'commodity', base: 1284.44 },
+  { symbol: 'WHEAT',   name: 'Wheat Futures',          type: 'commodity', base: 5.88 },
+  { symbol: 'CORN',    name: 'Corn Futures',           type: 'commodity', base: 4.42 },
+];
+
+/* ============================================================
+   ASSET DETAILS — curated lookup for well-known assets
+   Anything not here uses reasonable defaults from asset type/sector.
+   ============================================================ */
+const ASSET_DETAILS = {
+  // STOCKS
+  'NVDA': { desc: "NVIDIA designs graphics processors, systems on chip, and AI accelerators. Its GPUs power the majority of the world's AI training infrastructure, with the Blackwell architecture leading the current data-center cycle.",
+            hq: "Santa Clara, California, USA", ceo: "Jensen Huang", employees: 29600, founded: 1993, website: "nvidia.com", exchange: "NASDAQ", dividend: 0.03, pe: 62 },
+  'AAPL': { desc: "Apple designs, manufactures, and sells consumer electronics, software, and services — the iPhone remains its largest revenue driver, with services and wearables the main growth pillars.",
+            hq: "Cupertino, California, USA", ceo: "Tim Cook", employees: 164000, founded: 1976, website: "apple.com", exchange: "NASDAQ", dividend: 0.44, pe: 34 },
+  'MSFT': { desc: "Microsoft develops software, cloud services (Azure), productivity tools (Microsoft 365), and gaming (Xbox). Azure is the fastest-growing hyperscale cloud after AWS, and OpenAI partnership positions the company deeply in enterprise AI.",
+            hq: "Redmond, Washington, USA", ceo: "Satya Nadella", employees: 228000, founded: 1975, website: "microsoft.com", exchange: "NASDAQ", dividend: 0.83, pe: 36 },
+  'GOOGL':{ desc: "Alphabet is the parent of Google, YouTube, and Google Cloud. Ad revenue from Search and YouTube funds heavy investment in AI (Gemini) and autonomous driving (Waymo).",
+            hq: "Mountain View, California, USA", ceo: "Sundar Pichai", employees: 182000, founded: 1998, website: "abc.xyz", exchange: "NASDAQ", dividend: 0.42, pe: 25 },
+  'META': { desc: "Meta operates Facebook, Instagram, WhatsApp, and Threads, monetized primarily through digital advertising. Reality Labs pursues AR/VR platforms as a long-horizon bet.",
+            hq: "Menlo Park, California, USA", ceo: "Mark Zuckerberg", employees: 74000, founded: 2004, website: "meta.com", exchange: "NASDAQ", dividend: 0.34, pe: 28 },
+  'AMZN': { desc: "Amazon operates the largest e-commerce marketplace in North America, plus AWS — the world's largest cloud infrastructure business — and a growing advertising segment.",
+            hq: "Seattle, Washington, USA", ceo: "Andy Jassy", employees: 1540000, founded: 1994, website: "amazon.com", exchange: "NASDAQ", dividend: 0, pe: 44 },
+  'TSLA': { desc: "Tesla designs and manufactures electric vehicles, battery storage, and solar products. It also develops autonomous-driving software and humanoid robotics (Optimus).",
+            hq: "Austin, Texas, USA", ceo: "Elon Musk", employees: 140000, founded: 2003, website: "tesla.com", exchange: "NASDAQ", dividend: 0, pe: 68 },
+  'AMD':  { desc: "AMD designs high-performance CPUs, GPUs, and adaptive computing chips. Its EPYC server CPUs and Instinct AI accelerators compete directly with Intel and Nvidia respectively.",
+            hq: "Santa Clara, California, USA", ceo: "Lisa Su", employees: 26000, founded: 1969, website: "amd.com", exchange: "NASDAQ", dividend: 0, pe: 48 },
+  'TSM':  { desc: "TSMC is the world's largest dedicated semiconductor foundry, manufacturing chips for Apple, Nvidia, AMD, and most leading fabless designers. It leads the industry on advanced process nodes.",
+            hq: "Hsinchu, Taiwan", ceo: "C.C. Wei", employees: 76000, founded: 1987, website: "tsmc.com", exchange: "NYSE", dividend: 1.4, pe: 28 },
+  'GLW':  { desc: "Corning specializes in specialty glass, ceramics, and optical fiber. Its optical communications segment supplies data centers and telcos, benefiting from the AI infrastructure buildout.",
+            hq: "Corning, New York, USA", ceo: "Wendell P. Weeks", employees: 57500, founded: 1851, website: "corning.com", exchange: "NYSE", dividend: 2.8, pe: 24 },
+  'MU':   { desc: "Micron manufactures memory and storage — DRAM, NAND flash, and HBM (High Bandwidth Memory) for AI training. HBM3E is currently fully allocated through the AI capex cycle.",
+            hq: "Boise, Idaho, USA", ceo: "Sanjay Mehrotra", employees: 48000, founded: 1978, website: "micron.com", exchange: "NASDAQ", dividend: 0.4, pe: 22 },
+  'COIN': { desc: "Coinbase operates the largest US-regulated crypto exchange, custody, and staking platform. Revenue is highly cyclical with crypto trading volumes and interest income on USDC reserves.",
+            hq: "Remote-first (Delaware, USA)", ceo: "Brian Armstrong", employees: 3800, founded: 2012, website: "coinbase.com", exchange: "NASDAQ", dividend: 0, pe: 42 },
+  'JPM':  { desc: "JPMorgan Chase is the largest US bank by assets, operating in consumer banking, corporate & investment banking, wealth management, and asset management.",
+            hq: "New York City, NY, USA", ceo: "Jamie Dimon", employees: 316000, founded: 2000, website: "jpmorganchase.com", exchange: "NYSE", dividend: 2.1, pe: 12 },
+
+  // MALAYSIAN
+  'MAYBANK':{ desc: "Malayan Banking Berhad (Maybank) is the largest bank in Malaysia by assets and market capitalization, with operations across ASEAN and a growing Islamic banking franchise.",
+              hq: "Kuala Lumpur, Malaysia", ceo: "Khairussaleh Ramli", employees: 43000, founded: 1960, website: "maybank.com", exchange: "Bursa Malaysia", dividend: 5.6, pe: 12 },
+  'CIMB':   { desc: "CIMB Group is the second-largest bank in Malaysia and a leading ASEAN universal bank, with significant operations in Indonesia, Thailand, and Singapore.",
+              hq: "Kuala Lumpur, Malaysia", ceo: "Novan Amirudin", employees: 33000, founded: 1974, website: "cimb.com", exchange: "Bursa Malaysia", dividend: 5.2, pe: 10 },
+  'PBBANK': { desc: "Public Bank Berhad is one of Malaysia's largest banking groups, known for consistent profitability and a heavy retail-lending mix concentrated in residential property.",
+              hq: "Kuala Lumpur, Malaysia", ceo: "Tan Sri Tay Ah Lek", employees: 19000, founded: 1966, website: "publicbankgroup.com", exchange: "Bursa Malaysia", dividend: 4.4, pe: 11 },
+  'TENAGA': { desc: "Tenaga Nasional is Malaysia's national electric utility, responsible for generation, transmission, and distribution across Peninsular Malaysia.",
+              hq: "Kuala Lumpur, Malaysia", ceo: "Datuk Megat Jalaluddin", employees: 36000, founded: 1949, website: "tnb.com.my", exchange: "Bursa Malaysia", dividend: 3.4, pe: 16 },
+  'PETGAS': { desc: "Petronas Gas is a subsidiary of Petronas, operating Malaysia's gas processing, transmission pipelines, and regasification terminals.",
+              hq: "Kuala Lumpur, Malaysia", ceo: "Abdul Aziz Othman", employees: 2200, founded: 1983, website: "petronasgas.com", exchange: "Bursa Malaysia", dividend: 3.8, pe: 15 },
+
+  // FUNDS / ETFs
+  'VOO':  { desc: "Vanguard S&P 500 ETF tracks the S&P 500 Index — the 500 largest US publicly-traded companies weighted by market capitalization. One of the lowest-cost broad-market ETFs available.",
+            expenseRatio: 0.03, aum: 1670e9, yield: 1.28, holdings: 503, inception: "2010-09-07", issuer: "Vanguard", benchmark: "S&P 500 Index", topHoldings: ["AAPL", "NVDA", "MSFT", "AMZN", "META", "GOOGL", "TSLA", "BRK.B", "AVGO", "JPM"] },
+  'SPY':  { desc: "SPDR S&P 500 ETF Trust is the oldest and most-traded ETF in the world, tracking the S&P 500 Index. Popular with institutions for its deep liquidity and options market.",
+            expenseRatio: 0.0945, aum: 620e9, yield: 1.25, holdings: 503, inception: "1993-01-22", issuer: "State Street", benchmark: "S&P 500 Index", topHoldings: ["AAPL", "NVDA", "MSFT", "AMZN", "META", "GOOGL", "TSLA", "BRK.B", "AVGO", "JPM"] },
+  'QQQ':  { desc: "Invesco QQQ Trust tracks the Nasdaq-100 Index — the 100 largest non-financial companies on Nasdaq. Heavy tech and consumer-tech weighting; high-beta proxy for the US large-cap growth cycle.",
+            expenseRatio: 0.20, aum: 350e9, yield: 0.51, holdings: 101, inception: "1999-03-10", issuer: "Invesco", benchmark: "Nasdaq-100 Index", topHoldings: ["AAPL", "NVDA", "MSFT", "AMZN", "META", "AVGO", "GOOGL", "TSLA", "COST", "NFLX"] },
+  'SMH':  { desc: "VanEck Semiconductor ETF holds the 25 largest US-listed semiconductor companies weighted by market cap. Concentrated bet on the AI infrastructure buildout, with cyclical drawdowns expected.",
+            expenseRatio: 0.35, aum: 26e9, yield: 0.42, holdings: 25, inception: "2011-12-20", issuer: "VanEck", benchmark: "MVIS US Listed Semiconductor 25 Index", topHoldings: ["NVDA", "TSM", "AVGO", "AMD", "ASML", "QCOM", "AMAT", "TXN", "LRCX", "MU"] },
+  'EWM':  { desc: "iShares MSCI Malaysia ETF provides broad exposure to Malaysian large- and mid-cap equities. Heavily weighted toward banks, utilities, and consumer staples.",
+            expenseRatio: 0.50, aum: 220e6, yield: 3.2, holdings: 39, inception: "1996-03-12", issuer: "BlackRock", benchmark: "MSCI Malaysia Index", topHoldings: ["MAYBANK", "PBBANK", "TENAGA", "CIMB", "PETGAS", "IHH", "PCHEM", "MISC", "AXIATA", "GENTING"] },
+  'GLD':  { desc: "SPDR Gold Shares holds physical gold bullion, offering the simplest listed exposure to spot gold prices. Common as a portfolio hedge against inflation, currency debasement, and geopolitical stress.",
+            expenseRatio: 0.40, aum: 88e9, yield: 0, holdings: 1, inception: "2004-11-18", issuer: "State Street", benchmark: "LBMA Gold Price PM", topHoldings: ["Physical Gold Bullion"] },
+  'SGOV': { desc: "iShares 0-3 Month Treasury Bond ETF holds short-duration US Treasury bills. Near-zero interest-rate risk; effectively cash with a yield closely tracking the Fed policy rate.",
+            expenseRatio: 0.09, aum: 42e9, yield: 4.8, holdings: 20, inception: "2020-05-26", issuer: "BlackRock", benchmark: "ICE 0-3 Month US Treasury Securities Index", topHoldings: ["US Treasury Bills (avg 30-day maturity)"] },
+  'IBIT': { desc: "iShares Bitcoin Trust provides direct exposure to spot Bitcoin through a regulated ETF structure with institutional custody (Coinbase). Tracks BTC price minus expenses.",
+            expenseRatio: 0.25, aum: 55e9, yield: 0, holdings: 1, inception: "2024-01-11", issuer: "BlackRock", benchmark: "CF Bitcoin Reference Rate", topHoldings: ["Physical Bitcoin (held with Coinbase Custody)"] },
+  'SCHD': { desc: "Schwab US Dividend Equity ETF tracks the Dow Jones US Dividend 100 Index — 100 US large-caps screened for dividend consistency, quality, and sustainability. Popular as a core dividend holding.",
+            expenseRatio: 0.06, aum: 65e9, yield: 3.4, holdings: 103, inception: "2011-10-20", issuer: "Charles Schwab", benchmark: "Dow Jones US Dividend 100 Index", topHoldings: ["HD", "VZ", "AMGN", "TXN", "CVX", "PEP", "PFE", "KO", "LMT", "BLK"] },
+  'XLK':  { desc: "Technology Select Sector SPDR Fund holds the technology stocks in the S&P 500. Very concentrated at the top — Apple, Microsoft, and Nvidia typically make up over 40% combined.",
+            expenseRatio: 0.09, aum: 78e9, yield: 0.65, holdings: 66, inception: "1998-12-16", issuer: "State Street", benchmark: "Technology Select Sector Index", topHoldings: ["AAPL", "NVDA", "MSFT", "AVGO", "ORCL", "CRM", "CSCO", "ADBE", "ACN", "AMD"] },
+
+  // CRYPTO
+  'BTC':  { desc: "Bitcoin is the first and largest cryptocurrency by market cap. A proof-of-work network with a hard-capped 21 million supply, Bitcoin is treated by many institutional allocators as a digital store-of-value asset.",
+            launched: 2009, supply: "21M max, ~19.8M circulating", consensus: "Proof of Work (SHA-256)", website: "bitcoin.org" },
+  'ETH':  { desc: "Ethereum is the largest smart-contract platform by developer activity and total value locked. Post-Merge (2022) it uses Proof of Stake, and the recent Pectra upgrade further improved validator efficiency.",
+            launched: 2015, supply: "No hard cap, ~120M circulating", consensus: "Proof of Stake", website: "ethereum.org" },
+  'SOL':  { desc: "Solana is a high-throughput proof-of-stake blockchain optimized for low-latency trading and consumer applications. Known for hosting NFT and meme-coin activity at high volumes.",
+            launched: 2020, supply: "No hard cap, ~470M circulating", consensus: "Proof of Stake + Proof of History", website: "solana.com" },
+  'BNB':  { desc: "BNB is the native token of the BNB Chain ecosystem, used for exchange fee discounts on Binance and as gas on BNB Smart Chain. Regularly burned per Binance's quarterly burn schedule.",
+            launched: 2017, supply: "Deflationary, ~145M circulating", consensus: "Proof of Staked Authority", website: "bnbchain.org" },
+  'XRP':  { desc: "XRP is the native token of the XRP Ledger, designed for fast, low-cost cross-border payments. Ripple Labs, the primary developer, uses XRP for its On-Demand Liquidity remittance product.",
+            launched: 2012, supply: "100B max, ~56B circulating", consensus: "XRP Ledger Consensus Protocol", website: "xrpl.org" },
+
+  // INDICES
+  'SPX':  { desc: "The S&P 500 tracks 500 of the largest US publicly-traded companies weighted by free-float market cap. It represents roughly 80% of total US equity market capitalization and is the primary benchmark for US large-cap equity performance.",
+            constituents: 503, base_year: 1957, methodology: "Free-float market-cap weighted" },
+  'IXIC': { desc: "The Nasdaq Composite tracks all common stocks listed on the Nasdaq Stock Market — over 3,000 companies, heavily weighted toward technology, biotech, and consumer internet.",
+            constituents: 3000, base_year: 1971, methodology: "Market-cap weighted" },
+  'KLSE': { desc: "The FTSE Bursa Malaysia KLCI tracks the 30 largest companies on Bursa Malaysia by market capitalization. Historically dominated by banks, utilities, and plantation companies.",
+            constituents: 30, base_year: 1986, methodology: "Free-float market-cap weighted" },
+  'UKX':  { desc: "The FTSE 100 tracks the 100 largest UK-listed companies by market cap. Heavy in energy, banks, mining, and consumer staples — often used as a global multinational proxy rather than a UK-domestic gauge.",
+            constituents: 100, base_year: 1984, methodology: "Free-float market-cap weighted" },
+  'N225': { desc: "The Nikkei 225 is a price-weighted index of 225 large Japanese companies listed on the Tokyo Stock Exchange. Unlike the S&P 500, it uses price weighting rather than market-cap weighting.",
+            constituents: 225, base_year: 1950, methodology: "Price-weighted" },
+  'VIX':  { desc: "The Cboe Volatility Index measures 30-day expected volatility on the S&P 500 derived from options prices. Rises sharply during risk-off events; often called the 'fear gauge'.",
+            constituents: "S&P 500 options chain", base_year: 1993, methodology: "Implied volatility from SPX options" },
+};
+
+/* Sector-level defaults for stocks not in ASSET_DETAILS */
+const SECTOR_DEFAULTS = {
+  'Semiconductors': { pe: 32, dividend: 0.6, margin: 22 },
+  'Software':       { pe: 34, dividend: 0.8, margin: 24 },
+  'Banking':        { pe: 12, dividend: 3.2, margin: 28 },
+  'Energy':         { pe: 12, dividend: 4.0, margin: 12 },
+  'Pharma':         { pe: 18, dividend: 2.6, margin: 20 },
+  'Healthcare':     { pe: 22, dividend: 1.4, margin: 15 },
+  'Retail':         { pe: 26, dividend: 1.2, margin: 6 },
+  'Automotive':     { pe: 18, dividend: 1.8, margin: 8 },
+  'Utilities':      { pe: 16, dividend: 3.4, margin: 15 },
+  'Consumer Tech':  { pe: 28, dividend: 0.5, margin: 22 },
+  'Internet':       { pe: 26, dividend: 0.4, margin: 25 },
+  'E-Commerce':     { pe: 40, dividend: 0.0, margin: 8 },
+  'Media':          { pe: 22, dividend: 1.2, margin: 14 },
+  'Payments':       { pe: 32, dividend: 0.8, margin: 45 },
+  'Diversified':    { pe: 18, dividend: 1.8, margin: 12 },
+  'Fintech':        { pe: 34, dividend: 0.2, margin: 18 },
+  'Hardware':       { pe: 20, dividend: 0.6, margin: 12 },
+  'Chemicals':      { pe: 14, dividend: 2.8, margin: 10 },
+  'Consumer':       { pe: 22, dividend: 2.4, margin: 12 },
+  'Luxury':         { pe: 26, dividend: 1.8, margin: 22 },
+  'Shipping':       { pe: 10, dividend: 3.6, margin: 15 },
+  'Leisure':        { pe: 16, dividend: 2.2, margin: 10 },
+  'Telecom':        { pe: 14, dividend: 4.2, margin: 15 },
+  'Storage':        { pe: 20, dividend: 1.4, margin: 12 },
+  'Optical Comms':  { pe: 22, dividend: 2.4, margin: 15 },
+};
+
+/* Merge helpers */
+function getDetails(asset) {
+  const curated = ASSET_DETAILS[asset.symbol] || {};
+  const sector = SECTOR_DEFAULTS[asset.sector] || { pe: 20, dividend: 1.2, margin: 15 };
+  return { sector, ...sector, ...curated };
+}
+
+/* ============================================================
+   NEWS POOL — with symbol tagging
+   ============================================================ */
+const NEWS_POOL = [
+  { headline: "Nvidia guides Q4 revenue above consensus as Blackwell shipments ramp faster than expected",
+    summary: "The chipmaker cited stronger-than-modeled demand from hyperscalers building out sovereign AI capacity. Management flagged supply constraints as the primary risk to the outlook.",
+    source: "Reuters", category: "markets", url: "https://www.reuters.com/technology/",
+    symbols: ["NVDA","SMH","QQQ","AMD","TSM","AVGO"], sentiment: "bullish" },
+  { headline: "Federal Reserve minutes signal split committee on pace of further rate cuts",
+    summary: "Several officials favored holding rates steady to assess the lagged effects of prior easing. Bond markets pared bets on a December cut following the release.",
+    source: "Bloomberg", category: "central", url: "https://www.bloomberg.com/markets",
+    symbols: ["SPX","IXIC","DJI","SPY","VOO","QQQ","TLT"], sentiment: "bearish",
+    reverseSymbols: ["SGOV"] },
+  { headline: "Bitcoin consolidates above $94K as spot ETF inflows extend to eighth consecutive session",
+    summary: "BlackRock's IBIT led net creations for the week, with cumulative flows surpassing the year-to-date record. Options open interest reset higher into month-end expiry.",
+    source: "CoinDesk", category: "crypto", url: "https://www.coindesk.com/markets/",
+    symbols: ["BTC","IBIT","COIN","MSTR","ETH"], sentiment: "bullish" },
+  { headline: "ECB's Lagarde says disinflation on track but warns of sticky services inflation risk",
+    summary: "In remarks at Frankfurt, the ECB president reiterated a data-dependent path. Euro-area OIS pricing shifted toward a shallower cut cycle into 2027.",
+    source: "Financial Times", category: "central", url: "https://www.ft.com/markets",
+    symbols: ["EUR/USD","VGK","GDAXI","FCHI"], sentiment: "neutral" },
+  { headline: "Semiconductor equipment stocks rally as ASML books record backlog for EUV tools",
+    summary: "The Dutch lithography giant reported bookings well above sell-side estimates on demand from leading-edge foundries. Peers Applied Materials and Lam Research gained in sympathy.",
+    source: "Wall Street Journal", category: "markets", url: "https://www.wsj.com/finance",
+    symbols: ["ASML","SMH","SOXX","TSM","NVDA","AMD"], sentiment: "bullish" },
+  { headline: "Ethereum staking yield ticks higher as Pectra upgrade drives validator queue efficiency",
+    summary: "On-chain data shows a modest uptick in effective staking APR post-upgrade. ETH/BTC ratio broke a three-month downtrend on the news.",
+    source: "The Block", category: "crypto", url: "https://www.theblock.co/",
+    symbols: ["ETH","ETHE","BTC"], sentiment: "bullish" },
+  { headline: "Bank of Japan holds policy rate but tweaks JGB purchase schedule signaling gradual taper",
+    summary: "Governor Ueda described the adjustment as a technical operational change, not a policy shift. The yen strengthened before paring gains against the dollar.",
+    source: "Nikkei Asia", category: "central", url: "https://asia.nikkei.com/",
+    symbols: ["USD/JPY","N225","EWJ","7203.T","6758.T"], sentiment: "neutral" },
+  { headline: "US 10-year Treasury yield slips below 4.20% on softer-than-expected core PCE print",
+    summary: "The Fed's preferred inflation gauge rose 0.16% month-over-month, undershooting consensus. Rate-sensitive sectors led the S&P 500 higher into the close.",
+    source: "CNBC", category: "markets", url: "https://www.cnbc.com/markets/",
+    symbols: ["SPX","SPY","VOO","TLT","BND","XLF","JPM"], sentiment: "bullish" },
+  { headline: "Coinbase launches perpetual futures for institutional clients on Bermuda-licensed venue",
+    summary: "The rollout targets US-domiciled hedge funds seeking regulated derivatives exposure. Volumes on the first day cleared $180 million notional.",
+    source: "CoinDesk", category: "crypto", url: "https://www.coindesk.com/business/",
+    symbols: ["COIN","BTC","ETH"], sentiment: "bullish" },
+  { headline: "Oil retreats as OPEC+ signals gradual unwind of voluntary output cuts through 2027",
+    summary: "Brent crude fell nearly 2% intraday before finding support near the 200-day moving average. Energy equities underperformed a rising broader tape.",
+    source: "Reuters", category: "markets", url: "https://www.reuters.com/business/energy/",
+    symbols: ["WTI","BRENT","XOM","CVX","SHEL","XLE"], sentiment: "bearish" },
+  { headline: "PBoC injects fresh liquidity via MLF as Chinese banks face year-end funding squeeze",
+    summary: "The medium-term lending facility operation exceeded maturities for the first time in six months. Onshore repo rates eased following the announcement.",
+    source: "Bloomberg", category: "central", url: "https://www.bloomberg.com/asia",
+    symbols: ["USD/CNY","MCHI","FXI","SSEC","HSI","BABA","TCEHY"], sentiment: "bullish" },
+  { headline: "Vanguard cuts expense ratio on flagship total-market ETF to industry-record low",
+    summary: "The fee reduction affects roughly $1.6 trillion in assets across the fund complex. Analysts see continued pressure on active manager economics.",
+    source: "Barron's", category: "markets", url: "https://www.barrons.com/funds",
+    symbols: ["VTI","VOO","SPY","QQQ"], sentiment: "bullish" },
+  { headline: "Bank of England holds Bank Rate at 4.25% in split 6-3 vote as UK services CPI cools",
+    summary: "Three MPC members dissented in favor of an immediate cut, citing softening labor demand. Sterling weakened against the euro after the decision.",
+    source: "Financial Times", category: "central", url: "https://www.ft.com/uk",
+    symbols: ["GBP/USD","UKX","ISF","HSBA","SHEL"], sentiment: "neutral" },
+  { headline: "Micron guides HBM revenue to more than double year-over-year on AI memory demand",
+    summary: "Management indicated that HBM3E capacity is fully allocated through calendar 2026. The stock gapped higher premarket before consolidating gains.",
+    source: "CNBC", category: "markets", url: "https://www.cnbc.com/technology/",
+    symbols: ["MU","NVDA","SMH","SOXX"], sentiment: "bullish" },
+  { headline: "Gold pushes to fresh record above $2,780 as real yields decline and central-bank buying persists",
+    summary: "Chinese and Polish central banks were the largest reported net buyers over the past quarter. Silver outperformed on the day with a 3% rally.",
+    source: "Bloomberg", category: "markets", url: "https://www.bloomberg.com/commodities",
+    symbols: ["GOLD","GLD","SILVER","SLV"], sentiment: "bullish" },
+  { headline: "Bank Negara Malaysia keeps OPR steady at 3.00%, cites resilient domestic demand",
+    summary: "The central bank's MPC noted inflation remains manageable within its projection range. The ringgit was little changed against the dollar post-decision.",
+    source: "The Edge Malaysia", category: "central", url: "https://theedgemalaysia.com/",
+    symbols: ["USD/MYR","KLSE","EWM","MAYBANK","CIMB","PBBANK","TENAGA"], sentiment: "neutral" },
+];
+
+/* ============================================================
+   FETCH LAYER
+   ============================================================ */
+async function fetchNews() {
+  if (CONFIG.useLiveApi) return fetchLiveNews();
+  return generateMockNews();
+}
+
+async function fetchLiveNews() {
+  // Swap in NewsAPI / Alpha Vantage here.
+  return [];
+}
+
+function generateMockNews() {
+  const shuffled = [...NEWS_POOL].sort(() => Math.random() - 0.5);
+  const count = 10 + Math.floor(Math.random() * 4);
+  const now = Date.now();
+  return shuffled.slice(0, count).map((n, i) => ({
+    ...n,
+    publishedAt: new Date(now - Math.floor(Math.random() * 90 * 60_000) - i * 30_000),
+    id: `${n.headline.slice(0, 20)}-${now}-${i}`,
+  }));
+}
+
+/* ============================================================
+   TICK / SPARKLINE / FORMAT
+   ============================================================ */
+function generateTicks(list) {
+  return list.map(item => {
+    const drift = (Math.random() - 0.48) * 0.02;
+    const price = item.base * (1 + drift);
+    const change = price - item.base;
+    const pct = (change / item.base) * 100;
+    return { ...item, price, change, pct };
+  });
+}
+
+function sparklinePath(bias = 0) {
+  const points = 20, w = 60, h = 20;
+  const vals = [];
+  let v = 10;
+  for (let i = 0; i < points; i++) {
+    v += (Math.random() - 0.5 + bias * 0.15) * 2;
+    v = Math.max(2, Math.min(18, v));
+    vals.push(v);
+  }
+  const step = w / (points - 1);
+  const path = vals.map((y, i) => `${i === 0 ? 'M' : 'L'}${(i * step).toFixed(1)},${(h - y).toFixed(1)}`).join(' ');
+  const fill = `${path} L${w},${h} L0,${h} Z`;
+  return { path, fill };
+}
+
+const fmt = {
+  price: (n) => n < 1
+    ? n.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })
+    : n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+  pct: (n) => `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`,
+  compact: (n) => {
+    if (n >= 1e12) return (n/1e12).toFixed(2) + 'T';
+    if (n >= 1e9)  return (n/1e9).toFixed(2)  + 'B';
+    if (n >= 1e6)  return (n/1e6).toFixed(2)  + 'M';
+    if (n >= 1e3)  return (n/1e3).toFixed(1)  + 'K';
+    return n.toFixed(0);
+  },
+  timeAgo: (d) => {
+    const diff = Math.floor((Date.now() - d.getTime()) / 60_000);
+    if (diff < 1) return 'just now';
+    if (diff < 60) return `${diff}m ago`;
+    const h = Math.floor(diff / 60);
+    return `${h}h ${diff % 60}m ago`;
+  }
+};
+
+/* ============================================================
+   CLOCK
+   ============================================================ */
+function renderClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+  document.getElementById('date').textContent =
+    now.toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()
+    + ' · UTC+8';
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+const INDICES = UNIVERSE.filter(a => a.type === 'index').slice(0, 8);
+const STOCKS_SB = UNIVERSE.filter(a => a.type === 'stock' && a.region === 'US').slice(0, 9);
+const FUNDS_COUNTRY = UNIVERSE.filter(a => a.type === 'fund' &&
+  ['US','UK','JP','CN','MY','IN','EM','EU'].includes(a.region) &&
+  !['SMH','SOXX','XLK','XLF','XLE','XLV','XLI','XLU','XLP','XLY','VNQ','GLD','SLV','IBB','ARKK','SGOV','TLT','BND','IBIT','ETHE'].includes(a.symbol)
+).slice(0, 10);
+const FUNDS_INDUSTRY = UNIVERSE.filter(a =>
+  ['SMH','XLK','XLF','XLE','XLV','XLI','VNQ','GLD','IBB','SGOV'].includes(a.symbol)
+);
+const CRYPTO_SB = UNIVERSE.filter(a => a.type === 'crypto').slice(0, 4);
+
+function marketRow(item, opts = {}) {
+  const { showName = false, compactName = false } = opts;
+  const isUp = item.pct >= 0;
+  const colorClass = isUp ? 'text-bull' : 'text-bear';
+  const arrow = isUp ? '▲' : '▼';
+  const spark = sparklinePath(isUp ? 0.3 : -0.3);
+  const strokeColor = isUp ? 'var(--bull)' : 'var(--bear)';
+  return `
+    <div class="asset-row px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-black/20 transition cursor-pointer" data-symbol="${item.symbol}">
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-sm font-semibold">${item.symbol}</span>
+          ${item.region ? `<span class="region">${item.region}</span>` : ''}
+        </div>
+        ${showName ? `<div class="text-[10px] text-dim truncate ${compactName ? 'max-w-[110px]' : ''}">${item.name}</div>` : ''}
+      </div>
+      <svg width="50" height="18" viewBox="0 0 60 20" class="flex-shrink-0">
+        <path class="spark-fill" d="${spark.fill}" fill="${strokeColor}"/>
+        <path class="spark" d="${spark.path}" stroke="${strokeColor}"/>
+      </svg>
+      <div class="text-right flex-shrink-0 min-w-[70px]">
+        <div class="font-mono text-xs font-semibold">${fmt.price(item.price)}</div>
+        <div class="font-mono text-[10px] ${colorClass}">${arrow} ${fmt.pct(item.pct)}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderSidebar() {
+  document.getElementById('indices-list').innerHTML = generateTicks(INDICES).map(i => marketRow(i)).join('');
+  document.getElementById('indices-count').textContent = INDICES.length;
+  document.getElementById('stocks-list').innerHTML = generateTicks(STOCKS_SB).map(s => marketRow(s, { showName: true, compactName: true })).join('');
+  document.getElementById('stocks-count').textContent = STOCKS_SB.length;
+  document.getElementById('funds-country').innerHTML = generateTicks(FUNDS_COUNTRY).map(f => marketRow(f, { showName: true, compactName: true })).join('');
+  document.getElementById('funds-industry').innerHTML = generateTicks(FUNDS_INDUSTRY).map(f => marketRow(f, { showName: true, compactName: true })).join('');
+  document.getElementById('crypto-list').innerHTML = generateTicks(CRYPTO_SB).map(c => marketRow(c, { showName: true })).join('');
+  renderWatchlist();
+
+  document.querySelectorAll('.asset-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const sym = row.dataset.symbol;
+      const asset = UNIVERSE.find(a => a.symbol === sym);
+      if (asset) openDetail(asset);
+    });
+  });
+}
+
+/* ============================================================
+   FUND TABS
+   ============================================================ */
+function initFundTabs() {
+  document.querySelectorAll('#fund-tabs .subtab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('#fund-tabs .subtab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      state.activeFundTab = tab.dataset.tab;
+      const c = document.getElementById('funds-country');
+      const i = document.getElementById('funds-industry');
+      if (state.activeFundTab === 'country') { c.classList.remove('hidden'); i.classList.add('hidden'); }
+      else { c.classList.add('hidden'); i.classList.remove('hidden'); }
+    });
+  });
+}
+
+/* ============================================================
+   NEWS
+   ============================================================ */
+function newsCard(article) {
+  const tagClass = { markets: 'tag-markets', crypto: 'tag-crypto', central: 'tag-central' }[article.category] || '';
+  const catLabel = { markets: 'MARKETS', crypto: 'CRYPTO', central: 'CENTRAL BANK' }[article.category] || 'NEWS';
+  return `
+    <article class="panel card-enter p-5 hover:border-[color:var(--border-strong)] transition-colors">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="tag ${tagClass}">${catLabel}</span>
+        <span class="text-[10px] font-mono text-dim tracking-wider">${article.source.toUpperCase()}</span>
+        <span class="text-dim">·</span>
+        <span class="text-[10px] font-mono text-muted">${fmt.timeAgo(article.publishedAt)}</span>
+      </div>
+      <h3 class="text-base font-semibold leading-snug mb-2 tracking-tight">${article.headline}</h3>
+      <p class="text-sm text-muted leading-relaxed mb-3">${article.summary}</p>
+      <div class="flex items-center justify-between">
+        <a href="${article.url}" target="_blank" rel="noopener noreferrer" class="link-src inline-flex items-center gap-1">
+          Read on ${article.source}
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M7 17L17 7M17 7H8M17 7v9"/>
+          </svg>
+        </a>
+        <span class="text-[10px] font-mono text-dim">
+          ${article.publishedAt.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+        </span>
+      </div>
+    </article>
+  `;
+}
+
+function renderNews() {
+  const filtered = state.activeCategory === 'all'
+    ? state.news
+    : state.news.filter(n => n.category === state.activeCategory);
+  const feed = document.getElementById('news-feed');
+  if (filtered.length === 0) {
+    feed.innerHTML = `<div class="panel p-8 text-center"><div class="text-muted text-sm">No articles match this filter.</div></div>`;
+    return;
+  }
+  feed.innerHTML = filtered.map(newsCard).join('');
+}
+
+/* ============================================================
+   REFRESH
+   ============================================================ */
+async function refresh() {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+  try {
+    state.news = await fetchNews();
+    renderNews();
+    renderSidebar();
+    document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+    // If signals never computed OR are stale, recompute now that we have fresh news
+    if (typeof renderAllocator === 'function') {
+      if (!state.newsSignals || Date.now() - state.newsSignals.computedAt >= SIGNAL_REFRESH_MS) {
+        state.newsSignals = loadOrComputeSignals(true);
+        renderAllocator();
+      }
+    }
+  } catch (err) { console.error('Fetch failed:', err); }
+  finally {
+    setTimeout(() => btn.classList.remove('spinning'), 800);
+    resetCountdown();
+  }
+}
+
+function resetCountdown() {
+  state.countdown = 60;
+  updateCountdownVisual();
+  if (state.refreshTimer) clearTimeout(state.refreshTimer);
+  state.refreshTimer = setTimeout(refresh, CONFIG.refreshIntervalMs);
+}
+
+function updateCountdownVisual() {
+  const offset = 100.53 * (1 - state.countdown / 60);
+  document.getElementById('ring-fill').setAttribute('stroke-dashoffset', offset);
+  document.getElementById('countdown').textContent = state.countdown;
+}
+
+function tickCountdown() {
+  state.countdown = Math.max(0, state.countdown - 1);
+  updateCountdownVisual();
+}
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
+function initFilters() {
+  document.querySelectorAll('#filter-bar .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#filter-bar .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.activeCategory = chip.dataset.cat;
+      renderNews();
+    });
+  });
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+function openSearch() {
+  document.getElementById('search-modal').classList.add('open');
+  const input = document.getElementById('search-input');
+  input.value = '';
+  input.focus();
+  renderSearchResults('');
+}
+
+function closeSearch() {
+  document.getElementById('search-modal').classList.remove('open');
+}
+
+function fuzzyMatch(query, asset) {
+  const q = query.toLowerCase().trim();
+  if (!q) return 1;
+  const sym = asset.symbol.toLowerCase();
+  const name = asset.name.toLowerCase();
+  const sector = (asset.sector || '').toLowerCase();
+  if (sym === q) return 100;
+  if (sym.startsWith(q)) return 80;
+  if (name.startsWith(q)) return 60;
+  if (sym.includes(q)) return 40;
+  if (name.includes(q)) return 30;
+  if (sector.includes(q)) return 20;
+  return 0;
+}
+
+function renderSearchResults(query) {
+  const type = state.activeSearchType;
+  let candidates = UNIVERSE;
+  if (type !== 'all') candidates = candidates.filter(a => a.type === type);
+
+  const scored = candidates
+    .map(a => ({ asset: a, score: fuzzyMatch(query, a) }))
+    .filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 50);
+
+  state.filteredResults = scored.map(s => s.asset);
+  state.focusedResultIdx = 0;
+
+  const container = document.getElementById('search-results');
+  const countEl = document.getElementById('search-count');
+
+  if (scored.length === 0 && query) {
+    container.innerHTML = `<div class="empty-state">No matches for "<span class="text-muted">${query}</span>"</div>`;
+    countEl.textContent = '0 results';
+    return;
+  }
+
+  if (!query && state.recentSearches.length > 0) {
+    const recentAssets = state.recentSearches
+      .map(sym => UNIVERSE.find(a => a.symbol === sym))
+      .filter(Boolean);
+    if (recentAssets.length > 0) {
+      container.innerHTML = `
+        <div class="px-4 pt-3 pb-1 text-[10px] font-mono tracking-wider text-dim">RECENT</div>
+        ${recentAssets.map((a, i) => searchResultRow(a, i)).join('')}
+        <div class="px-4 pt-3 pb-1 text-[10px] font-mono tracking-wider text-dim border-t hair mt-2">ALL</div>
+        ${state.filteredResults.map((a, i) => searchResultRow(a, i + recentAssets.length)).join('')}
+      `;
+      countEl.textContent = `${state.filteredResults.length} results`;
+      state.filteredResults = [...recentAssets, ...state.filteredResults.filter(a => !recentAssets.find(r => r.symbol === a.symbol))];
+      focusResult(0);
+      return;
+    }
+  }
+
+  container.innerHTML = state.filteredResults.map((a, i) => searchResultRow(a, i)).join('');
+  countEl.textContent = `${state.filteredResults.length} results`;
+  focusResult(0);
+}
+
+function searchResultRow(a, idx) {
+  const typeClass = `type-${a.type}`;
+  return `
+    <div class="search-result" data-idx="${idx}" data-symbol="${a.symbol}">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="font-mono text-sm font-semibold">${a.symbol}</span>
+          <span class="type-badge ${typeClass}">${a.type}</span>
+          ${a.region ? `<span class="region">${a.region}</span>` : ''}
+        </div>
+        <div class="text-xs text-muted truncate">${a.name}${a.sector ? ` · ${a.sector}` : ''}</div>
+      </div>
+      <div class="text-right font-mono text-xs text-muted">${fmt.price(a.base)}</div>
+    </div>
+  `;
+}
+
+function focusResult(idx) {
+  document.querySelectorAll('.search-result').forEach(el => el.classList.remove('focused'));
+  const els = document.querySelectorAll('.search-result');
+  if (els[idx]) {
+    els[idx].classList.add('focused');
+    els[idx].scrollIntoView({ block: 'nearest' });
+    state.focusedResultIdx = idx;
+  }
+}
+
+function initSearch() {
+  const trigger = document.getElementById('search-trigger');
+  const input = document.getElementById('search-input');
+  const closeBtn = document.getElementById('search-close');
+  const modal = document.getElementById('search-modal');
+
+  trigger.addEventListener('click', openSearch);
+  closeBtn.addEventListener('click', closeSearch);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeSearch(); });
+
+  input.addEventListener('input', (e) => renderSearchResults(e.target.value));
+
+  input.addEventListener('keydown', (e) => {
+    const total = document.querySelectorAll('.search-result').length;
+    if (e.key === 'ArrowDown') { e.preventDefault(); focusResult(Math.min(state.focusedResultIdx + 1, total - 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); focusResult(Math.max(state.focusedResultIdx - 1, 0)); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      const focused = document.querySelector('.search-result.focused');
+      if (focused) {
+        const asset = UNIVERSE.find(a => a.symbol === focused.dataset.symbol);
+        if (asset) { closeSearch(); openDetail(asset); }
+      }
+    }
+  });
+
+  document.querySelectorAll('#search-filters .subtab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('#search-filters .subtab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      state.activeSearchType = tab.dataset.type;
+      renderSearchResults(input.value);
+    });
+  });
+
+  document.getElementById('search-results').addEventListener('click', (e) => {
+    const row = e.target.closest('.search-result');
+    if (row) {
+      const asset = UNIVERSE.find(a => a.symbol === row.dataset.symbol);
+      if (asset) { closeSearch(); openDetail(asset); }
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+    if (e.key === 'Escape') { closeSearch(); closeDetail(); }
+  });
+}
+
+/* ============================================================
+   DETAIL MODAL — TABBED
+   ============================================================ */
+function openDetail(asset) {
+  state.currentAsset = asset;
+  state.currentPrices = null;
+  state.activeDetailTab = 'overview';
+  state.activeTimeframe = '1M';
+
+  state.recentSearches = [asset.symbol, ...state.recentSearches.filter(s => s !== asset.symbol)].slice(0, 5);
+  saveRecent();
+
+  document.getElementById('detail-modal').classList.add('open');
+  renderDetailHeader();
+  renderActiveTab();
+
+  // Reset tab visuals to Overview
+  document.querySelectorAll('.dm-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'overview'));
+}
+
+function closeDetail() {
+  document.getElementById('detail-modal').classList.remove('open');
+  state.currentAsset = null;
+  state.currentPrices = null;
+}
+
+/* ---------- HEADER + PRICE BAR ---------- */
+function renderDetailHeader() {
+  const a = state.currentAsset;
+  if (!a) return;
+
+  document.getElementById('dm-symbol').textContent = a.symbol;
+  document.getElementById('dm-name').textContent = a.name + (a.sector ? ` · ${a.sector}` : '');
+  const typeEl = document.getElementById('dm-type');
+  typeEl.textContent = a.type;
+  typeEl.className = `type-badge type-${a.type}`;
+  const regionEl = document.getElementById('dm-region');
+  if (a.region) { regionEl.textContent = a.region; regionEl.style.display = ''; }
+  else { regionEl.style.display = 'none'; }
+
+  const tick = generateTicks([a])[0];
+  const isUp = tick.pct >= 0;
+  document.getElementById('dm-price').textContent = fmt.price(tick.price);
+  const chgEl = document.getElementById('dm-change');
+  const pctEl = document.getElementById('dm-pct');
+  chgEl.textContent = `${isUp ? '+' : ''}${tick.change.toFixed(2)}`;
+  pctEl.textContent = `${isUp ? '▲' : '▼'} ${fmt.pct(tick.pct)}`;
+  chgEl.className = `text-lg font-mono ${isUp ? 'text-bull' : 'text-bear'}`;
+  pctEl.className = `text-sm font-mono ${isUp ? 'text-bull' : 'text-bear'}`;
+  document.getElementById('dm-time').textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+
+  state.currentTick = tick;
+  updateWatchlistButton();
+}
+
+/* ---------- PRICE SERIES GENERATION (shared across tabs) ---------- */
+function priceSeries(asset, points = 100) {
+  const volMap = { crypto: 0.04, stock: 0.02, fund: 0.012, index: 0.01, forex: 0.005, commodity: 0.02 };
+  const vol = volMap[asset.type] || 0.02;
+  const prices = [];
+  let p = asset.base * (1 + (Math.random() - 0.5) * 0.1);
+  for (let i = 0; i < points; i++) {
+    p = p * (1 + (Math.random() - 0.5) * vol);
+    prices.push(p);
+  }
+  prices[prices.length - 1] = asset.base * (1 + (Math.random() - 0.48) * 0.02);
+  return prices;
+}
+
+function ensurePrices() {
+  if (!state.currentPrices && state.currentAsset) {
+    state.currentPrices = priceSeries(state.currentAsset, 100);
+  }
+  return state.currentPrices;
+}
+
+/* ---------- TAB ROUTER ---------- */
+function renderActiveTab() {
+  const container = document.getElementById('dm-content');
+  container.innerHTML = ''; // clear
+  switch (state.activeDetailTab) {
+    case 'overview':   container.innerHTML = renderOverviewTab(); attachOverview(); break;
+    case 'financials': container.innerHTML = renderFinancialsTab(); attachFinancialsHandlers(); break;
+    case 'technicals': container.innerHTML = renderTechnicalsTab(); break;
+    case 'profile':    container.innerHTML = renderProfileTab(); break;
+    case 'news':       container.innerHTML = renderNewsTab(); break;
+  }
+}
+
+/* ---------- OVERVIEW ---------- */
+function renderOverviewTab() {
+  const a = state.currentAsset;
+  const tick = state.currentTick;
+  const prices = ensurePrices();
+  const min = Math.min(...prices), max = Math.max(...prices);
+
+  const open = a.base * (1 + (Math.random() - 0.5) * 0.005);
+  const high = Math.max(tick.price, open) * (1 + Math.random() * 0.008);
+  const low = Math.min(tick.price, open) * (1 - Math.random() * 0.008);
+  const w52h = a.base * (1 + 0.1 + Math.random() * 0.4);
+  const w52l = a.base * (1 - 0.1 - Math.random() * 0.3);
+  const vol = Math.floor((5 + Math.random() * 40) * 1e6);
+  const avgVol = Math.floor(vol * (0.8 + Math.random() * 0.4));
+  const mcap = a.type === 'stock' ? a.base * (0.5 + Math.random() * 3) * 1e9 : null;
+  const prevClose = a.base * (1 + (Math.random() - 0.5) * 0.008);
+
+  const dayPos = ((tick.price - low) / (high - low || 1)) * 100;
+  const yearPos = ((tick.price - w52l) / (w52h - w52l || 1)) * 100;
+
+  return `
+    <div class="tab-panel">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-[10px] font-mono tracking-wider text-dim">PRICE CHART</div>
+        <div class="flex gap-1" id="dm-timeframes">
+          ${['1D','5D','1M','3M','6M','1Y'].map(tf => `<button class="tf-btn ${tf===state.activeTimeframe?'active':''}" data-tf="${tf}">${tf}</button>`).join('')}
+        </div>
+      </div>
+      <div class="relative">
+        <svg id="dm-chart" width="100%" height="240" viewBox="0 0 800 240" preserveAspectRatio="none"></svg>
+        <div id="dm-tooltip" class="absolute hidden px-2 py-1 panel-2 text-xs font-mono pointer-events-none" style="border: 1px solid var(--cyan);"></div>
+      </div>
+
+      <div class="mt-6">
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-2">DAY RANGE</div>
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-xs text-bear">${fmt.price(low)}</span>
+          <div class="range-bar flex-1">
+            <div class="range-bar-fill" style="left: 0; right: ${100 - dayPos}%;"></div>
+            <div class="range-marker" style="left: ${Math.max(0, Math.min(100, dayPos))}%; transform: translateX(-50%);"></div>
+          </div>
+          <span class="font-mono text-xs text-bull">${fmt.price(high)}</span>
+        </div>
+
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-2 mt-4">52 WEEK RANGE</div>
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-xs text-bear">${fmt.price(w52l)}</span>
+          <div class="range-bar flex-1">
+            <div class="range-bar-fill" style="left: 0; right: ${100 - yearPos}%;"></div>
+            <div class="range-marker" style="left: ${Math.max(0, Math.min(100, yearPos))}%; transform: translateX(-50%);"></div>
+          </div>
+          <span class="font-mono text-xs text-bull">${fmt.price(w52h)}</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-6">
+        <div class="stat"><div class="stat-label">Open</div><div class="stat-value">${fmt.price(open)}</div></div>
+        <div class="stat"><div class="stat-label">Prev Close</div><div class="stat-value">${fmt.price(prevClose)}</div></div>
+        <div class="stat"><div class="stat-label">Day High</div><div class="stat-value text-bull">${fmt.price(high)}</div></div>
+        <div class="stat"><div class="stat-label">Day Low</div><div class="stat-value text-bear">${fmt.price(low)}</div></div>
+        <div class="stat"><div class="stat-label">Volume</div><div class="stat-value">${fmt.compact(vol)}</div></div>
+        <div class="stat"><div class="stat-label">Avg Volume</div><div class="stat-value">${fmt.compact(avgVol)}</div></div>
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">${mcap ? '$' + fmt.compact(mcap) : '—'}</div></div>
+        <div class="stat"><div class="stat-label">Chart Range</div><div class="stat-value text-xs">${fmt.price(min)} – ${fmt.price(max)}</div></div>
+      </div>
+    </div>
+  `;
+}
+
+function attachOverview() {
+  document.querySelectorAll('#dm-timeframes .tf-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#dm-timeframes .tf-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.activeTimeframe = btn.dataset.tf;
+      state.currentPrices = null; // regenerate for new tf
+      drawChart(state.activeTimeframe);
+    });
+  });
+  drawChart(state.activeTimeframe);
+}
+
+function drawChart(timeframe) {
+  const a = state.currentAsset;
+  if (!a) return;
+
+  const daysMap = { '1D': 24, '5D': 60, '1M': 30, '3M': 90, '6M': 180, '1Y': 260 };
+  const points = daysMap[timeframe] || 60;
+  const prices = priceSeries(a, points);
+  state.currentPrices = prices;
+
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const range = max - min || 1;
+  const w = 800, h = 240, padL = 50, padR = 10, padT = 20, padB = 30;
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const isUp = prices[prices.length - 1] >= prices[0];
+  const stroke = isUp ? 'var(--bull)' : 'var(--bear)';
+  const fillCol = isUp ? 'rgba(52, 211, 153, 0.12)' : 'rgba(248, 113, 113, 0.12)';
+
+  const step = innerW / (prices.length - 1);
+  const pts = prices.map((price, i) => {
+    const x = padL + i * step;
+    const y = padT + innerH - ((price - min) / range) * innerH;
+    return { x, y, price };
+  });
+
+  const linePath = pts.map((pt, i) => `${i === 0 ? 'M' : 'L'}${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' ');
+  const fillPath = `${linePath} L${padL + innerW},${padT + innerH} L${padL},${padT + innerH} Z`;
+
+  const yLabels = [];
+  for (let i = 0; i <= 4; i++) {
+    const price = min + (range * i / 4);
+    const y = padT + innerH - (i / 4) * innerH;
+    yLabels.push({ price, y });
+  }
+  const gridLines = yLabels.map(l =>
+    `<line x1="${padL}" y1="${l.y}" x2="${w - padR}" y2="${l.y}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="2,3"/>` +
+    `<text x="${padL - 6}" y="${l.y + 3}" text-anchor="end" fill="var(--dim)" font-family="JetBrains Mono" font-size="9">${fmt.price(l.price)}</text>`
+  ).join('');
+
+  const svg = document.getElementById('dm-chart');
+  if (!svg) return;
+  svg.innerHTML = `
+    ${gridLines}
+    <path d="${fillPath}" fill="${fillCol}" />
+    <path d="${linePath}" fill="none" stroke="${stroke}" stroke-width="1.5" />
+    <circle cx="${pts[pts.length-1].x}" cy="${pts[pts.length-1].y}" r="3" fill="${stroke}"/>
+    <line x1="${padL}" y1="${padT + innerH}" x2="${w - padR}" y2="${padT + innerH}" stroke="var(--border-strong)" stroke-width="1"/>
+  `;
+
+  const tooltip = document.getElementById('dm-tooltip');
+  svg.onmousemove = (e) => {
+    const rect = svg.getBoundingClientRect();
+    const scaleX = w / rect.width;
+    const mouseX = (e.clientX - rect.left) * scaleX;
+    let nearest = pts[0], minDist = Infinity;
+    pts.forEach(pt => { const d = Math.abs(pt.x - mouseX); if (d < minDist) { minDist = d; nearest = pt; } });
+    tooltip.classList.remove('hidden');
+    tooltip.textContent = fmt.price(nearest.price);
+    tooltip.style.left = `${(nearest.x / w) * rect.width + 8}px`;
+    tooltip.style.top = `${(nearest.y / h) * rect.height - 8}px`;
+  };
+  svg.onmouseleave = () => tooltip.classList.add('hidden');
+}
+
+/* ---------- FINANCIALS ---------- */
+function renderFinancialsTab() {
+  const a = state.currentAsset;
+  const d = getDetails(a);
+
+  if (a.type === 'stock') return renderStockFinancials(a, d);
+  if (a.type === 'fund')  return renderFundFinancials(a, d);
+  if (a.type === 'crypto')return renderCryptoFinancials(a, d);
+  if (a.type === 'index') return renderIndexFinancials(a, d);
+  return renderGenericFinancials(a);
+}
+
+function renderStockFinancials(a, d) {
+  const pe = d.pe || 20;
+  const eps = a.base / pe;
+  const marketCap = a.base * (0.5 + Math.random() * 3) * 1e9;
+  const revenue = marketCap * (0.5 + Math.random() * 0.8);
+  const revGrowth = -5 + Math.random() * 30;
+  const netIncome = revenue * (d.margin / 100);
+  const dividend = a.base * (d.dividend / 100);
+  const payoutRatio = d.dividend > 0 ? Math.min(90, 20 + Math.random() * 60) : 0;
+  const pb = 2 + Math.random() * 6;
+  const ps = 3 + Math.random() * 8;
+  const peg = 1 + Math.random() * 2;
+  const roe = 12 + Math.random() * 20;
+  const roa = 5 + Math.random() * 10;
+  const de = 0.3 + Math.random() * 1.5;
+  const currentRatio = 1.2 + Math.random() * 1.5;
+  const beta = 0.7 + Math.random() * 1.2;
+  const shares = marketCap / a.base;
+
+  return `
+    <div class="tab-panel">
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">VALUATION</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+        <div class="stat"><div class="stat-label">P/E Ratio</div><div class="stat-value">${pe.toFixed(2)}</div></div>
+        <div class="stat"><div class="stat-label">EPS (TTM)</div><div class="stat-value">$${eps.toFixed(2)}</div></div>
+        <div class="stat"><div class="stat-label">PEG Ratio</div><div class="stat-value">${peg.toFixed(2)}</div></div>
+        <div class="stat"><div class="stat-label">P/B Ratio</div><div class="stat-value">${pb.toFixed(2)}</div></div>
+        <div class="stat"><div class="stat-label">P/S Ratio</div><div class="stat-value">${ps.toFixed(2)}</div></div>
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">$${fmt.compact(marketCap)}</div></div>
+        <div class="stat"><div class="stat-label">Enterprise Val</div><div class="stat-value">$${fmt.compact(marketCap * 1.1)}</div></div>
+        <div class="stat"><div class="stat-label">Shares Out</div><div class="stat-value">${fmt.compact(shares)}</div></div>
+      </div>
+
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">INCOME &amp; MARGINS</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+        <div class="stat"><div class="stat-label">Revenue (TTM)</div><div class="stat-value">$${fmt.compact(revenue)}</div></div>
+        <div class="stat"><div class="stat-label">Rev Growth YoY</div><div class="stat-value ${revGrowth>=0?'text-bull':'text-bear'}">${fmt.pct(revGrowth)}</div></div>
+        <div class="stat"><div class="stat-label">Net Income</div><div class="stat-value">$${fmt.compact(netIncome)}</div></div>
+        <div class="stat"><div class="stat-label">Profit Margin</div><div class="stat-value">${d.margin.toFixed(1)}%</div></div>
+      </div>
+
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">RETURNS &amp; BALANCE SHEET</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+        <div class="stat"><div class="stat-label">ROE</div><div class="stat-value">${roe.toFixed(1)}%</div></div>
+        <div class="stat"><div class="stat-label">ROA</div><div class="stat-value">${roa.toFixed(1)}%</div></div>
+        <div class="stat"><div class="stat-label">Debt / Equity</div><div class="stat-value">${de.toFixed(2)}</div></div>
+        <div class="stat"><div class="stat-label">Current Ratio</div><div class="stat-value">${currentRatio.toFixed(2)}</div></div>
+      </div>
+
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">DIVIDEND &amp; RISK</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div class="stat"><div class="stat-label">Div Yield</div><div class="stat-value">${d.dividend.toFixed(2)}%</div></div>
+        <div class="stat"><div class="stat-label">Annual Div</div><div class="stat-value">$${dividend.toFixed(2)}</div></div>
+        <div class="stat"><div class="stat-label">Payout Ratio</div><div class="stat-value">${payoutRatio.toFixed(0)}%</div></div>
+        <div class="stat"><div class="stat-label">Beta (5Y)</div><div class="stat-value">${beta.toFixed(2)}</div></div>
+      </div>
+
+      <div class="mt-6 text-[10px] font-mono text-dim">
+        Figures are mock estimates for demo purposes. Wire in a fundamentals API (Alpha Vantage, Finnhub, FMP) to replace.
+      </div>
+    </div>
+  `;
+}
+
+function renderFundFinancials(a, d) {
+  const expense = d.expenseRatio || 0.4;
+  const aum = d.aum || 1e9;
+  const yieldPct = d.yield !== undefined ? d.yield : 1.2;
+  const holdings = d.holdings || 100;
+  const inception = d.inception || '2010-01-01';
+  const issuer = d.issuer || 'Various';
+  const benchmark = d.benchmark || a.sector;
+  const nav = a.base * (1 + (Math.random() - 0.5) * 0.001);
+  const premium = ((a.base - nav) / nav) * 100;
+  const top = d.topHoldings || [];
+
+  return `
+    <div class="tab-panel">
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">FUND OVERVIEW</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+        <div class="stat"><div class="stat-label">Expense Ratio</div><div class="stat-value">${expense.toFixed(2)}%</div></div>
+        <div class="stat"><div class="stat-label">AUM</div><div class="stat-value">$${fmt.compact(aum)}</div></div>
+        <div class="stat"><div class="stat-label">Yield (TTM)</div><div class="stat-value">${yieldPct.toFixed(2)}%</div></div>
+        <div class="stat"><div class="stat-label"># Holdings</div><div class="stat-value">${holdings}</div></div>
+        <div class="stat"><div class="stat-label">NAV</div><div class="stat-value">${fmt.price(nav)}</div></div>
+        <div class="stat"><div class="stat-label">Premium / Disc</div><div class="stat-value ${premium>=0?'text-bull':'text-bear'}">${fmt.pct(premium)}</div></div>
+        <div class="stat"><div class="stat-label">Inception</div><div class="stat-value text-xs">${inception}</div></div>
+        <div class="stat"><div class="stat-label">Issuer</div><div class="stat-value text-xs">${issuer}</div></div>
+      </div>
+
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">BENCHMARK</div>
+      <div class="panel-2 p-3 mb-6 text-sm">${benchmark}</div>
+
+      ${top.length ? `
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-3">TOP HOLDINGS</div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+          ${top.map((sym, i) => {
+            const held = UNIVERSE.find(x => x.symbol === sym);
+            const clickable = held ? `data-symbol="${sym}" style="cursor: pointer;"` : '';
+            const cls = held ? 'hover:border-[color:var(--cyan)] holding-cell' : '';
+            return `<div class="stat ${cls}" ${clickable}>
+              <div class="stat-label">#${i+1}</div>
+              <div class="stat-value text-xs">${sym}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="text-[10px] font-mono text-dim mt-2">Click a holding to open its detail view.</div>
+      ` : ''}
+
+      <div class="mt-6 text-[10px] font-mono text-dim">
+        Mock figures for demonstration. Wire in a fund-data API (issuer sites, Morningstar, Yahoo Finance) to replace.
+      </div>
+    </div>
+  `;
+}
+
+function attachFinancialsHandlers() {
+  document.querySelectorAll('.holding-cell').forEach(el => {
+    el.addEventListener('click', () => {
+      const a = UNIVERSE.find(x => x.symbol === el.dataset.symbol);
+      if (a) openDetail(a);
+    });
+  });
+}
+
+function renderCryptoFinancials(a, d) {
+  const marketCap = a.base * (1e6 + Math.random() * 20e6);
+  const vol24h = marketCap * (0.02 + Math.random() * 0.08);
+  const supply = d.supply || '—';
+  const consensus = d.consensus || '—';
+  const launched = d.launched || '—';
+  const ath = a.base * (1.2 + Math.random() * 3);
+  const athFromCurrent = ((a.base - ath) / ath) * 100;
+  const atl = a.base * (0.05 + Math.random() * 0.3);
+  const dominance = a.symbol === 'BTC' ? 54.2 : a.symbol === 'ETH' ? 13.8 : (0.5 + Math.random() * 4);
+
+  return `
+    <div class="tab-panel">
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">MARKET DATA</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">$${fmt.compact(marketCap)}</div></div>
+        <div class="stat"><div class="stat-label">24h Volume</div><div class="stat-value">$${fmt.compact(vol24h)}</div></div>
+        <div class="stat"><div class="stat-label">Dominance</div><div class="stat-value">${dominance.toFixed(2)}%</div></div>
+        <div class="stat"><div class="stat-label">All-Time High</div><div class="stat-value">${fmt.price(ath)}</div></div>
+        <div class="stat"><div class="stat-label">From ATH</div><div class="stat-value ${athFromCurrent>=0?'text-bull':'text-bear'}">${fmt.pct(athFromCurrent)}</div></div>
+        <div class="stat"><div class="stat-label">All-Time Low</div><div class="stat-value">${fmt.price(atl)}</div></div>
+        <div class="stat"><div class="stat-label">Launched</div><div class="stat-value">${launched}</div></div>
+        <div class="stat"><div class="stat-label">Consensus</div><div class="stat-value text-xs">${consensus}</div></div>
+      </div>
+
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">SUPPLY</div>
+      <div class="panel-2 p-3 mb-6 text-sm">${supply}</div>
+
+      <div class="mt-6 text-[10px] font-mono text-dim">
+        Mock figures for demonstration. Wire in CoinGecko or CoinMarketCap API for live data.
+      </div>
+    </div>
+  `;
+}
+
+function renderIndexFinancials(a, d) {
+  const details = ASSET_DETAILS[a.symbol] || {};
+  const constituents = details.constituents || '—';
+  const baseYear = details.base_year || '—';
+  const methodology = details.methodology || 'Market-cap weighted';
+
+  return `
+    <div class="tab-panel">
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">INDEX METHODOLOGY</div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6">
+        <div class="stat"><div class="stat-label">Constituents</div><div class="stat-value">${constituents}</div></div>
+        <div class="stat"><div class="stat-label">Base Year</div><div class="stat-value">${baseYear}</div></div>
+        <div class="stat"><div class="stat-label">Weighting</div><div class="stat-value text-xs">${methodology}</div></div>
+      </div>
+      <div class="text-[10px] font-mono text-dim">
+        Indices are calculated benchmarks — not directly investable. Use an index ETF (e.g. SPY, VOO for S&P 500) for exposure.
+      </div>
+    </div>
+  `;
+}
+
+function renderGenericFinancials(a) {
+  return `
+    <div class="tab-panel">
+      <div class="empty-state">Financial statement data not applicable to ${a.type} assets.</div>
+    </div>
+  `;
+}
+
+/* ---------- TECHNICALS ---------- */
+function computeSMA(prices, period) {
+  if (prices.length < period) return null;
+  const slice = prices.slice(-period);
+  return slice.reduce((s, p) => s + p, 0) / period;
+}
+
+function computeRSI(prices, period = 14) {
+  if (prices.length < period + 1) return 50;
+  let gains = 0, losses = 0;
+  for (let i = prices.length - period; i < prices.length; i++) {
+    const delta = prices[i] - prices[i - 1];
+    if (delta >= 0) gains += delta; else losses -= delta;
+  }
+  const avgGain = gains / period;
+  const avgLoss = losses / period;
+  if (avgLoss === 0) return 100;
+  const rs = avgGain / avgLoss;
+  return 100 - (100 / (1 + rs));
+}
+
+function signalFromMA(price, ma) {
+  if (!ma) return 'neutral';
+  const diff = (price - ma) / ma;
+  if (diff > 0.005) return 'buy';
+  if (diff < -0.005) return 'sell';
+  return 'neutral';
+}
+
+function signalFromRSI(rsi) {
+  if (rsi > 70) return 'sell';
+  if (rsi > 55) return 'buy';
+  if (rsi < 30) return 'buy';
+  if (rsi < 45) return 'sell';
+  return 'neutral';
+}
+
+function aggregateRating(signals) {
+  const score = signals.reduce((s, sig) => s + (sig === 'buy' ? 1 : sig === 'sell' ? -1 : 0), 0);
+  const total = signals.length;
+  const ratio = score / total;
+  if (ratio > 0.5) return { label: 'STRONG BUY', segIdx: 5, cls: 'rating-strong-buy' };
+  if (ratio > 0.15) return { label: 'BUY', segIdx: 4, cls: 'rating-buy' };
+  if (ratio > -0.15) return { label: 'NEUTRAL', segIdx: 3, cls: 'rating-neutral' };
+  if (ratio > -0.5) return { label: 'SELL', segIdx: 2, cls: 'rating-sell' };
+  return { label: 'STRONG SELL', segIdx: 1, cls: 'rating-strong-sell' };
+}
+
+function renderTechnicalsTab() {
+  const a = state.currentAsset;
+  const prices = priceSeries(a, 220); // enough for MA200
+  const price = prices[prices.length - 1];
+
+  const ma10 = computeSMA(prices, 10);
+  const ma20 = computeSMA(prices, 20);
+  const ma50 = computeSMA(prices, 50);
+  const ma100 = computeSMA(prices, 100);
+  const ma200 = computeSMA(prices, 200);
+
+  const rsi = computeRSI(prices);
+  const macdLine = (computeSMA(prices, 12) || price) - (computeSMA(prices, 26) || price);
+  const stochK = 50 + (Math.random() - 0.5) * 50;
+  const stochSignal = stochK > 80 ? 'sell' : stochK < 20 ? 'buy' : stochK > 55 ? 'buy' : stochK < 45 ? 'sell' : 'neutral';
+  const cci = (Math.random() - 0.5) * 300;
+  const cciSignal = cci > 100 ? 'sell' : cci < -100 ? 'buy' : 'neutral';
+  const macdSignal = macdLine > 0 ? 'buy' : 'sell';
+
+  const maSignals = [ma10, ma20, ma50, ma100, ma200].map(ma => signalFromMA(price, ma));
+  const oscSignals = [signalFromRSI(rsi), stochSignal, cciSignal, macdSignal];
+  const overall = aggregateRating([...maSignals, ...oscSignals]);
+  const maRating = aggregateRating(maSignals);
+  const oscRating = aggregateRating(oscSignals);
+
+  const supp1 = price * 0.97;
+  const supp2 = price * 0.94;
+  const res1 = price * 1.03;
+  const res2 = price * 1.06;
+  const pivot = (supp1 + res1 + price) / 3;
+
+  const gauge = (idx) => Array.from({length: 5}, (_, i) => `<div class="gauge-seg gauge-seg-${i+1} ${i === idx-1 ? 'on' : ''}"></div>`).join('');
+
+  return `
+    <div class="tab-panel">
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">TECHNICAL RATING · 1D</div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+        <div class="panel-2 p-4 text-center">
+          <div class="text-[10px] font-mono text-dim mb-1">MOVING AVERAGES</div>
+          <div class="text-lg font-bold ${maRating.cls}">${maRating.label}</div>
+          <div class="gauge-track mt-2">${gauge(maRating.segIdx)}</div>
+        </div>
+        <div class="panel-2 p-4 text-center" style="border-color: var(--cyan);">
+          <div class="text-[10px] font-mono text-dim mb-1">OVERALL</div>
+          <div class="text-2xl font-bold ${overall.cls}">${overall.label}</div>
+          <div class="gauge-track mt-2">${gauge(overall.segIdx)}</div>
+        </div>
+        <div class="panel-2 p-4 text-center">
+          <div class="text-[10px] font-mono text-dim mb-1">OSCILLATORS</div>
+          <div class="text-lg font-bold ${oscRating.cls}">${oscRating.label}</div>
+          <div class="gauge-track mt-2">${gauge(oscRating.segIdx)}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-2">MOVING AVERAGES</div>
+          ${[['SMA 10', ma10, maSignals[0]], ['SMA 20', ma20, maSignals[1]], ['SMA 50', ma50, maSignals[2]], ['SMA 100', ma100, maSignals[3]], ['SMA 200', ma200, maSignals[4]]].map(([label, val, sig]) => `
+            <div class="ind-row">
+              <div class="text-sm">${label}</div>
+              <div class="font-mono text-xs text-muted">${val ? fmt.price(val) : '—'}</div>
+              <div class="ind-signal ind-signal-${sig}">${sig.toUpperCase()}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-2">OSCILLATORS</div>
+          <div class="ind-row">
+            <div class="text-sm">RSI (14)</div>
+            <div class="font-mono text-xs text-muted">${rsi.toFixed(2)}</div>
+            <div class="ind-signal ind-signal-${signalFromRSI(rsi)}">${signalFromRSI(rsi).toUpperCase()}</div>
+          </div>
+          <div class="ind-row">
+            <div class="text-sm">MACD Line</div>
+            <div class="font-mono text-xs text-muted">${macdLine.toFixed(2)}</div>
+            <div class="ind-signal ind-signal-${macdSignal}">${macdSignal.toUpperCase()}</div>
+          </div>
+          <div class="ind-row">
+            <div class="text-sm">Stochastic %K</div>
+            <div class="font-mono text-xs text-muted">${stochK.toFixed(2)}</div>
+            <div class="ind-signal ind-signal-${stochSignal}">${stochSignal.toUpperCase()}</div>
+          </div>
+          <div class="ind-row">
+            <div class="text-sm">CCI (20)</div>
+            <div class="font-mono text-xs text-muted">${cci.toFixed(2)}</div>
+            <div class="ind-signal ind-signal-${cciSignal}">${cciSignal.toUpperCase()}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-2">SUPPORT / RESISTANCE (Classic Pivot)</div>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-6">
+        <div class="stat"><div class="stat-label">Resistance 2</div><div class="stat-value text-bear">${fmt.price(res2)}</div></div>
+        <div class="stat"><div class="stat-label">Resistance 1</div><div class="stat-value text-bear">${fmt.price(res1)}</div></div>
+        <div class="stat"><div class="stat-label">Pivot</div><div class="stat-value text-cyan">${fmt.price(pivot)}</div></div>
+        <div class="stat"><div class="stat-label">Support 1</div><div class="stat-value text-bull">${fmt.price(supp1)}</div></div>
+        <div class="stat"><div class="stat-label">Support 2</div><div class="stat-value text-bull">${fmt.price(supp2)}</div></div>
+      </div>
+
+      <div class="text-[10px] font-mono text-dim">
+        Rating aggregates signals from 5 moving averages and 4 oscillators (RSI, MACD, Stochastic, CCI). Not a trade recommendation.
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- PROFILE ---------- */
+function renderProfileTab() {
+  const a = state.currentAsset;
+  const d = getDetails(a);
+
+  if (a.type === 'stock') {
+    return `
+      <div class="tab-panel">
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-3">DESCRIPTION</div>
+        <p class="prose-muted mb-6">${d.desc || `${a.name} is a publicly-listed company operating in the ${a.sector || 'financial'} sector.`}</p>
+
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-3">COMPANY DETAILS</div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6">
+          <div class="stat"><div class="stat-label">Sector</div><div class="stat-value text-xs">${a.sector || '—'}</div></div>
+          <div class="stat"><div class="stat-label">CEO</div><div class="stat-value text-xs">${d.ceo || '—'}</div></div>
+          <div class="stat"><div class="stat-label">Employees</div><div class="stat-value">${d.employees ? d.employees.toLocaleString() : '—'}</div></div>
+          <div class="stat"><div class="stat-label">Founded</div><div class="stat-value">${d.founded || '—'}</div></div>
+          <div class="stat"><div class="stat-label">Exchange</div><div class="stat-value text-xs">${d.exchange || '—'}</div></div>
+          <div class="stat"><div class="stat-label">Headquarters</div><div class="stat-value text-xs">${d.hq || '—'}</div></div>
+        </div>
+
+        ${d.website ? `<div class="text-[10px] font-mono tracking-wider text-dim mb-2">WEBSITE</div>
+          <a href="https://${d.website}" target="_blank" rel="noopener" class="link-src">${d.website} ↗</a>` : ''}
+      </div>
+    `;
+  }
+
+  if (a.type === 'fund') {
+    return `
+      <div class="tab-panel">
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-3">DESCRIPTION</div>
+        <p class="prose-muted mb-6">${d.desc || `${a.name} is an exchange-traded fund providing exposure to ${a.sector || 'diversified'} assets.`}</p>
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-3">FUND DETAILS</div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+          <div class="stat"><div class="stat-label">Issuer</div><div class="stat-value text-xs">${d.issuer || '—'}</div></div>
+          <div class="stat"><div class="stat-label">Inception</div><div class="stat-value text-xs">${d.inception || '—'}</div></div>
+          <div class="stat"><div class="stat-label">Category</div><div class="stat-value text-xs">${a.sector || '—'}</div></div>
+          <div class="stat"><div class="stat-label">Domicile</div><div class="stat-value text-xs">${a.region || '—'}</div></div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (a.type === 'crypto') {
+    return `
+      <div class="tab-panel">
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-3">DESCRIPTION</div>
+        <p class="prose-muted mb-6">${d.desc || `${a.name} is a digital cryptocurrency.`}</p>
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-3">NETWORK DETAILS</div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6">
+          <div class="stat"><div class="stat-label">Launched</div><div class="stat-value">${d.launched || '—'}</div></div>
+          <div class="stat"><div class="stat-label">Consensus</div><div class="stat-value text-xs">${d.consensus || '—'}</div></div>
+          <div class="stat"><div class="stat-label">Supply</div><div class="stat-value text-xs">${d.supply || '—'}</div></div>
+        </div>
+        ${d.website ? `<a href="https://${d.website}" target="_blank" rel="noopener" class="link-src">${d.website} ↗</a>` : ''}
+      </div>
+    `;
+  }
+
+  if (a.type === 'index') {
+    return `
+      <div class="tab-panel">
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-3">DESCRIPTION</div>
+        <p class="prose-muted">${d.desc || `${a.name} tracks a basket of underlying assets.`}</p>
+      </div>
+    `;
+  }
+
+  return `<div class="tab-panel"><div class="empty-state">Profile data unavailable for this asset type.</div></div>`;
+}
+
+/* ---------- NEWS ---------- */
+function renderNewsTab() {
+  const a = state.currentAsset;
+  // Find news tagged with this symbol; fall back to sector/related
+  const tagged = NEWS_POOL.filter(n => n.symbols && n.symbols.includes(a.symbol));
+  const items = tagged.length > 0 ? tagged : NEWS_POOL.slice(0, 5);
+
+  return `
+    <div class="tab-panel">
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">
+        ${tagged.length > 0 ? `RELATED NEWS · ${tagged.length} MATCHING ${a.symbol}` : 'GENERAL MARKET NEWS · NO SPECIFIC MATCHES'}
+      </div>
+      <div class="space-y-2">
+        ${items.map(n => {
+          const tagClass = { markets: 'tag-markets', crypto: 'tag-crypto', central: 'tag-central' }[n.category] || '';
+          return `
+            <a href="${n.url}" target="_blank" rel="noopener" class="mini-news block">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="tag ${tagClass}">${n.category.toUpperCase()}</span>
+                <span class="text-[10px] font-mono text-dim">${n.source.toUpperCase()}</span>
+              </div>
+              <div class="text-sm font-semibold leading-snug mb-1">${n.headline}</div>
+              <div class="text-xs text-muted leading-relaxed">${n.summary}</div>
+            </a>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- TAB SWITCHING ---------- */
+function initDetailModal() {
+  document.getElementById('dm-close').addEventListener('click', closeDetail);
+  document.getElementById('detail-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'detail-modal') closeDetail();
+  });
+
+  document.querySelectorAll('.dm-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.dm-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      state.activeDetailTab = tab.dataset.tab;
+      renderActiveTab();
+    });
+  });
+
+  document.getElementById('dm-watchlist-btn').addEventListener('click', toggleWatchlist);
+}
+
+/* ============================================================
+   WATCHLIST
+   ============================================================ */
+function loadWatchlist() {
+  try { state.watchlist = JSON.parse(localStorage.getItem(CONFIG.storageKey) || '[]'); } catch { state.watchlist = []; }
+}
+function saveWatchlist() {
+  try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(state.watchlist)); } catch {}
+}
+function loadRecent() {
+  try { state.recentSearches = JSON.parse(localStorage.getItem(CONFIG.recentSearchKey) || '[]'); } catch { state.recentSearches = []; }
+}
+function saveRecent() {
+  try { localStorage.setItem(CONFIG.recentSearchKey, JSON.stringify(state.recentSearches)); } catch {}
+}
+
+function toggleWatchlist() {
+  const a = state.currentAsset;
+  if (!a) return;
+  const idx = state.watchlist.indexOf(a.symbol);
+  if (idx === -1) state.watchlist.push(a.symbol);
+  else state.watchlist.splice(idx, 1);
+  saveWatchlist();
+  updateWatchlistButton();
+  renderWatchlist();
+}
+
+function updateWatchlistButton() {
+  const btn = document.getElementById('dm-watchlist-btn');
+  const label = document.getElementById('dm-watchlist-label');
+  const a = state.currentAsset;
+  if (!a) return;
+  const inList = state.watchlist.includes(a.symbol);
+  if (inList) {
+    label.textContent = 'In Watchlist · Remove';
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-ghost', 'danger');
+  } else {
+    label.textContent = 'Add to Watchlist';
+    btn.classList.remove('btn-ghost', 'danger');
+    btn.classList.add('btn-primary');
+  }
+}
+
+function renderWatchlist() {
+  const container = document.getElementById('watchlist-list');
+  const countEl = document.getElementById('watchlist-count');
+  countEl.textContent = state.watchlist.length;
+
+  if (state.watchlist.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="mb-2">No items yet</div>
+      <div class="text-[10px] leading-relaxed">Search any symbol and click<br/>"Add to Watchlist" to track it here.</div>
+    </div>`;
+    return;
+  }
+
+  const assets = state.watchlist.map(sym => UNIVERSE.find(a => a.symbol === sym)).filter(Boolean);
+  const ticked = generateTicks(assets);
+
+  container.innerHTML = ticked.map(item => {
+    const isUp = item.pct >= 0;
+    const color = isUp ? 'text-bull' : 'text-bear';
+    const arrow = isUp ? '▲' : '▼';
+    return `
+      <div class="watchlist-row" data-symbol="${item.symbol}">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-sm font-semibold">${item.symbol}</span>
+            <span class="type-badge type-${item.type}">${item.type}</span>
+          </div>
+          <div class="text-[10px] text-dim truncate">${item.name}</div>
+        </div>
+        <div class="text-right">
+          <div class="font-mono text-xs font-semibold">${fmt.price(item.price)}</div>
+          <div class="font-mono text-[10px] ${color}">${arrow} ${fmt.pct(item.pct)}</div>
+        </div>
+        <button class="remove-btn" data-remove="${item.symbol}" title="Remove">✕</button>
+      </div>
+    `;
+  }).join('');
+
+  container.querySelectorAll('.watchlist-row').forEach(row => {
+    row.addEventListener('click', (e) => {
+      if (e.target.classList.contains('remove-btn')) return;
+      const asset = UNIVERSE.find(a => a.symbol === row.dataset.symbol);
+      if (asset) openDetail(asset);
+    });
+  });
+  container.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      state.watchlist = state.watchlist.filter(s => s !== btn.dataset.remove);
+      saveWatchlist();
+      renderWatchlist();
+      if (state.currentAsset && state.currentAsset.symbol === btn.dataset.remove) updateWatchlistButton();
+    });
+  });
+}
+
+/* ============================================================
+   SIGNAL'S TAKE
+   ============================================================ */
+const PICKS = [
+  // ═══ ETF PICKS ═══
+  { symbol: "SGOV", kind: "etf", title: "Short-duration US Treasury ETF", ticker: "NYSE:SGOV",
+    category: "Cash equivalent · Bonds", risk: "very-low",
+    riskLabel: "Very low risk · Low return",
+    returnEst: "~4–5% annualized",
+    horizon: {
+      min: "None (daily liquidity)",
+      optimal: "3–24 months",
+      note: "T-bill ETF with negligible duration risk. Move funds in or out any trading day — this is a parking spot, not a long-term hold."
+    },
+    thesis: "Front-end T-bill yields still pay real return above inflation. The parking spot for capital you want ready to deploy on the next pullback — near-zero duration risk, daily liquidity, better than cash.",
+    bestFor: "Building dry powder while earning yield" },
+
+  { symbol: "VOO", kind: "etf", title: "Vanguard S&P 500 ETF", ticker: "NYSE:VOO",
+    category: "US large-cap · Broad market", risk: "low",
+    riskLabel: "Low-to-moderate risk · Steady return",
+    returnEst: "~7–10% annualized (long-run avg)",
+    horizon: {
+      min: "3 years (to weather typical drawdowns)",
+      optimal: "10–20 years",
+      note: "Rolling 15-year returns for the S&P 500 have historically been positive. Shorter windows can see 30%+ drawdowns before recovery."
+    },
+    thesis: "Owning the whole US large-cap index removes single-stock risk while keeping exposure to the AI capex cycle and productivity growth. Expense ratio near 0.03% is basically free. Boring quietly beats most active funds.",
+    bestFor: "Your core, long-term holding" },
+
+  { symbol: "GLD", kind: "etf", title: "SPDR Gold Shares", ticker: "NYSE:GLD",
+    category: "Commodity · Hedge", risk: "moderate",
+    riskLabel: "Moderate risk · Moderate return",
+    returnEst: "~5–8% annualized, defensive in shocks",
+    horizon: {
+      min: "1 year (through a full risk cycle)",
+      optimal: "3–7 years",
+      note: "Gold can underperform for multiple years during risk-on cycles. Hold long enough to weather at least one full macro cycle."
+    },
+    thesis: "Central-bank buying (China, Poland, India) has structurally repriced gold. Works as a hedge against currency debasement and geopolitical risk without correlating with equities. Size as 5–10% of portfolio.",
+    bestFor: "Portfolio insurance during macro stress" },
+
+  { symbol: "SMH", kind: "etf", title: "VanEck Semiconductor ETF", ticker: "NYSE:SMH",
+    category: "Sector thematic · AI infra", risk: "high",
+    riskLabel: "High risk · High return potential",
+    returnEst: "~15–25% target, drawdowns of 30%+ possible",
+    horizon: {
+      min: "2 years (one semi cycle)",
+      optimal: "5–10 years",
+      note: "Semiconductor cycles run 18–36 months peak-to-trough. Plan to hold across at least one full cycle to avoid selling at the bottom."
+    },
+    thesis: "The AI infrastructure buildout runs on lithography, HBM memory, and advanced packaging — SMH captures that theme without forcing you to pick between Nvidia, TSMC, and ASML. Cyclicality is real; size as satellite, not core.",
+    bestFor: "Betting on the compute demand curve" },
+
+  { symbol: "IBIT", kind: "etf", title: "Spot Bitcoin ETF", ticker: "NASDAQ:IBIT",
+    category: "Crypto · Digital asset", risk: "very-high",
+    riskLabel: "Very high risk · Very high return potential",
+    returnEst: "Highly variable · 50%+ drawdowns historical",
+    horizon: {
+      min: "4 years (one halving cycle)",
+      optimal: "8–12 years (two halving cycles)",
+      note: "Bitcoin's 4-year halving cycle historically drives structural returns. Hold across at least one full cycle; only size to what you can watch fall 60% without panic-selling."
+    },
+    thesis: "Regulated wrapper for direct BTC exposure with institutional-grade custody. Halving-driven supply constraint plus continued ETF inflows form a structural bid. Only size to what you can watch fall 60% without panic-selling.",
+    bestFor: "High-conviction crypto via regulated wrapper" },
+
+  // ═══ INDIVIDUAL STOCK PICKS ═══
+  { symbol: "MSFT", kind: "stock", title: "Microsoft Corporation", ticker: "NASDAQ:MSFT",
+    category: "Mega-cap software · Cloud + AI", risk: "low",
+    riskLabel: "Low-to-moderate risk · Steady growth",
+    returnEst: "~10–14% annualized (5Y trend)",
+    horizon: {
+      min: "3 years",
+      optimal: "7–15 years",
+      note: "Azure + M365 subscription base creates highly predictable cash flow. OpenAI partnership adds AI upside without single-product risk."
+    },
+    thesis: "The most diversified mega-cap: cloud infrastructure (Azure), enterprise software (M365), gaming (Xbox), and OpenAI partnership. Recurring revenue and $80B+ annual buybacks make drawdowns shallow relative to peers.",
+    bestFor: "Blue-chip growth as a stock, not an ETF" },
+
+  { symbol: "GLW", kind: "stock", title: "Corning Incorporated", ticker: "NYSE:GLW",
+    category: "Optical comms · AI infrastructure", risk: "moderate",
+    riskLabel: "Moderate risk · Dividend + AI upside",
+    returnEst: "~8–15% annualized + ~2.8% dividend",
+    horizon: {
+      min: "2 years",
+      optimal: "4–8 years",
+      note: "Optical fiber demand ramp is tied to the multi-year data-center buildout. Dividend cushions drawdowns; wait for the AI capex tailwind to fully monetize."
+    },
+    thesis: "Optical fiber is the physical layer under every AI data center. Corning has 170+ years of specialty-glass moat and pays a growing dividend. Undervalued relative to pure-play AI infrastructure names.",
+    bestFor: "AI infrastructure exposure with income cushion" },
+
+  { symbol: "JPM", kind: "stock", title: "JPMorgan Chase", ticker: "NYSE:JPM",
+    category: "Banking · Financial dividend", risk: "low",
+    riskLabel: "Low-to-moderate risk · Dividend + cyclical upside",
+    returnEst: "~9–13% annualized + ~2.1% dividend",
+    horizon: {
+      min: "2 years",
+      optimal: "5–10 years",
+      note: "Banks are cyclical — expect drawdowns of 25%+ in recessions. But JPM's fortress balance sheet and diversified franchise make it the highest-quality large bank."
+    },
+    thesis: "The best-run US megabank — leading market share in consumer, investment banking, and asset management. Benefits from higher rates and normalized yield curve. Dimon successor plan reduces key-person risk.",
+    bestFor: "Financial-sector exposure with dividend income" },
+
+  { symbol: "NVDA", kind: "stock", title: "NVIDIA Corporation", ticker: "NASDAQ:NVDA",
+    category: "AI leader · Semiconductors", risk: "high",
+    riskLabel: "High risk · Very high return potential",
+    returnEst: "Highly variable · could be ±40% in one year",
+    horizon: {
+      min: "3 years",
+      optimal: "5–10 years",
+      note: "Concentrated bet on continued AI capex. When AI infrastructure spending inevitably slows, expect 40%+ drawdowns. Size accordingly."
+    },
+    thesis: "The pick-and-shovel play for the AI gold rush. CUDA software moat + Blackwell architecture leadership + fully-allocated supply through 2026. Direct alternative to SMH if you want concentrated conviction.",
+    bestFor: "Direct AI exposure without ETF dilution" },
+
+  { symbol: "COIN", kind: "stock", title: "Coinbase Global", ticker: "NASDAQ:COIN",
+    category: "Crypto proxy · Fintech", risk: "very-high",
+    riskLabel: "Very high risk · Extreme volatility",
+    returnEst: "Highly variable · 60%+ drawdowns common",
+    horizon: {
+      min: "3 years (one crypto cycle)",
+      optimal: "5–8 years",
+      note: "COIN behaves as a leveraged bet on crypto adoption. Revenue is tied to trading volumes which collapse in bear markets — historical drawdowns exceed 80%."
+    },
+    thesis: "The largest US-regulated crypto exchange, custody, and staking platform. Levered exposure to crypto adoption without holding tokens directly. Interest income on USDC reserves adds a defensive floor.",
+    bestFor: "Levered crypto adoption via a listed stock" },
+];
+
+function pickCard(pick) {
+  const kindBadge = pick.kind === 'etf' ? 'type-fund' : 'type-stock';
+  const kindLabel = pick.kind === 'etf' ? 'ETF' : 'STOCK';
+  return `
+    <div class="pick-card clickable p-5 card-enter" data-risk="${pick.risk}" data-symbol="${pick.symbol}">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <div class="text-[10px] font-mono tracking-wider text-dim">${pick.category.toUpperCase()}</div>
+            <span class="type-badge ${kindBadge}">${kindLabel}</span>
+          </div>
+          <h4 class="text-lg font-semibold tracking-tight leading-snug">${pick.title}</h4>
+        </div>
+        <span class="tag tag-markets flex-shrink-0">${pick.ticker}</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="tag" style="color: var(--accent); border-color: var(--accent);">${pick.riskLabel}</span>
+      </div>
+      <p class="text-sm text-muted leading-relaxed mb-4">${pick.thesis}</p>
+
+      <div class="pt-3 border-t hair">
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-2">HOLDING HORIZON</div>
+        <div class="space-y-1 text-xs">
+          <div class="flex gap-2"><span class="text-dim font-mono w-20 flex-shrink-0">MINIMUM</span><span class="text-muted">${pick.horizon.min}</span></div>
+          <div class="flex gap-2"><span class="text-dim font-mono w-20 flex-shrink-0">OPTIMAL</span><span class="text-cyan font-semibold">${pick.horizon.optimal}</span></div>
+        </div>
+        <div class="text-[10px] text-dim mt-2 leading-relaxed italic">${pick.horizon.note}</div>
+      </div>
+
+      <div class="mt-3 pt-3 border-t hair grid grid-cols-2 gap-2">
+        <div><div class="text-[10px] font-mono tracking-wider text-dim mb-1">EXPECTED RETURN</div><div class="text-xs font-medium">${pick.returnEst}</div></div>
+        <div><div class="text-[10px] font-mono tracking-wider text-dim mb-1">BEST FOR</div><div class="text-xs text-cyan">${pick.bestFor}</div></div>
+      </div>
+
+      <div class="mt-3 pt-3 border-t hair flex items-center justify-between">
+        <span class="text-[10px] font-mono text-dim tracking-wider">CLICK CARD FOR ${pick.symbol} DETAILS</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+          <path d="M5 12h14M13 5l7 7-7 7"/>
+        </svg>
+      </div>
+    </div>
+  `;
+}
+
+function renderPicks() {
+  const etfPicks = PICKS.filter(p => p.kind === 'etf');
+  const stockPicks = PICKS.filter(p => p.kind === 'stock');
+  document.getElementById('picks-grid-etf').innerHTML = etfPicks.map(pickCard).join('');
+  document.getElementById('picks-grid-stock').innerHTML = stockPicks.map(pickCard).join('');
+  document.querySelectorAll('.pick-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const asset = UNIVERSE.find(a => a.symbol === card.dataset.symbol);
+      if (asset) openDetail(asset);
+    });
+  });
+}
+
+/* ============================================================
+   NEWS-DRIVEN SIGNAL ENGINE
+   Reads sentiment from tagged news articles, computes per-pick
+   tilts (±3% max). Cached 24h in localStorage; manual refresh
+   available. Rebalances the base allocation.
+   ============================================================ */
+const NEWS_SIGNAL_KEY = 'signal_news_signals_v1';
+const SIGNAL_REFRESH_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+// Compute per-pick signals from a news array
+function computeNewsSignals(news) {
+  const agg = {};
+  PICKS.forEach(p => {
+    agg[p.symbol] = { score: 0, bullish: [], bearish: [] };
+  });
+
+  news.forEach(article => {
+    if (!article.sentiment || article.sentiment === 'neutral') return;
+    const impact = article.sentiment === 'bullish' ? 1 : -1;
+
+    // Direct symbols: article moves them in same direction as sentiment
+    (article.symbols || []).forEach(sym => {
+      if (agg[sym]) {
+        agg[sym].score += impact;
+        if (impact > 0) agg[sym].bullish.push(article.headline);
+        else agg[sym].bearish.push(article.headline);
+      }
+    });
+
+    // Reverse symbols: article moves them opposite (e.g., hawkish Fed = bearish equities but bullish SGOV)
+    (article.reverseSymbols || []).forEach(sym => {
+      if (agg[sym]) {
+        agg[sym].score -= impact;
+        if (-impact > 0) agg[sym].bullish.push(article.headline);
+        else agg[sym].bearish.push(article.headline);
+      }
+    });
+  });
+
+  // Convert scores to tilt %
+  const out = {};
+  Object.entries(agg).forEach(([sym, d]) => {
+    let tilt = 0, label = 'NEUTRAL', color = 'var(--muted)';
+    if (d.score >= 3)      { tilt = +3;  label = 'BULLISH';       color = 'var(--bull)'; }
+    else if (d.score === 2){ tilt = +2;  label = 'BULLISH';       color = 'var(--bull)'; }
+    else if (d.score === 1){ tilt = +1;  label = 'MILD BULLISH';  color = '#86EFAC'; }
+    else if (d.score === -1){ tilt = -1; label = 'MILD BEARISH';  color = '#FCA5A5'; }
+    else if (d.score === -2){ tilt = -2; label = 'BEARISH';       color = 'var(--bear)'; }
+    else if (d.score <= -3){ tilt = -3;  label = 'BEARISH';       color = 'var(--bear)'; }
+    out[sym] = {
+      tilt, label, color, score: d.score,
+      bullishCount: d.bullish.length,
+      bearishCount: d.bearish.length,
+      driving: d.score > 0 ? d.bullish[0] : (d.score < 0 ? d.bearish[0] : null),
+    };
+  });
+  return out;
+}
+
+// Cache-aware signal retrieval
+function loadOrComputeSignals(forceRefresh = false) {
+  if (!forceRefresh) {
+    try {
+      const raw = localStorage.getItem(NEWS_SIGNAL_KEY);
+      if (raw) {
+        const cached = JSON.parse(raw);
+        if (Date.now() - cached.computedAt < SIGNAL_REFRESH_MS) {
+          return cached;
+        }
+      }
+    } catch {}
+  }
+  // Recompute from current news snapshot
+  const signals = computeNewsSignals(state.news || []);
+  const payload = { signals, computedAt: Date.now() };
+  try { localStorage.setItem(NEWS_SIGNAL_KEY, JSON.stringify(payload)); } catch {}
+  return payload;
+}
+
+// Apply signals to a base allocation, rebalance to 100%
+function applySignalsToAllocation(baseAllocation, signals) {
+  const adjusted = {};
+  Object.entries(baseAllocation).forEach(([sym, w]) => {
+    const sig = signals[sym];
+    const tilt = sig ? sig.tilt : 0;
+    adjusted[sym] = Math.max(0, w + tilt);
+  });
+  const total = Object.values(adjusted).reduce((s, v) => s + v, 0);
+  if (total > 0) {
+    Object.keys(adjusted).forEach(sym => {
+      adjusted[sym] = (adjusted[sym] / total) * 100;
+    });
+  }
+  return adjusted;
+}
+
+// Format "last computed" and "next refresh" times
+function formatSignalMeta(computedAt) {
+  const now = Date.now();
+  const ageMs = now - computedAt;
+  const nextMs = SIGNAL_REFRESH_MS - ageMs;
+
+  const ageHrs = Math.floor(ageMs / 3.6e6);
+  const ageMin = Math.floor((ageMs % 3.6e6) / 60000);
+  const last = ageHrs > 0 ? `${ageHrs}h ${ageMin}m ago` : `${ageMin}m ago`;
+
+  const next = nextMs <= 0 ? 'due now' : (() => {
+    const nHrs = Math.floor(nextMs / 3.6e6);
+    const nMin = Math.floor((nextMs % 3.6e6) / 60000);
+    return nHrs > 0 ? `in ${nHrs}h ${nMin}m` : `in ${nMin}m`;
+  })();
+
+  return { last, next };
+}
+
+/* ============================================================
+   PORTFOLIO ALLOCATOR — ETFs + Stocks + News signals
+   ============================================================ */
+const USD_MYR = 4.22;
+
+// Annualized scenario returns per pick (%)
+const PICK_RETURNS = {
+  // ETFs
+  SGOV: { bear: 3.0,  base: 4.5,  bull: 5.2  },
+  VOO:  { bear: -3.0, base: 8.0,  bull: 14.0 },
+  GLD:  { bear: -5.0, base: 6.0,  bull: 15.0 },
+  SMH:  { bear: -20.0,base: 15.0, bull: 30.0 },
+  IBIT: { bear: -35.0,base: 20.0, bull: 50.0 },
+  // Stocks
+  MSFT: { bear: -10.0,base: 12.0, bull: 22.0 },
+  GLW:  { bear: -15.0,base: 10.0, bull: 20.0 },
+  JPM:  { bear: -15.0,base: 10.0, bull: 18.0 },
+  NVDA: { bear: -35.0,base: 25.0, bull: 55.0 },
+  COIN: { bear: -55.0,base: 30.0, bull: 90.0 },
+};
+
+const PICK_COLORS = {
+  SGOV: '#60A5FA', VOO:  '#34D399', GLD:  '#22D3EE',
+  SMH:  '#FBBF24', IBIT: '#F87171', MSFT: '#93C5FD',
+  GLW:  '#2DD4BF', JPM:  '#84CC16', NVDA: '#FB923C',
+  COIN: '#F472B6',
+};
+
+const ALLOCATIONS = {
+  'conservative-short':    { SGOV: 75, VOO: 15, GLD: 10 },
+  'conservative-medium':   { SGOV: 55, VOO: 30, GLD: 15 },
+  'conservative-long':     { SGOV: 40, VOO: 40, GLD: 15, MSFT: 5 },
+  'conservative-verylong': { SGOV: 25, VOO: 50, GLD: 15, MSFT: 5, JPM: 5 },
+
+  'balanced-short':        { SGOV: 60, VOO: 25, GLD: 15 },
+  'balanced-medium':       { SGOV: 35, VOO: 40, GLD: 15, MSFT: 5, JPM: 5 },
+  'balanced-long':         { SGOV: 20, VOO: 40, GLD: 12, MSFT: 8, JPM: 5, GLW: 5, SMH: 5, IBIT: 5 },
+  'balanced-verylong':     { SGOV: 10, VOO: 40, GLD: 10, MSFT: 10, JPM: 5, GLW: 5, SMH: 10, NVDA: 5, IBIT: 5 },
+
+  'growth-short':          { SGOV: 45, VOO: 30, GLD: 10, MSFT: 10, GLW: 5 },
+  'growth-medium':         { SGOV: 20, VOO: 40, GLD: 10, MSFT: 8, JPM: 5, GLW: 5, SMH: 7, NVDA: 5 },
+  'growth-long':           { SGOV: 10, VOO: 35, GLD: 8, MSFT: 8, GLW: 4, JPM: 5, SMH: 15, NVDA: 10, IBIT: 5 },
+  'growth-verylong':       { SGOV: 5, VOO: 30, GLD: 5, MSFT: 10, GLW: 5, SMH: 15, NVDA: 15, IBIT: 10, COIN: 5 },
+
+  'aggressive-short':      { SGOV: 35, VOO: 25, GLD: 10, MSFT: 10, SMH: 10, NVDA: 10 },
+  'aggressive-medium':     { SGOV: 15, VOO: 30, GLD: 5, MSFT: 10, SMH: 15, NVDA: 15, IBIT: 5, COIN: 5 },
+  'aggressive-long':       { SGOV: 5, VOO: 25, GLD: 5, MSFT: 5, SMH: 20, NVDA: 20, IBIT: 10, COIN: 10 },
+  'aggressive-verylong':   { VOO: 20, MSFT: 5, SMH: 20, NVDA: 25, IBIT: 15, COIN: 15 },
+};
+
+const HORIZON_YEARS = { short: 0.75, medium: 2, long: 4, verylong: 8 };
+const HORIZON_LABELS = { short: '< 1 year', medium: '1–3 years', long: '3–5 years', verylong: '5+ years' };
+const RISK_LABELS = { conservative: 'Conservative', balanced: 'Balanced', growth: 'Growth', aggressive: 'Aggressive' };
+
+function computeAllocation() {
+  const amount = parseFloat(document.getElementById('alloc-amount').value) || 0;
+  const currency = document.getElementById('alloc-currency').value;
+  const risk = state.allocRisk;
+  const horizon = state.allocHorizon;
+
+  const usdAmount = currency === 'MYR' ? amount / USD_MYR : amount;
+  const baseWeights = ALLOCATIONS[`${risk}-${horizon}`];
+  const signals = state.newsSignals ? state.newsSignals.signals : {};
+  const weights = applySignalsToAllocation(baseWeights, signals);
+
+  const plan = [];
+  Object.entries(weights).forEach(([sym, pct]) => {
+    if (pct < 0.5) return; // suppress dust
+    const asset = UNIVERSE.find(a => a.symbol === sym);
+    const pick = PICKS.find(p => p.symbol === sym);
+    const usdAlloc = (usdAmount * pct) / 100;
+    const shares = usdAlloc / asset.base;
+    const basePct = baseWeights[sym] || 0;
+    plan.push({
+      symbol: sym, pct, basePct, tilt: pct - basePct, asset, pick, usdAlloc, shares,
+      displayAlloc: currency === 'MYR' ? usdAlloc * USD_MYR : usdAlloc,
+    });
+  });
+
+  return { plan, usdAmount, amount, currency, risk, horizon, baseWeights };
+}
+
+function renderSignalsPanel() {
+  if (!state.newsSignals) return;
+  const { signals, computedAt } = state.newsSignals;
+  const meta = formatSignalMeta(computedAt);
+  document.getElementById('signals-last').textContent = meta.last;
+  document.getElementById('signals-next').textContent = meta.next;
+
+  // Signal cards — one per pick
+  const grid = document.getElementById('signals-grid');
+  grid.innerHTML = PICKS.map(p => {
+    const sig = signals[p.symbol] || { tilt: 0, label: 'NEUTRAL', color: 'var(--muted)' };
+    const tiltSign = sig.tilt > 0 ? '+' : '';
+    return `
+      <div class="panel p-2" style="border-left: 2px solid ${sig.color};">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-mono text-xs font-bold">${p.symbol}</span>
+          <span class="font-mono text-xs font-bold" style="color: ${sig.color};">${tiltSign}${sig.tilt}%</span>
+        </div>
+        <div class="text-[9px] font-mono tracking-wider" style="color: ${sig.color};">${sig.label}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Driving news list
+  const articlesEl = document.getElementById('signals-articles');
+  const drivingList = [];
+  PICKS.forEach(p => {
+    const sig = signals[p.symbol];
+    if (sig && sig.driving) {
+      drivingList.push({ symbol: p.symbol, driving: sig.driving, tilt: sig.tilt, color: sig.color });
+    }
+  });
+  if (drivingList.length === 0) {
+    articlesEl.innerHTML = `<div class="text-[10px] text-dim italic">No directional signals detected in current news cycle.</div>`;
+  } else {
+    articlesEl.innerHTML = drivingList.map(d => `
+      <div class="flex items-start gap-2 text-[11px]">
+        <span class="font-mono font-bold flex-shrink-0" style="color: ${d.color}; min-width: 44px;">${d.symbol} ${d.tilt > 0 ? '+' : ''}${d.tilt}%</span>
+        <span class="text-muted leading-snug">${d.driving}</span>
+      </div>
+    `).join('');
+  }
+}
+
+function renderAllocator() {
+  // Ensure signals loaded
+  if (!state.newsSignals) state.newsSignals = loadOrComputeSignals();
+  renderSignalsPanel();
+
+  const { plan, usdAmount, amount, currency, risk, horizon } = computeAllocation();
+  const currSym = currency === 'USD' ? '$' : 'RM ';
+
+  const convEl = document.getElementById('alloc-conversion');
+  if (currency === 'MYR') {
+    convEl.textContent = `≈ $${usdAmount.toFixed(2)} USD (rate: 1 USD = ${USD_MYR} MYR)`;
+  } else {
+    convEl.textContent = `≈ RM ${(usdAmount * USD_MYR).toFixed(2)} MYR`;
+  }
+
+  const etfCount = plan.filter(p => p.pick && p.pick.kind === 'etf').length;
+  const stockCount = plan.filter(p => p.pick && p.pick.kind === 'stock').length;
+  document.getElementById('alloc-summary').textContent =
+    `${RISK_LABELS[risk]} · ${HORIZON_LABELS[horizon]} · ${etfCount} ETF${etfCount !== 1 ? 's' : ''} + ${stockCount} stock${stockCount !== 1 ? 's' : ''} · news-adjusted`;
+
+  document.getElementById('alloc-bar').innerHTML = plan.map(p => `
+    <div style="width: ${p.pct}%; background: ${PICK_COLORS[p.symbol]}; display: flex; align-items: center; justify-content: center; overflow: hidden;" title="${p.symbol}: ${p.pct.toFixed(1)}%">
+      ${p.pct >= 8 ? `<span class="font-mono text-[10px] font-bold" style="color: var(--bg);">${p.symbol}</span>` : ''}
+    </div>
+  `).join('');
+
+  document.getElementById('alloc-legend').innerHTML = plan.map(p => `
+    <div class="flex items-center gap-1.5">
+      <span style="width: 8px; height: 8px; background: ${PICK_COLORS[p.symbol]};"></span>
+      <span class="text-muted">${p.symbol}</span>
+      <span class="text-dim">${p.pct.toFixed(1)}%</span>
+    </div>
+  `).join('');
+
+  const planEl = document.getElementById('alloc-plan');
+  planEl.innerHTML = plan.map(p => {
+    const priceInLocal = currency === 'MYR' ? p.asset.base * USD_MYR : p.asset.base;
+    const kindLabel = p.pick ? (p.pick.kind === 'etf' ? 'ETF' : 'STOCK') : p.asset.type.toUpperCase();
+    const kindClass = p.pick && p.pick.kind === 'etf' ? 'type-fund' : 'type-stock';
+    // Tilt indicator vs base
+    const tiltHtml = Math.abs(p.tilt) >= 0.5
+      ? `<span class="font-mono text-[9px] ${p.tilt > 0 ? 'text-bull' : 'text-bear'}" title="News signal adjustment">
+           (${p.tilt > 0 ? '+' : ''}${p.tilt.toFixed(1)}% vs base ${p.basePct}%)
+         </span>` : '';
+    return `
+      <div class="panel-2 p-3 flex items-center justify-between gap-3 alloc-plan-row cursor-pointer hover:border-[color:var(--cyan)]" data-symbol="${p.symbol}">
+        <div class="flex items-center gap-3 min-w-0 flex-1">
+          <span style="width: 4px; align-self: stretch; background: ${PICK_COLORS[p.symbol]};"></span>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-mono font-bold">${p.symbol}</span>
+              <span class="type-badge ${kindClass}">${kindLabel}</span>
+              <span class="text-[10px] text-dim">${p.pct.toFixed(1)}%</span>
+              ${tiltHtml}
+            </div>
+            <div class="text-[10px] text-dim truncate">${p.asset.name}</div>
+          </div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="font-mono text-sm font-semibold">${currSym}${fmt.price(p.displayAlloc)}</div>
+          <div class="font-mono text-[10px] text-cyan">Buy ~${p.shares.toFixed(p.shares < 1 ? 4 : 2)} shares @ ${currSym}${fmt.price(priceInLocal)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  planEl.querySelectorAll('.alloc-plan-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const asset = UNIVERSE.find(a => a.symbol === row.dataset.symbol);
+      if (asset) openDetail(asset);
+    });
+  });
+
+  // Projected outcomes
+  const years = HORIZON_YEARS[horizon];
+  const scenarioMeta = {
+    bear: { label: 'BEAR CASE', color: 'var(--bear)', desc: 'Recession / prolonged drawdown' },
+    base: { label: 'BASE CASE', color: 'var(--cyan)', desc: 'Historical long-run average' },
+    bull: { label: 'BULL CASE', color: 'var(--bull)', desc: 'Favorable macro conditions' },
+  };
+  const outcomes = ['bear', 'base', 'bull'].map(scenario => {
+    const weightedReturn = plan.reduce((s, p) => s + (p.pct / 100) * PICK_RETURNS[p.symbol][scenario], 0);
+    const finalUsd = usdAmount * Math.pow(1 + weightedReturn / 100, years);
+    const finalDisplay = currency === 'MYR' ? finalUsd * USD_MYR : finalUsd;
+    const gainPct = ((finalUsd - usdAmount) / usdAmount) * 100;
+    const gain = finalDisplay - amount;
+    return { scenario, weightedReturn, finalDisplay, gain, gainPct };
+  });
+
+  document.getElementById('alloc-outcomes').innerHTML = outcomes.map(o => {
+    const m = scenarioMeta[o.scenario];
+    const gainColor = o.gainPct >= 0 ? 'text-bull' : 'text-bear';
+    return `
+      <div class="panel-2 p-4" style="border-top: 2px solid ${m.color};">
+        <div class="text-[10px] font-mono tracking-wider mb-2" style="color: ${m.color};">${m.label}</div>
+        <div class="font-mono text-xl font-semibold">${currSym}${fmt.price(o.finalDisplay)}</div>
+        <div class="font-mono text-xs ${gainColor} mt-1">
+          ${o.gainPct >= 0 ? '+' : ''}${currSym}${fmt.price(o.gain)} (${o.gainPct >= 0 ? '+' : ''}${o.gainPct.toFixed(1)}%)
+        </div>
+        <div class="text-[10px] text-dim mt-2 font-mono">${o.weightedReturn.toFixed(1)}%/yr blended · ${years}y</div>
+        <div class="text-[10px] text-dim mt-1">${m.desc}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function initAllocator() {
+  state.allocRisk = 'balanced';
+  state.allocHorizon = 'long';
+  state.newsSignals = null; // will lazy-load on first render
+
+  document.getElementById('alloc-amount').addEventListener('input', renderAllocator);
+  document.getElementById('alloc-currency').addEventListener('change', renderAllocator);
+
+  document.querySelectorAll('#alloc-risk .alloc-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#alloc-risk .alloc-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.allocRisk = chip.dataset.risk;
+      renderAllocator();
+    });
+  });
+
+  document.querySelectorAll('#alloc-horizon .alloc-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#alloc-horizon .alloc-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.allocHorizon = chip.dataset.horizon;
+      renderAllocator();
+    });
+  });
+
+  // Manual signal refresh
+  document.getElementById('signals-refresh-btn').addEventListener('click', () => {
+    const btn = document.getElementById('signals-refresh-btn');
+    btn.classList.add('spinning');
+    state.newsSignals = loadOrComputeSignals(true);
+    renderAllocator();
+    setTimeout(() => btn.classList.remove('spinning'), 800);
+  });
+
+  // Update "last/next" meta every minute
+  setInterval(() => {
+    if (state.newsSignals) {
+      // Auto-refresh if 24h elapsed
+      if (Date.now() - state.newsSignals.computedAt >= SIGNAL_REFRESH_MS) {
+        state.newsSignals = loadOrComputeSignals(true);
+        renderAllocator();
+      } else {
+        renderSignalsPanel(); // just update timer text
+      }
+    }
+  }, 60_000);
+
+  renderAllocator();
+}
+
+
+/* ============================================================
+   LIVE PRICE ENGINE — Finnhub integration
+   Fetches real market prices for picks + visible assets.
+   Falls back to base prices when no API key.
+   ============================================================ */
+
+function loadApiKey() {
+  try { state.apiKey = localStorage.getItem(CONFIG.apiKeyStorageKey) || null; } catch { state.apiKey = null; }
+}
+function saveApiKey(key) {
+  try {
+    if (key) localStorage.setItem(CONFIG.apiKeyStorageKey, key);
+    else localStorage.removeItem(CONFIG.apiKeyStorageKey);
+    state.apiKey = key || null;
+  } catch (err) { console.warn('API key save failed:', err); }
+}
+
+async function fetchLivePrice(symbol) {
+  if (!state.apiKey) return null;
+  try {
+    const url = `${CONFIG.livePriceEndpoint}?symbol=${encodeURIComponent(symbol)}&token=${state.apiKey}`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data && typeof data.c === 'number' && data.c > 0) {
+      return {
+        price: data.c,
+        change: data.d,
+        changePct: data.dp,
+        prevClose: data.pc,
+        high: data.h,
+        low: data.l,
+        open: data.o,
+        timestamp: (data.t || Math.floor(Date.now()/1000)) * 1000,
+      };
+    }
+  } catch (err) {
+    console.warn('Live price fetch failed for', symbol, err);
+  }
+  return null;
+}
+
+async function refreshLivePrices() {
+  if (!state.apiKey) return;
+  // Prioritize the picks (used in Portfolio Builder) + all watchlist items
+  const priority = [...new Set([
+    ...PICKS.map(p => p.symbol),
+    ...state.watchlist,
+  ])];
+  const results = await Promise.all(priority.map(s => fetchLivePrice(s).then(p => [s, p])));
+  let updated = 0;
+  results.forEach(([sym, data]) => {
+    if (data) { state.livePrices[sym] = data; updated++; }
+  });
+  updateLiveIndicator();
+  if (updated > 0) {
+    renderSidebar();
+    if (typeof renderAllocator === 'function') renderAllocator();
+  }
+}
+
+function startLivePriceRefresh() {
+  stopLivePriceRefresh();
+  if (!state.apiKey) return;
+  refreshLivePrices(); // immediate seed via REST
+  state.livePriceTimer = setInterval(refreshLivePrices, CONFIG.livePriceRefreshMs);
+  startWebSocketStream();  // real-time tick-by-tick on top
+}
+function stopLivePriceRefresh() {
+  if (state.livePriceTimer) { clearInterval(state.livePriceTimer); state.livePriceTimer = null; }
+  stopWebSocketStream();
+}
+
+/* ─── WebSocket real-time streaming ─── */
+let ws = null;
+let wsReRenderTimer = null;
+let wsSubscribed = new Set();
+
+function startWebSocketStream() {
+  if (!state.apiKey) return;
+  if (ws && ws.readyState === WebSocket.OPEN) return; // already open
+  try {
+    ws = new WebSocket(`wss://ws.finnhub.io?token=${encodeURIComponent(state.apiKey)}`);
+    wsSubscribed.clear();
+
+    ws.onopen = () => {
+      const symbols = [...new Set([...PICKS.map(p => p.symbol), ...state.watchlist])];
+      symbols.forEach(sym => {
+        try {
+          ws.send(JSON.stringify({ type: 'subscribe', symbol: sym }));
+          wsSubscribed.add(sym);
+        } catch {}
+      });
+      console.info('[SIGNAL] WebSocket connected, subscribed to', symbols.length, 'symbols');
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'trade' && Array.isArray(msg.data)) {
+          msg.data.forEach(trade => {
+            const sym = trade.s;
+            const existing = state.livePrices[sym] || {};
+            state.livePrices[sym] = {
+              ...existing,
+              price: trade.p,
+              timestamp: trade.t,
+              // Recompute change vs prev close if we have it
+              change: existing.prevClose ? trade.p - existing.prevClose : (existing.change || 0),
+              changePct: existing.prevClose ? ((trade.p - existing.prevClose) / existing.prevClose) * 100 : (existing.changePct || 0),
+            };
+          });
+          scheduleWsReRender();
+        }
+      } catch (err) { /* silent */ }
+    };
+
+    ws.onerror = (err) => console.warn('[SIGNAL] WebSocket error:', err);
+    ws.onclose = () => {
+      ws = null;
+      // Auto-reconnect after 5s if API key still present
+      if (state.apiKey) setTimeout(startWebSocketStream, 5000);
+    };
+  } catch (err) {
+    console.warn('[SIGNAL] WebSocket setup failed:', err);
+  }
+}
+
+function stopWebSocketStream() {
+  if (ws) { try { ws.close(); } catch {} ws = null; }
+  wsSubscribed.clear();
+}
+
+function scheduleWsReRender() {
+  if (wsReRenderTimer) return;
+  wsReRenderTimer = setTimeout(() => {
+    renderSidebar();
+    if (typeof renderAllocator === 'function') renderAllocator();
+    wsReRenderTimer = null;
+  }, 800); // throttle to ~1/sec to avoid re-render storms
+}
+
+/* ─── Real company news via Finnhub ─── */
+async function fetchCompanyNews(symbol) {
+  if (!state.apiKey) return null;
+  const to = new Date();
+  const from = new Date(to.getTime() - 14 * 24 * 60 * 60 * 1000);
+  const fmtDate = (d) => d.toISOString().slice(0, 10);
+  const url = `https://finnhub.io/api/v1/company-news?symbol=${encodeURIComponent(symbol)}&from=${fmtDate(from)}&to=${fmtDate(to)}&token=${state.apiKey}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!Array.isArray(data)) return null;
+    return data.slice(0, 12).map(n => ({
+      headline: n.headline,
+      summary: n.summary || '',
+      source: n.source || 'Finnhub',
+      url: n.url,
+      publishedAt: new Date((n.datetime || Date.now()/1000) * 1000),
+      category: 'markets',
+      isLive: true,
+    }));
+  } catch { return null; }
+}
+
+/* Override renderNewsTab to fetch real company news when available */
+const _renderNewsTab_original = renderNewsTab;
+renderNewsTab = function() {
+  const a = state.currentAsset;
+  const tagged = NEWS_POOL.filter(n => n.symbols && n.symbols.includes(a.symbol));
+  const fallback = tagged.length > 0 ? tagged : NEWS_POOL.slice(0, 5);
+
+  // Kick off async fetch for live news (won't block render)
+  if (state.apiKey && (a.type === 'stock' || a.type === 'fund')) {
+    fetchCompanyNews(a.symbol).then(liveNews => {
+      if (liveNews && liveNews.length > 0 && state.currentAsset && state.currentAsset.symbol === a.symbol && state.activeDetailTab === 'news') {
+        // Re-render with live news
+        document.getElementById('dm-content').innerHTML = _renderNewsHtml(a, liveNews, true);
+      }
+    });
+  }
+
+  return _renderNewsHtml(a, fallback, false);
+};
+
+function _renderNewsHtml(a, items, isLive) {
+  const label = isLive
+    ? `LIVE NEWS · ${items.length} STORIES FOR ${a.symbol}`
+    : items.length > 0 && items[0].symbols && items[0].symbols.includes(a.symbol)
+      ? `RELATED NEWS · ${items.length} MATCHING ${a.symbol} (mock — add API key for live)`
+      : `GENERAL MARKET NEWS (mock — add API key for live)`;
+
+  return `
+    <div class="tab-panel">
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3 flex items-center gap-2">
+        ${isLive ? '<span class="pulse-dot" style="width:6px;height:6px;"></span>' : ''}
+        <span>${label}</span>
+      </div>
+      <div class="space-y-2">
+        ${items.map(n => {
+          const tagClass = { markets: 'tag-markets', crypto: 'tag-crypto', central: 'tag-central' }[n.category] || 'tag-markets';
+          return `
+            <a href="${n.url}" target="_blank" rel="noopener" class="mini-news block">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="tag ${tagClass}">${(n.category || 'markets').toUpperCase()}</span>
+                <span class="text-[10px] font-mono text-dim">${(n.source || '').toUpperCase()}</span>
+                <span class="text-[10px] font-mono text-dim">· ${fmt.timeAgo(n.publishedAt)}</span>
+              </div>
+              <div class="text-sm font-semibold leading-snug mb-1">${n.headline}</div>
+              ${n.summary ? `<div class="text-xs text-muted leading-relaxed">${n.summary.slice(0, 240)}${n.summary.length > 240 ? '…' : ''}</div>` : ''}
+            </a>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function getAssetPrice(asset) {
+  if (!asset) return 0;
+  const live = state.livePrices[asset.symbol];
+  return live ? live.price : asset.base;
+}
+
+function isLive(symbol) { return !!state.livePrices[symbol]; }
+
+function updateLiveIndicator() {
+  const dot = document.getElementById('live-indicator');
+  const label = document.getElementById('live-label');
+  if (!dot || !label) return;
+  const active = state.apiKey && Object.keys(state.livePrices).length > 0;
+  if (active) {
+    dot.style.background = 'var(--bull)';
+    label.textContent = 'LIVE';
+    label.className = 'text-xs font-mono tracking-wider text-bull';
+  } else if (state.apiKey) {
+    dot.style.background = 'var(--warn)';
+    label.textContent = 'CONNECTING';
+    label.className = 'text-xs font-mono tracking-wider text-warn';
+  } else {
+    dot.style.background = 'var(--dim)';
+    label.textContent = 'MOCK';
+    label.className = 'text-xs font-mono tracking-wider text-dim';
+  }
+}
+
+/* Override generateTicks to prefer live prices when available */
+const _generateTicks_original = generateTicks;
+generateTicks = function(list) {
+  return list.map(item => {
+    const live = state.livePrices[item.symbol];
+    if (live) {
+      return { ...item, price: live.price, change: live.change, pct: live.changePct };
+    }
+    const drift = (Math.random() - 0.48) * 0.02;
+    const price = item.base * (1 + drift);
+    const change = price - item.base;
+    const pct = (change / item.base) * 100;
+    return { ...item, price, change, pct };
+  });
+};
+
+/* ============================================================
+   SETTINGS MODAL
+   ============================================================ */
+function openSettings() {
+  document.getElementById('settings-modal').classList.add('open');
+  document.getElementById('api-key-input').value = state.apiKey || '';
+  document.getElementById('api-key-input').type = 'password';
+  document.getElementById('api-key-toggle').textContent = 'Show';
+  document.getElementById('api-test-result').textContent = '';
+  refreshLiveStatus();
+}
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+
+function refreshLiveStatus() {
+  const statusText = document.getElementById('live-status-text');
+  const statusDot = document.getElementById('live-status-dot');
+  if (!statusText || !statusDot) return;
+  if (state.apiKey) {
+    const count = Object.keys(state.livePrices).length;
+    if (count > 0) {
+      statusText.innerHTML = `<span class="text-bull">Live prices active</span> · ${count} symbols cached`;
+      statusDot.style.background = 'var(--bull)';
+    } else {
+      statusText.innerHTML = `<span class="text-warn">API key saved</span> · waiting for first fetch`;
+      statusDot.style.background = 'var(--warn)';
+    }
+  } else {
+    statusText.innerHTML = `<span class="text-dim">No API key</span> · using simulated prices`;
+    statusDot.style.background = 'var(--dim)';
+  }
+}
+
+function initSettings() {
+  document.getElementById('settings-btn').addEventListener('click', openSettings);
+  document.getElementById('settings-close').addEventListener('click', closeSettings);
+  document.getElementById('settings-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'settings-modal') closeSettings();
+  });
+
+  document.getElementById('api-key-toggle').addEventListener('click', () => {
+    const inp = document.getElementById('api-key-input');
+    const btn = document.getElementById('api-key-toggle');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
+    else { inp.type = 'password'; btn.textContent = 'Show'; }
+  });
+
+  document.getElementById('api-key-save').addEventListener('click', () => {
+    const key = document.getElementById('api-key-input').value.trim();
+    if (!key) { document.getElementById('api-test-result').innerHTML = '<span class="text-bear">Enter a key first.</span>'; return; }
+    saveApiKey(key);
+    startLivePriceRefresh();
+    document.getElementById('api-test-result').innerHTML = '<span class="text-bull">Saved. Fetching live prices…</span>';
+    setTimeout(refreshLiveStatus, 1500);
+    updateLiveIndicator();
+  });
+
+  document.getElementById('api-key-test').addEventListener('click', async () => {
+    const key = document.getElementById('api-key-input').value.trim();
+    if (!key) { document.getElementById('api-test-result').innerHTML = '<span class="text-bear">Enter a key first.</span>'; return; }
+    document.getElementById('api-test-result').innerHTML = '<span class="text-muted">Testing with AAPL…</span>';
+    const oldKey = state.apiKey;
+    state.apiKey = key;
+    const result = await fetchLivePrice('AAPL');
+    state.apiKey = oldKey;
+    if (result && result.price > 0) {
+      document.getElementById('api-test-result').innerHTML =
+        `<span class="text-bull">✓ Works.</span> AAPL live: $${result.price.toFixed(2)} (${result.changePct >= 0 ? '+' : ''}${result.changePct.toFixed(2)}%)`;
+    } else {
+      document.getElementById('api-test-result').innerHTML =
+        `<span class="text-bear">✗ Failed.</span> Check the key at finnhub.io/dashboard or wait a moment (rate limit).`;
+    }
+  });
+
+  document.getElementById('api-key-disable').addEventListener('click', () => {
+    saveApiKey(null);
+    stopLivePriceRefresh();
+    state.livePrices = {};
+    document.getElementById('api-key-input').value = '';
+    document.getElementById('api-test-result').innerHTML = '<span class="text-muted">Live prices disabled. Using mock ticks.</span>';
+    refreshLiveStatus();
+    updateLiveIndicator();
+    renderSidebar();
+    if (typeof renderAllocator === 'function') renderAllocator();
+  });
+}
+
+/* ============================================================
+   OVERRIDE: computeAllocation to use live prices
+   ============================================================ */
+const _computeAllocation_original = computeAllocation;
+computeAllocation = function() {
+  const amount = parseFloat(document.getElementById('alloc-amount').value) || 0;
+  const currency = document.getElementById('alloc-currency').value;
+  const risk = state.allocRisk;
+  const horizon = state.allocHorizon;
+
+  const usdAmount = currency === 'MYR' ? amount / USD_MYR : amount;
+  const baseWeights = ALLOCATIONS[`${risk}-${horizon}`];
+  const signals = state.newsSignals ? state.newsSignals.signals : {};
+  const weights = applySignalsToAllocation(baseWeights, signals);
+
+  const plan = [];
+  Object.entries(weights).forEach(([sym, pct]) => {
+    if (pct < 0.5) return;
+    const asset = UNIVERSE.find(a => a.symbol === sym);
+    const pick = PICKS.find(p => p.symbol === sym);
+    const price = getAssetPrice(asset);              // ← LIVE if available
+    const usdAlloc = (usdAmount * pct) / 100;
+    const shares = usdAlloc / price;
+    const basePct = baseWeights[sym] || 0;
+    plan.push({
+      symbol: sym, pct, basePct, tilt: pct - basePct, asset, pick, usdAlloc, shares,
+      displayAlloc: currency === 'MYR' ? usdAlloc * USD_MYR : usdAlloc,
+      currentPrice: price,
+      isLivePrice: isLive(sym),
+    });
+  });
+
+  return { plan, usdAmount, amount, currency, risk, horizon, baseWeights };
+};
+
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+  loadWatchlist();
+  loadRecent();
+  loadApiKey();
+
+  renderClock();
+  setInterval(renderClock, 1000);
+
+  initFilters();
+  initFundTabs();
+  initSearch();
+  initDetailModal();
+  initSettings();
+
+  document.getElementById('refresh-btn').addEventListener('click', refresh);
+
+  renderPicks();
+  initAllocator();
+  refresh();
+
+  // Kick off live price refresh if API key present
+  updateLiveIndicator();
+  startLivePriceRefresh();
+
+  setInterval(tickCountdown, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
