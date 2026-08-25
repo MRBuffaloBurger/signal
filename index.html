@@ -546,6 +546,32 @@
         </div>
       </section>
 
+      <!-- MY PORTFOLIO -->
+      <section class="mt-8 panel p-6" id="livetest-section">
+        <div class="flex items-end justify-between mb-3 flex-wrap gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+                <path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>
+              </svg>
+              <div class="text-xs font-mono tracking-wider text-dim">MY PORTFOLIO · MOOMOO HOLDINGS</div>
+            </div>
+            <h2 class="text-2xl font-semibold tracking-tight">Live Portfolio Analysis</h2>
+            <p class="text-sm text-muted mt-1" id="livetest-subtitle">Track your real holdings against live prices with per-position analysis and recommended actions.</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <select id="portfolio-currency" class="alloc-input text-xs">
+              <option value="MYR">MYR</option>
+              <option value="USD">USD</option>
+            </select>
+            <button id="livetest-add-btn" class="btn-ghost text-xs">+ Add Position</button>
+            <button id="livetest-reset-btn" class="btn-ghost text-xs danger">Reset</button>
+          </div>
+        </div>
+
+        <div id="livetest-content"><!-- rendered dynamically --></div>
+      </section>
+
       <!-- PORTFOLIO BUILDER -->
       <section class="mt-8 panel p-6">
         <div class="flex items-end justify-between mb-3">
@@ -733,6 +759,7 @@
     <!-- Tab bar -->
     <div class="px-6 border-b hair flex-shrink-0 overflow-x-auto">
       <button class="dm-tab active" data-tab="overview">Overview</button>
+      <button class="dm-tab" data-tab="timing">Entry Timing</button>
       <button class="dm-tab" data-tab="financials">Financials</button>
       <button class="dm-tab" data-tab="technicals">Technicals</button>
       <button class="dm-tab" data-tab="profile">Profile</button>
@@ -787,13 +814,30 @@
 
       <div id="api-test-result" class="text-xs font-mono mb-4"></div>
 
+      <div class="text-[10px] font-mono tracking-wider text-cyan mb-2 mt-6">TWELVE DATA API KEY <span class="text-dim">— optional, for real charts &amp; timing</span></div>
+      <p class="text-xs text-muted mb-3 leading-relaxed">
+        Adds <strong class="text-text">real historical price data</strong> for the chart in Overview tab and makes all Entry Timing signals accurate. Without this, charts and timing use plausible-looking simulations. Sign up at
+        <a href="https://twelvedata.com/register" target="_blank" rel="noopener" class="link-src">twelvedata.com/register ↗</a>
+        — free tier: 800 API calls/day, 8/minute. Plenty for personal use.
+      </p>
+
+      <div class="flex gap-2 mb-3">
+        <input id="twelve-key-input" type="password" placeholder="Paste your Twelve Data key here..." class="alloc-input flex-1" autocomplete="off" />
+        <button id="twelve-key-toggle" class="btn-ghost" title="Show/hide">Show</button>
+      </div>
+      <div class="flex gap-2 mb-3">
+        <button id="twelve-key-save" class="btn-primary">Save &amp; Enable</button>
+        <button id="twelve-key-test" class="btn-ghost">Test Key</button>
+        <button id="twelve-key-disable" class="btn-ghost danger">Disable</button>
+      </div>
+      <div id="twelve-test-result" class="text-xs font-mono mb-4"></div>
+
       <div class="text-[10px] font-mono tracking-wider text-dim mb-2 mt-4">HOW IT WORKS</div>
       <ul class="text-xs text-muted space-y-1 leading-relaxed">
-        <li>• When enabled, the 10 Signal's Take picks refresh live every 30s.</li>
-        <li>• Portfolio Builder share calculations use live prices when available.</li>
-        <li>• Sidebar &amp; detail modal show real market data instead of simulated ticks.</li>
-        <li>• Your API key is stored only in your browser's localStorage. Never sent anywhere except Finnhub.</li>
-        <li>• Free tier covers US stocks/ETFs (NYSE, NASDAQ) — matches your Moomoo US universe.</li>
+        <li>• <strong class="text-text">Finnhub</strong> → real-time prices, WebSocket streaming, company news.</li>
+        <li>• <strong class="text-text">Twelve Data</strong> → real historical candles, accurate charts, trustworthy timing signals.</li>
+        <li>• Use both together for the full experience. Or just Finnhub for live prices with simulated charts.</li>
+        <li>• Both keys are stored only in your browser's localStorage. Never sent anywhere except the respective API.</li>
         <li>• Prices may differ from Moomoo by a few cents due to feed-level latency; this is normal.</li>
       </ul>
     </div>
@@ -812,8 +856,11 @@ const CONFIG = {
   storageKey: 'signal_watchlist_v1',
   recentSearchKey: 'signal_recent_v1',
   apiKeyStorageKey: 'signal_finnhub_key_v1',
+  twelveKeyStorageKey: 'signal_twelvedata_key_v1',
   livePriceEndpoint: 'https://finnhub.io/api/v1/quote',
   livePriceRefreshMs: 30_000,
+  twelveDataEndpoint: 'https://api.twelvedata.com/time_series',
+  historyCacheHours: 6, // cache historical candles for 6 hours
 };
 
 const state = {
@@ -832,8 +879,10 @@ const state = {
   watchlist: [],
   recentSearches: [],
   apiKey: null,          // Finnhub API key
+  twelveKey: null,       // Twelve Data API key (for historical)
   livePrices: {},        // symbol → { price, change, changePct, timestamp }
   livePriceTimer: null,
+  historyCache: {},      // symbol+tf → { candles, fetchedAt }
 };
 
 /* ============================================================
@@ -879,6 +928,8 @@ const UNIVERSE = [
   { symbol: 'COIN',  name: 'Coinbase Global',           type: 'stock', region: 'US', base: 148.68, sector: 'Fintech' },
   { symbol: 'MSTR',  name: 'MicroStrategy',             type: 'stock', region: 'US', base: 268.44, sector: 'Fintech' },
   { symbol: 'SMCI',  name: 'Super Micro Computer',      type: 'stock', region: 'US', base: 62.14,  sector: 'Hardware' },
+  { symbol: 'HBM',   name: 'Hudbay Minerals',            type: 'stock', region: 'US', base: 26.69,  sector: 'Copper Mining' },
+  { symbol: 'NBIS',  name: 'Nebius Group',               type: 'stock', region: 'US', base: 210.20, sector: 'AI Cloud' },
 
   // ═══ MALAYSIAN STOCKS (Bursa Malaysia, prices in MYR) ═══
   { symbol: 'MAYBANK', name: 'Malayan Banking Bhd',     type: 'stock', region: 'MY', base: 10.42,  sector: 'Banking' },
@@ -891,6 +942,7 @@ const UNIVERSE = [
   { symbol: 'GENTING', name: 'Genting Berhad',          type: 'stock', region: 'MY', base: 3.88,   sector: 'Leisure' },
   { symbol: 'AXIATA',  name: 'Axiata Group',            type: 'stock', region: 'MY', base: 2.44,   sector: 'Telecom' },
   { symbol: 'MISC',    name: 'MISC Berhad',             type: 'stock', region: 'MY', base: 8.71,   sector: 'Shipping' },
+  { symbol: 'SUNMED',  name: 'Sunview Group / Sun Med (5555)', type: 'stock', region: 'MY', base: 1.55,  sector: 'Healthcare' },
 
   // ═══ UK / EU STOCKS ═══
   { symbol: 'SHEL', name: 'Shell plc',         type: 'stock', region: 'UK', base: 2842.44, sector: 'Energy' },
@@ -950,6 +1002,9 @@ const UNIVERSE = [
   { symbol: 'BND',  name: 'Vanguard Total Bond Market ETF',  type: 'fund', region: 'US', base: 72.30,  sector: 'Bonds' },
   { symbol: 'IBIT', name: 'iShares Bitcoin Trust',           type: 'fund', region: 'US', base: 36.13,  sector: 'Crypto' },
   { symbol: 'ETHE', name: 'Grayscale Ethereum Trust',        type: 'fund', region: 'US', base: 18.44,  sector: 'Crypto' },
+  { symbol: 'SOXL', name: 'Direxion Semiconductor Bull 3x',  type: 'fund', region: 'US', base: 45.20,  sector: 'Leveraged Semi' },
+  { symbol: 'TQQQ', name: 'ProShares UltraPro QQQ (3x)',     type: 'fund', region: 'US', base: 128.44, sector: 'Leveraged Nasdaq' },
+  { symbol: 'XBI',  name: 'SPDR S&P Biotech ETF',            type: 'fund', region: 'US', base: 92.18,  sector: 'Biotech' },
 
   // ═══ INDICES — prices verified Aug 13, 2026 close ═══
   { symbol: 'SPX',   name: 'S&P 500 Index',           type: 'index', region: 'US', base: 7798.99 },
@@ -1713,6 +1768,7 @@ function renderActiveTab() {
   container.innerHTML = ''; // clear
   switch (state.activeDetailTab) {
     case 'overview':   container.innerHTML = renderOverviewTab(); attachOverview(); break;
+    case 'timing':     container.innerHTML = renderTimingTab(); break;
     case 'financials': container.innerHTML = renderFinancialsTab(); attachFinancialsHandlers(); break;
     case 'technicals': container.innerHTML = renderTechnicalsTab(); break;
     case 'profile':    container.innerHTML = renderProfileTab(); break;
@@ -2066,6 +2122,387 @@ function renderGenericFinancials(a) {
     </div>
   `;
 }
+
+/* ============================================================
+   ENTRY TIMING ENGINE
+   Combines RSI, distance-from-highs, MA position, drawdown,
+   and Bollinger position into a single 0–100 timing score.
+   Higher score = better entry opportunity.
+   ============================================================ */
+
+function computeStdDev(prices) {
+  const mean = prices.reduce((s, p) => s + p, 0) / prices.length;
+  const variance = prices.reduce((s, p) => s + (p - mean) ** 2, 0) / prices.length;
+  return Math.sqrt(variance);
+}
+
+function computeTimingSignals(asset) {
+  const prices = priceSeries(asset, 260); // ~1 year of "daily" data
+  const price = getAssetPrice(asset);
+  // Force current price to match live if available (so timing reflects reality)
+  prices[prices.length - 1] = price;
+
+  const w52h = Math.max(...prices);
+  const w52l = Math.min(...prices);
+  const ma50 = computeSMA(prices, 50);
+  const ma200 = computeSMA(prices, 200);
+  const rsi = computeRSI(prices);
+  const ma20 = computeSMA(prices, 20);
+  const last20 = prices.slice(-20);
+  const std20 = computeStdDev(last20);
+  const bbUpper = ma20 + 2 * std20;
+  const bbLower = ma20 - 2 * std20;
+  const bbPos = (price - bbLower) / (bbUpper - bbLower); // 0=lower band, 1=upper band
+
+  const distFrom52H = ((price - w52h) / w52h) * 100;  // negative = below high
+  const distFrom52L = ((price - w52l) / w52l) * 100;
+  const distFromMA200 = ((price - ma200) / ma200) * 100;
+
+  // ── Score components (each 0–100, higher = better entry) ──
+
+  // 1. RSI: sweet spot 30–50 = best entry, >70 = terrible
+  let rsiScore;
+  if (rsi < 30) rsiScore = 90;
+  else if (rsi < 45) rsiScore = 80;
+  else if (rsi < 55) rsiScore = 55;
+  else if (rsi < 65) rsiScore = 35;
+  else if (rsi < 75) rsiScore = 15;
+  else rsiScore = 5;
+
+  // 2. Distance from 52W high: closer to high = worse entry
+  let highScore;
+  if (distFrom52H > -2) highScore = 10;        // at high
+  else if (distFrom52H > -5) highScore = 25;
+  else if (distFrom52H > -10) highScore = 50;
+  else if (distFrom52H > -20) highScore = 75;
+  else highScore = 90;                          // well off highs
+
+  // 3. Bollinger position: lower half of band = better entry
+  let bbScore;
+  if (bbPos < 0.15) bbScore = 90;
+  else if (bbPos < 0.35) bbScore = 70;
+  else if (bbPos < 0.55) bbScore = 55;
+  else if (bbPos < 0.75) bbScore = 35;
+  else bbScore = 15;
+
+  // 4. Distance from 200-day MA: extended above = worse, below = value
+  let maScore;
+  if (distFromMA200 < -10) maScore = 85;
+  else if (distFromMA200 < 0) maScore = 70;
+  else if (distFromMA200 < 10) maScore = 55;
+  else if (distFromMA200 < 25) maScore = 35;
+  else maScore = 15;                             // dangerously extended
+
+  // Weighted composite (RSI + BB = mean-reversion; MA + high = trend context)
+  const composite = Math.round(
+    rsiScore * 0.30 +
+    highScore * 0.25 +
+    bbScore * 0.20 +
+    maScore * 0.25
+  );
+
+  // ── Entry price zones ──
+  // "Good entry" = at MA50 or -5% from current, whichever is lower
+  // "Great entry" = at BB lower or -10% from current, whichever is lower
+  const zoneWait = price * 1.02;                    // wait if within 2% up from here
+  const zoneFair = Math.min(price, ma20);
+  const zoneGood = Math.min(ma50 || price * 0.95, price * 0.95);
+  const zoneGreat = Math.min(bbLower, price * 0.88);
+
+  // ── Verdict ──
+  let verdict, action, color, actionDetail;
+  if (composite >= 75) {
+    verdict = 'GREAT ENTRY';
+    action = 'Buy now — good risk/reward';
+    actionDetail = 'Price is oversold or well off recent highs. Historical odds favor entry here.';
+    color = 'var(--bull)';
+  } else if (composite >= 60) {
+    verdict = 'GOOD ENTRY';
+    action = 'Buy now or DCA in';
+    actionDetail = 'Reasonable entry zone. Consider splitting into 2–3 tranches over a few weeks.';
+    color = '#86EFAC';
+  } else if (composite >= 40) {
+    verdict = 'FAIR ENTRY';
+    action = 'DCA slowly';
+    actionDetail = 'Not stretched, but not a bargain. Dollar-cost average over 4–8 weeks rather than lump sum.';
+    color = 'var(--cyan)';
+  } else if (composite >= 25) {
+    verdict = 'STRETCHED';
+    action = 'Wait for pullback';
+    actionDetail = 'Price is extended vs recent range. Better entries likely in the coming weeks.';
+    color = 'var(--warn)';
+  } else {
+    verdict = 'AVOID / WAIT';
+    action = 'Wait — high risk of near-term drop';
+    actionDetail = 'Multiple indicators screaming overbought. Very poor risk/reward for a fresh entry.';
+    color = 'var(--bear)';
+  }
+
+  return {
+    composite, verdict, action, actionDetail, color,
+    price, rsi, ma20, ma50, ma200, bbUpper, bbLower, bbPos, std20,
+    w52h, w52l, distFrom52H, distFrom52L, distFromMA200,
+    zoneWait, zoneFair, zoneGood, zoneGreat,
+    components: { rsiScore, highScore, bbScore, maScore },
+  };
+}
+
+function renderAnalystView(asset, timing) {
+  const pick = PICKS.find(p => p.symbol === asset.symbol);
+  if (!pick || !pick.analysis) return '';
+
+  const an = pick.analysis;
+
+  // Conviction stars
+  const stars = '★'.repeat(an.conviction) + '☆'.repeat(5 - an.conviction);
+  const convictionColor = an.conviction >= 4 ? 'var(--bull)' : an.conviction === 3 ? 'var(--cyan)' : an.conviction === 2 ? 'var(--warn)' : 'var(--bear)';
+
+  // Trend alignment
+  const trendMap = {
+    'strong-tailwind':   { label: '⇈ STRONG TAILWIND', color: 'var(--bull)', desc: 'Every macro condition supports this pick' },
+    'tailwind':          { label: '↗ TAILWIND',        color: '#86EFAC',     desc: 'Market conditions favor the thesis' },
+    'mixed':             { label: '⇄ MIXED',           color: 'var(--cyan)', desc: 'Some tailwinds, some headwinds' },
+    'headwind':          { label: '↘ HEADWIND',        color: 'var(--warn)', desc: 'Fighting the current market trend' },
+    'strong-headwind':   { label: '⇊ STRONG HEADWIND', color: 'var(--bear)', desc: 'Major forces working against this pick' },
+  };
+  const trend = trendMap[an.trendAlignment] || trendMap['mixed'];
+
+  // Signal trust — should we trust the mechanical signal above?
+  const trustMap = {
+    'trust-always':   { label: 'ALWAYS TRUST',        color: 'var(--bull)', icon: '✓' },
+    'trust-bullish':  { label: 'TRUST BULLISH SIGNALS',color: '#86EFAC',    icon: '↑' },
+    'trust-bearish':  { label: 'TRUST BEARISH SIGNALS',color: 'var(--warn)',icon: '↓' },
+    'nuanced':        { label: 'READ WITH NUANCE',    color: 'var(--cyan)', icon: '~' },
+    'contrarian':     { label: 'CONTRARIAN SETUP',    color: 'var(--purple)',icon: '⇋' },
+  };
+  const trust = trustMap[an.signalTrust] || trustMap['nuanced'];
+
+  // Check if the mechanical signal agrees with the analyst view
+  const mechanicalSaysBuy = timing.composite >= 60;
+  const mechanicalSaysWait = timing.composite < 40;
+  const analystIsBullish = an.conviction >= 4 && (an.trendAlignment === 'strong-tailwind' || an.trendAlignment === 'tailwind');
+  const analystIsBearish = an.conviction <= 2 || an.trendAlignment === 'strong-headwind';
+
+  let agreementBadge = '';
+  if (mechanicalSaysBuy && analystIsBullish) {
+    agreementBadge = `<div class="text-[10px] font-mono mt-2 px-2 py-1" style="background: rgba(52,211,153,0.15); border-left: 2px solid var(--bull); color: var(--bull);">
+      ✓ TECHNICAL &amp; FUNDAMENTAL SIGNALS AGREE — HIGH CONFIDENCE BUY
+    </div>`;
+  } else if (mechanicalSaysWait && analystIsBearish) {
+    agreementBadge = `<div class="text-[10px] font-mono mt-2 px-2 py-1" style="background: rgba(248,113,113,0.15); border-left: 2px solid var(--bear); color: var(--bear);">
+      ✓ TECHNICAL &amp; FUNDAMENTAL SIGNALS AGREE — WAIT
+    </div>`;
+  } else if (mechanicalSaysBuy && analystIsBearish) {
+    agreementBadge = `<div class="text-[10px] font-mono mt-2 px-2 py-1" style="background: rgba(251,191,36,0.15); border-left: 2px solid var(--warn); color: var(--warn);">
+      ⚠ TECHNICAL SAYS BUY BUT FUNDAMENTALS DISAGREE — FALLING KNIFE RISK
+    </div>`;
+  } else if (mechanicalSaysWait && analystIsBullish) {
+    agreementBadge = `<div class="text-[10px] font-mono mt-2 px-2 py-1" style="background: rgba(192,132,252,0.15); border-left: 2px solid var(--purple); color: var(--purple);">
+      ⇋ TECHNICAL SAYS WAIT BUT THESIS IS STRONG — GOOD DCA OPPORTUNITY
+    </div>`;
+  } else {
+    agreementBadge = `<div class="text-[10px] font-mono mt-2 px-2 py-1" style="background: var(--panel-2); border-left: 2px solid var(--cyan); color: var(--cyan);">
+      ~ MIXED SIGNAL — READ ANALYST VIEW BELOW BEFORE ACTING
+    </div>`;
+  }
+
+  return `
+    <div class="text-[10px] font-mono tracking-wider text-cyan mb-3 mt-6 flex items-center gap-2">
+      <span style="width: 6px; height: 6px; background: var(--cyan); display: inline-block;"></span>
+      SIGNAL'S ANALYST VIEW · ${asset.symbol}
+      <span class="text-dim">· updated ${an.updated || 'recently'}</span>
+    </div>
+
+    <div class="panel-2 p-4 mb-4" style="border-left: 3px solid ${convictionColor};">
+      <!-- Conviction + trend + trust badges -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-1">CONVICTION</div>
+          <div class="font-mono text-lg" style="color: ${convictionColor};">${stars}</div>
+          <div class="text-[10px] text-dim mt-1">${an.conviction}/5 · ${
+            an.conviction === 5 ? 'Very high' : an.conviction === 4 ? 'High' : an.conviction === 3 ? 'Moderate' : an.conviction === 2 ? 'Low' : 'Very low'
+          }</div>
+        </div>
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-1">MARKET TREND</div>
+          <div class="font-mono text-xs font-bold" style="color: ${trend.color};">${trend.label}</div>
+          <div class="text-[10px] text-dim mt-1">${trend.desc}</div>
+        </div>
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-1">SIGNAL RELIABILITY</div>
+          <div class="font-mono text-xs font-bold" style="color: ${trust.color};">${trust.icon} ${trust.label}</div>
+          <div class="text-[10px] text-dim mt-1">How to weight the timing score</div>
+        </div>
+      </div>
+
+      ${agreementBadge}
+
+      <!-- Trend reasoning -->
+      <div class="mt-4">
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-1">CURRENT MARKET CONTEXT</div>
+        <p class="text-xs text-muted leading-relaxed">${an.trendReasoning}</p>
+      </div>
+
+      <!-- Signal trust reasoning -->
+      <div class="mt-3">
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-1">HOW TO READ THE TIMING SIGNAL</div>
+        <p class="text-xs text-muted leading-relaxed">${an.signalReasoning}</p>
+      </div>
+
+      <!-- Overall view -->
+      <div class="mt-3 pt-3 border-t hair">
+        <div class="text-[10px] font-mono tracking-wider text-cyan mb-1">OVERALL VIEW</div>
+        <p class="text-sm leading-relaxed" style="color: var(--text);">${an.view}</p>
+      </div>
+
+      <!-- Catalysts + Risks side by side -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-bull mb-2">▲ BULLISH CATALYSTS</div>
+          <ul class="text-xs space-y-1.5 leading-relaxed">
+            ${an.catalysts.map(c => `<li class="flex gap-2"><span class="text-bull">+</span><span class="text-muted">${c}</span></li>`).join('')}
+          </ul>
+        </div>
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-bear mb-2">▼ KEY RISKS</div>
+          <ul class="text-xs space-y-1.5 leading-relaxed">
+            ${an.risks.map(r => `<li class="flex gap-2"><span class="text-bear">−</span><span class="text-muted">${r}</span></li>`).join('')}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Invalidation -->
+      <div class="mt-4 p-3" style="background: rgba(251,191,36,0.08); border-left: 2px solid var(--warn);">
+        <div class="text-[10px] font-mono tracking-wider text-warn mb-1">WHAT WOULD CHANGE THIS VIEW</div>
+        <p class="text-xs text-muted leading-relaxed">${an.invalidation}</p>
+      </div>
+
+      <p class="text-[10px] text-dim mt-3 font-mono italic">
+        Analyst view is my judgment based on public information as of ${an.updated || 'Aug 2026'}. Not financial advice. Confirm with your own research before acting.
+      </p>
+    </div>
+  `;
+}
+
+function renderTimingTab() {
+  const a = state.currentAsset;
+  if (!a) return '';
+  const t = computeTimingSignals(a);
+  const isLiveP = isLive(a.symbol);
+
+  // Score gauge (0-100 arc)
+  const gaugeAngle = (t.composite / 100) * 180 - 90; // -90 to +90 degrees
+
+  return `
+    <div class="tab-panel">
+
+      <!-- Headline verdict -->
+      <div class="panel-2 p-5 mb-5" style="border-top: 3px solid ${t.color};">
+        <div class="flex items-start justify-between gap-4 flex-wrap mb-3">
+          <div>
+            <div class="text-[10px] font-mono tracking-[0.2em] text-dim mb-1">ENTRY TIMING VERDICT</div>
+            <div class="text-2xl font-bold tracking-tight" style="color: ${t.color};">${t.verdict}</div>
+            <div class="text-sm text-muted mt-1">${t.action}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-[10px] font-mono tracking-wider text-dim mb-1">TIMING SCORE</div>
+            <div class="text-4xl font-mono font-bold" style="color: ${t.color};">${t.composite}<span class="text-lg text-dim">/100</span></div>
+          </div>
+        </div>
+        <p class="text-xs text-muted leading-relaxed">${t.actionDetail}</p>
+        ${!isLiveP ? '<p class="text-[10px] text-warn mt-2 font-mono">⚠ Using simulated price data — enable Finnhub in Settings for live-based signals.</p>' : ''}
+      </div>
+
+      <!-- Entry price zones -->
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">SUGGESTED ENTRY ZONES</div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-6">
+        <div class="stat" style="border-top: 2px solid var(--bear);">
+          <div class="stat-label">⚠ WAIT ABOVE</div>
+          <div class="stat-value">${fmt.price(t.zoneWait)}</div>
+          <div class="text-[10px] text-dim mt-1">Chasing zone</div>
+        </div>
+        <div class="stat" style="border-top: 2px solid var(--warn);">
+          <div class="stat-label">FAIR ENTRY</div>
+          <div class="stat-value">${fmt.price(t.zoneFair)}</div>
+          <div class="text-[10px] text-dim mt-1">DCA target</div>
+        </div>
+        <div class="stat" style="border-top: 2px solid #86EFAC;">
+          <div class="stat-label">GOOD ENTRY</div>
+          <div class="stat-value text-bull">${fmt.price(t.zoneGood)}</div>
+          <div class="text-[10px] text-dim mt-1">Load position</div>
+        </div>
+        <div class="stat" style="border-top: 2px solid var(--bull);">
+          <div class="stat-label">GREAT ENTRY</div>
+          <div class="stat-value text-bull">${fmt.price(t.zoneGreat)}</div>
+          <div class="text-[10px] text-dim mt-1">Back up truck</div>
+        </div>
+      </div>
+
+      <!-- Current price context -->
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">PRICE CONTEXT · CURRENT ${fmt.price(t.price)}</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+        <div class="stat">
+          <div class="stat-label">From 52W High</div>
+          <div class="stat-value ${t.distFrom52H > -5 ? 'text-bear' : t.distFrom52H > -15 ? 'text-warn' : 'text-bull'}">${fmt.pct(t.distFrom52H)}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">From 52W Low</div>
+          <div class="stat-value text-muted">${fmt.pct(t.distFrom52L)}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">From 200D MA</div>
+          <div class="stat-value ${t.distFromMA200 > 15 ? 'text-bear' : t.distFromMA200 > 0 ? 'text-warn' : 'text-bull'}">${fmt.pct(t.distFromMA200)}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">RSI (14)</div>
+          <div class="stat-value ${t.rsi > 70 ? 'text-bear' : t.rsi < 30 ? 'text-bull' : 'text-muted'}">${t.rsi.toFixed(1)}</div>
+        </div>
+      </div>
+
+      <!-- Score breakdown -->
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">HOW WE GOT THE SCORE</div>
+      <div class="space-y-2 mb-6">
+        ${[
+          ['Momentum (RSI)', t.components.rsiScore, 30, `RSI at ${t.rsi.toFixed(1)} — ${t.rsi > 70 ? 'overbought' : t.rsi < 30 ? 'oversold' : 'neutral zone'}`],
+          ['Distance from High', t.components.highScore, 25, `${Math.abs(t.distFrom52H).toFixed(1)}% ${t.distFrom52H < 0 ? 'below' : 'above'} 52W high`],
+          ['Bollinger Position', t.components.bbScore, 20, `${(t.bbPos * 100).toFixed(0)}% up the volatility band (0% = floor, 100% = ceiling)`],
+          ['Trend Position (200D MA)', t.components.maScore, 25, `${Math.abs(t.distFromMA200).toFixed(1)}% ${t.distFromMA200 > 0 ? 'above' : 'below'} long-term average`],
+        ].map(([label, score, weight, detail]) => {
+          const barColor = score >= 65 ? 'var(--bull)' : score >= 40 ? 'var(--cyan)' : 'var(--bear)';
+          return `
+            <div class="panel-2 p-3">
+              <div class="flex items-center justify-between mb-1">
+                <div class="text-sm font-medium">${label} <span class="text-[10px] font-mono text-dim">· weight ${weight}%</span></div>
+                <div class="font-mono text-sm font-bold" style="color: ${barColor};">${score}/100</div>
+              </div>
+              <div class="w-full h-1 bg-[color:var(--border)]"><div style="width: ${score}%; height: 100%; background: ${barColor};"></div></div>
+              <div class="text-[10px] text-dim mt-1">${detail}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      ${renderAnalystView(a, t)}
+
+      <!-- Execution guidance -->
+      <div class="panel-2 p-4">
+        <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">EXECUTION PLAYBOOK</div>
+        <ul class="text-xs text-muted space-y-1.5 leading-relaxed">
+          <li><span class="text-dim">•</span> <strong class="text-text">Never buy in one lump.</strong> Split any target position into 3–5 tranches over weeks.</li>
+          <li><span class="text-dim">•</span> Set your <strong class="text-text">Good Entry</strong> price (${fmt.price(t.zoneGood)}) as a limit-buy alert on Moomoo.</li>
+          <li><span class="text-dim">•</span> If price hits <strong class="text-text">Great Entry</strong> (${fmt.price(t.zoneGreat)}), increase tranche size 2x.</li>
+          <li><span class="text-dim">•</span> If price runs above <strong class="text-text">Wait zone</strong> (${fmt.price(t.zoneWait)}), stop buying — you're chasing.</li>
+          <li><span class="text-dim">•</span> Timing improves your average entry ~5–15%. It doesn't turn bad thesis into good — always confirm the fundamentals in the Financials tab.</li>
+        </ul>
+      </div>
+
+      <p class="text-[10px] text-dim mt-4 font-mono text-center">
+        Timing signals are probabilistic aids, not predictions. Markets can stay overbought longer than you can stay solvent.
+      </p>
+    </div>
+  `;
+}
+
 
 /* ---------- TECHNICALS ---------- */
 function computeSMA(prices, period) {
@@ -2457,7 +2894,20 @@ const PICKS = [
       note: "T-bill ETF with negligible duration risk. Move funds in or out any trading day — this is a parking spot, not a long-term hold."
     },
     thesis: "Front-end T-bill yields still pay real return above inflation. The parking spot for capital you want ready to deploy on the next pullback — near-zero duration risk, daily liquidity, better than cash.",
-    bestFor: "Building dry powder while earning yield" },
+    bestFor: "Building dry powder while earning yield",
+    analysis: {
+      conviction: 5,
+      trendAlignment: 'strong-tailwind',
+      trendReasoning: "Fed paused after 75bps of cuts, with hawkish dissents at recent meetings and 10Y at 5.2% (highest since 2007). Front-end rates likely stay elevated well into 2027.",
+      signalTrust: 'trust-always',
+      signalReasoning: "SGOV price is stable by design (~$100). Timing signals are essentially meaningless — buy anytime, sell anytime.",
+      view: "This is the most attractive it's been in years. ~5% yield with near-zero risk while equity risk premium is at historical lows. Every dollar you're not sure what to do with should live here.",
+      catalysts: ["10Y at 5.2%, keeps SGOV yield ~5%", "Hawkish Fed dissents = no near-term cuts", "Bear-steepening curve punishes duration"],
+      risks: ["Fed pivot dovish → yield grinds down to 3.5-4%", "Very unlikely: emergency rate cuts"],
+      invalidation: "Fed announces surprise emergency cuts or QE — you'd want to leave SGOV for duration or equities.",
+      updated: "Aug 2026"
+    }
+  },
 
   { symbol: "VOO", kind: "etf", title: "Vanguard S&P 500 ETF", ticker: "NYSE:VOO",
     category: "US large-cap · Broad market", risk: "low",
@@ -2469,7 +2919,20 @@ const PICKS = [
       note: "Rolling 15-year returns for the S&P 500 have historically been positive. Shorter windows can see 30%+ drawdowns before recovery."
     },
     thesis: "Owning the whole US large-cap index removes single-stock risk while keeping exposure to the AI capex cycle and productivity growth. Expense ratio near 0.03% is basically free. Boring quietly beats most active funds.",
-    bestFor: "Your core, long-term holding" },
+    bestFor: "Your core, long-term holding",
+    analysis: {
+      conviction: 3,
+      trendAlignment: 'mixed',
+      trendReasoning: "SPX at record highs ~7,800 (up 14% YTD). Bull market intact but equity risk premium near zero and heavy concentration in AI mega-caps. Vanguard forecasts elevated but not euphoric.",
+      signalTrust: 'nuanced',
+      signalReasoning: "'GREAT ENTRY' signals on VOO right now are suspect — index is 15%+ above its 200D MA. Better to trust 'STRETCHED' signals and wait for real pullbacks (5-10%+).",
+      view: "Long-term you'll be fine — VOO always is. But this is a bad moment for lump-sum. The AI capex peak-fear rotation started in July with semis down 30%. DCA over 4-6 months rather than deploying all at once.",
+      catalysts: ["Fed rate cuts continue (2 more expected)", "AI productivity gains broadening to non-tech sectors", "OBBBA fiscal stimulus"],
+      risks: ["AI capex disappointment (Alphabet -7%, Meta -8% on capex guidance)", "10Y at 5.2% pressuring multiples", "Middle East oil shock + Fed hawkish pivot", "Concentration risk: top 10 stocks = 38% of index"],
+      invalidation: "Meaningful pullback of 10%+ or clear earnings recession = flip to aggressive buying instead of DCA.",
+      updated: "Aug 2026"
+    }
+  },
 
   { symbol: "GLD", kind: "etf", title: "SPDR Gold Shares", ticker: "NYSE:GLD",
     category: "Commodity · Hedge", risk: "moderate",
@@ -2481,7 +2944,20 @@ const PICKS = [
       note: "Gold can underperform for multiple years during risk-on cycles. Hold long enough to weather at least one full macro cycle."
     },
     thesis: "Central-bank buying (China, Poland, India) has structurally repriced gold. Works as a hedge against currency debasement and geopolitical risk without correlating with equities. Size as 5–10% of portfolio.",
-    bestFor: "Portfolio insurance during macro stress" },
+    bestFor: "Portfolio insurance during macro stress",
+    analysis: {
+      conviction: 4,
+      trendAlignment: 'strong-tailwind',
+      trendReasoning: "Gold at $4,387 spot — up 57% since Jan 2026. Central bank buying persistent, dollar weakness, Middle East tensions, sticky inflation all supportive. Historically a 'stealth QE' beneficiary.",
+      signalTrust: 'trust-bullish',
+      signalReasoning: "Trust 'GREAT ENTRY' signals. Even 'STRETCHED' pullbacks tend to be shallow (5-10%) in strong secular uptrends. Don't wait for perfect entry.",
+      view: "One of the highest-conviction macro trades right now. Multi-decade central bank de-dollarization + geopolitical tail risk + fiscal excess = structural bid. Own 5-10% of portfolio and don't overthink it.",
+      catalysts: ["Middle East tensions escalating (Iran truce collapsed)", "Central bank buying record pace (China, Poland, India)", "Dollar weakness accelerating", "US fiscal deficit widening"],
+      risks: ["Aggressive Fed hike → real yields spike (mild negative)", "Middle East de-escalation (short-term profit taking only)", "Speculative positioning already crowded"],
+      invalidation: "Sustained dollar strength + real yields above 3% would break the thesis. Not imminent.",
+      updated: "Aug 2026"
+    }
+  },
 
   { symbol: "SMH", kind: "etf", title: "VanEck Semiconductor ETF", ticker: "NYSE:SMH",
     category: "Sector thematic · AI infra", risk: "high",
@@ -2493,7 +2969,20 @@ const PICKS = [
       note: "Semiconductor cycles run 18–36 months peak-to-trough. Plan to hold across at least one full cycle to avoid selling at the bottom."
     },
     thesis: "The AI infrastructure buildout runs on lithography, HBM memory, and advanced packaging — SMH captures that theme without forcing you to pick between Nvidia, TSMC, and ASML. Cyclicality is real; size as satellite, not core.",
-    bestFor: "Betting on the compute demand curve" },
+    bestFor: "Betting on the compute demand curve",
+    analysis: {
+      conviction: 4,
+      trendAlignment: 'headwind',
+      trendReasoning: "SMH sold off ~30% from June highs on AI capex peak fears. Market treating Alphabet/Meta's higher capex guidance as bearish rather than bullish — flipped narrative. This IS the drawdown the horizon note warned about.",
+      signalTrust: 'contrarian',
+      signalReasoning: "This is when timing signals are MOST valuable. 'GREAT ENTRY' or 'STRETCHED' signals should be trusted more than usual because we're actually in a real correction, not a shallow dip.",
+      view: "The best contrarian setup on this list right now. Fundamentals of AI infra buildout are intact ($520B hyperscaler capex in 2026 is real spending) but sentiment has capitulated. This is when you accumulate — DCA aggressively over the next 2-3 months. Don't try to catch bottom.",
+      catalysts: ["Post-correction technicals — 30% drawdown historically = strong 12M forward returns", "Q3 earnings could reset sentiment if capex guidance stabilizes", "AI capex actually spending, not slowing"],
+      risks: ["Capex genuinely peaks → 40-60% further downside", "Recession = memory cycle collapse (MU could halve)", "Chinese semi self-sufficiency accelerating"],
+      invalidation: "Two consecutive quarters of hyperscaler capex cuts (not just slower growth) — that's the signal the cycle is really over.",
+      updated: "Aug 2026"
+    }
+  },
 
   { symbol: "IBIT", kind: "etf", title: "Spot Bitcoin ETF", ticker: "NASDAQ:IBIT",
     category: "Crypto · Digital asset", risk: "very-high",
@@ -2505,7 +2994,20 @@ const PICKS = [
       note: "Bitcoin's 4-year halving cycle historically drives structural returns. Hold across at least one full cycle; only size to what you can watch fall 60% without panic-selling."
     },
     thesis: "Regulated wrapper for direct BTC exposure with institutional-grade custody. Halving-driven supply constraint plus continued ETF inflows form a structural bid. Only size to what you can watch fall 60% without panic-selling.",
-    bestFor: "High-conviction crypto via regulated wrapper" },
+    bestFor: "High-conviction crypto via regulated wrapper",
+    analysis: {
+      conviction: 3,
+      trendAlignment: 'headwind',
+      trendReasoning: "BTC ~$63K, down ~33% from earlier 2026 highs near $94K. Higher long yields (10Y at 5.2%) traditionally hurt zero-yield assets. Post-halving cycle historically enters 12-18 month consolidation before next leg up.",
+      signalTrust: 'nuanced',
+      signalReasoning: "In BTC drawdowns, mechanical timing signals often say 'GREAT ENTRY' too early — BTC can stay oversold for months. Weight the horizon note over the timing signal.",
+      view: "Not the peak buying moment but decent DCA setup. If you're not already positioned, start small (25% of target size) and add on further weakness to $50-55K. Cycle math still favors patient holders — 2028 halving is only 2 years out.",
+      catalysts: ["ETF inflow persistence — BlackRock IBIT still net creations", "Institutional treasury adoption expanding beyond MSTR", "2028 halving supply shock preparation"],
+      risks: ["Higher real yields → more selling pressure", "Regulatory shift under new administration", "Correlation with tech unwinds during SPX corrections"],
+      invalidation: "BTC breaking below $45K decisively would suggest cycle top is in and 2-year bear needed. Reassess sizing.",
+      updated: "Aug 2026"
+    }
+  },
 
   // ═══ INDIVIDUAL STOCK PICKS ═══
   { symbol: "MSFT", kind: "stock", title: "Microsoft Corporation", ticker: "NASDAQ:MSFT",
@@ -2518,7 +3020,20 @@ const PICKS = [
       note: "Azure + M365 subscription base creates highly predictable cash flow. OpenAI partnership adds AI upside without single-product risk."
     },
     thesis: "The most diversified mega-cap: cloud infrastructure (Azure), enterprise software (M365), gaming (Xbox), and OpenAI partnership. Recurring revenue and $80B+ annual buybacks make drawdowns shallow relative to peers.",
-    bestFor: "Blue-chip growth as a stock, not an ETF" },
+    bestFor: "Blue-chip growth as a stock, not an ETF",
+    analysis: {
+      conviction: 4,
+      trendAlignment: 'mixed',
+      trendReasoning: "MSFT ~$500 near highs but softer than pure AI plays. Azure remains capacity-constrained (bullish signal) but market punishing all AI capex commitments. Best-positioned mega-cap through the rotation.",
+      signalTrust: 'trust-bullish',
+      signalReasoning: "MSFT's recurring revenue model means drawdowns are shallower than pure-play AI names. Trust 'GOOD ENTRY' and 'GREAT ENTRY' signals when they appear — they've historically worked well.",
+      view: "The highest-quality way to own AI without the whipsaw. Azure is capacity-constrained (rare admission = truly strong demand) while OpenAI partnership provides asymmetric upside. Even in a broader tech correction, MSFT tends to lose less. Core holding for anyone building a stock portfolio.",
+      catalysts: ["Azure capacity constraints suggest FY27 revenue upside", "OpenAI GPT-5+ integration monetization", "$80B+ annual buyback authorization", "Gaming/Activision synergies materializing"],
+      risks: ["Capex commitments if AI monetization slower than hoped", "Regulatory pressure on Activision or OpenAI relationship", "General mega-cap tech de-rating on 10Y yield spike"],
+      invalidation: "Azure growth deceleration below 25% Y/Y would signal AI demand rolling over — reassess.",
+      updated: "Aug 2026"
+    }
+  },
 
   { symbol: "GLW", kind: "stock", title: "Corning Incorporated", ticker: "NYSE:GLW",
     category: "Optical comms · AI infrastructure", risk: "moderate",
@@ -2530,7 +3045,20 @@ const PICKS = [
       note: "Optical fiber demand ramp is tied to the multi-year data-center buildout. Dividend cushions drawdowns; wait for the AI capex tailwind to fully monetize."
     },
     thesis: "Optical fiber is the physical layer under every AI data center. Corning has 170+ years of specialty-glass moat and pays a growing dividend. Undervalued relative to pure-play AI infrastructure names.",
-    bestFor: "AI infrastructure exposure with income cushion" },
+    bestFor: "AI infrastructure exposure with income cushion",
+    analysis: {
+      conviction: 4,
+      trendAlignment: 'tailwind',
+      trendReasoning: "GLW at $158.54 in a healthy consolidation after big run. Optical fiber demand accelerating with data center buildout — GLW is the physical layer play the market underweights vs semis. Dividend yield near 2.8% provides income while waiting.",
+      signalTrust: 'trust-bullish',
+      signalReasoning: "GLW is less crowded than pure AI names, so timing signals here are more reliable. 'GREAT ENTRY' at oversold RSI historically leads to 15-25% moves in 6 months.",
+      view: "Under-owned AI infrastructure play. While NVDA gets the headlines, every AI data center needs miles of Corning optical fiber. Trades at reasonable multiples vs pure-play AI names. The dividend + AI upside combination is rare — worth accumulating on any weakness. Note: your original entry was above current, but thesis is intact — DCA down to lower your basis rather than sell.",
+      catalysts: ["Hyperscaler fiber orders accelerating", "800G optical transceiver ramp in 2026-2027", "Display glass exposure to premium OLED cycle", "Consistent dividend growth (2%+ per year)"],
+      risks: ["Optical component pricing pressure from Chinese competitors", "Data center pause slows fiber orders", "Non-AI segments (auto glass, containers) cyclical drag"],
+      invalidation: "Two quarters of declining optical segment revenue = thesis is early or wrong. Reassess.",
+      updated: "Aug 2026"
+    }
+  },
 
   { symbol: "JPM", kind: "stock", title: "JPMorgan Chase", ticker: "NYSE:JPM",
     category: "Banking · Financial dividend", risk: "low",
@@ -2542,7 +3070,20 @@ const PICKS = [
       note: "Banks are cyclical — expect drawdowns of 25%+ in recessions. But JPM's fortress balance sheet and diversified franchise make it the highest-quality large bank."
     },
     thesis: "The best-run US megabank — leading market share in consumer, investment banking, and asset management. Benefits from higher rates and normalized yield curve. Dimon successor plan reduces key-person risk.",
-    bestFor: "Financial-sector exposure with dividend income" },
+    bestFor: "Financial-sector exposure with dividend income",
+    analysis: {
+      conviction: 4,
+      trendAlignment: 'strong-tailwind',
+      trendReasoning: "JPM at $363 - benefits from every current macro theme: yield curve bear-steepening (wider NIM), Fed hawkish pivot (higher for longer), credit quality still healthy, IB deal activity picking up. Everything working.",
+      signalTrust: 'trust-bullish',
+      signalReasoning: "Trust bullish timing signals here. Bank valuations remain reasonable and 'STRETCHED' signals from other picks don't apply — JPM re-rated but not extreme.",
+      view: "The most quietly compelling pick on this list right now. Every macro condition favors JPM — higher long yields, steeper curve, deregulation tailwind, and Dimon still at the helm. Investment banking waking up. Trades at fair valuation without the AI hype premium. If you want steady wealth-building without whipsaw, this is it.",
+      catalysts: ["10Y at 5.2% + steeper curve = record NIM", "IB revenue recovery from 2023-2024 slump", "Deregulation under new administration", "Dimon successor plan de-risks leadership"],
+      risks: ["Recession = credit losses (though JPM well-provisioned)", "Commercial real estate exposure", "Sudden Fed cuts compress NIM"],
+      invalidation: "Credit metric deterioration (NPLs, charge-offs above 0.75%) would signal cycle turn.",
+      updated: "Aug 2026"
+    }
+  },
 
   { symbol: "NVDA", kind: "stock", title: "NVIDIA Corporation", ticker: "NASDAQ:NVDA",
     category: "AI leader · Semiconductors", risk: "high",
@@ -2554,7 +3095,20 @@ const PICKS = [
       note: "Concentrated bet on continued AI capex. When AI infrastructure spending inevitably slows, expect 40%+ drawdowns. Size accordingly."
     },
     thesis: "The pick-and-shovel play for the AI gold rush. CUDA software moat + Blackwell architecture leadership + fully-allocated supply through 2026. Direct alternative to SMH if you want concentrated conviction.",
-    bestFor: "Direct AI exposure without ETF dilution" },
+    bestFor: "Direct AI exposure without ETF dilution",
+    analysis: {
+      conviction: 3,
+      trendAlignment: 'headwind',
+      trendReasoning: "NVDA down significantly from highs as part of the July semi rout. Market is questioning AI capex peak — every hyperscaler capex increase is now being sold, not bought. This is a real regime change, not noise.",
+      signalTrust: 'nuanced',
+      signalReasoning: "'GREAT ENTRY' signals on individual AI names during a real correction can trigger multiple times before actual bottom. Use SMH exposure instead for diversified semi bet — safer expression of the same thesis.",
+      view: "Great company, wrong time for concentrated position. If SMH is already down 30%, individual AI names can drop 40-50% before the cycle turns. NVDA's fundamentals are excellent, but the stock price has to work through overhang from capex peak narrative. **Prefer SMH exposure over direct NVDA right now** — same thesis, less single-name volatility. If you must own NVDA, small position + DCA very slowly.",
+      catalysts: ["Blackwell demand still exceeding supply", "China H20 sales resumption", "Sovereign AI wave (Middle East, EU)", "GTC 2026 unveils Rubin architecture"],
+      risks: ["Hyperscaler capex genuinely peaks (Alphabet already at $200B/yr)", "Custom silicon from Google/Amazon eating share", "Government export restrictions widening", "Cyclical semi downcycle amplified by cyclicality"],
+      invalidation: "Q4 revenue guidance below consensus for the first time — that's the market's confirmation the cycle is turning.",
+      updated: "Aug 2026"
+    }
+  },
 
   { symbol: "COIN", kind: "stock", title: "Coinbase Global", ticker: "NASDAQ:COIN",
     category: "Crypto proxy · Fintech", risk: "very-high",
@@ -2566,7 +3120,19 @@ const PICKS = [
       note: "COIN behaves as a leveraged bet on crypto adoption. Revenue is tied to trading volumes which collapse in bear markets — historical drawdowns exceed 80%."
     },
     thesis: "The largest US-regulated crypto exchange, custody, and staking platform. Levered exposure to crypto adoption without holding tokens directly. Interest income on USDC reserves adds a defensive floor.",
-    bestFor: "Levered crypto adoption via a listed stock" },
+    bestFor: "Levered crypto adoption via a listed stock",
+    analysis: {
+      conviction: 2,
+      trendAlignment: 'strong-headwind',
+      trendReasoning: "COIN at $148 - massively down from earlier highs. BTC correction + interest income compression (as rates come down eventually) + trading volume collapse in bear market = triple squeeze.",
+      signalTrust: 'contrarian',
+      signalReasoning: "COIN mechanically follows BTC but with 2-3x leverage. Any 'GREAT ENTRY' signal must be validated against underlying BTC health first. Ignore isolated COIN signals.",
+      view: "The most speculative pick on this list — treat as such. If you're bullish crypto long-term, IBIT is a cleaner expression. COIN adds business execution risk on top of crypto risk. Only for those who understand: this can 3x or halve in a year. If you buy, ≤2% position and treat it as venture capital, not investment.",
+      catalysts: ["Regulatory clarity in US crypto framework", "Institutional custody wins", "Perpetuals rollout scaling revenue", "Base L2 monetization"],
+      risks: ["Extended crypto bear = 70%+ drawdown", "Competition from Robinhood, traditional brokers", "USDC interest income compressing", "Regulatory setback"],
+      invalidation: "Sustained BTC below $45K = COIN heading to $80. Reassess sizing."
+    }
+  },
 ];
 
 function pickCard(pick) {
@@ -2911,6 +3477,14 @@ function renderAllocator() {
       ? `<span class="font-mono text-[9px] ${p.tilt > 0 ? 'text-bull' : 'text-bear'}" title="News signal adjustment">
            (${p.tilt > 0 ? '+' : ''}${p.tilt.toFixed(1)}% vs base ${p.basePct}%)
          </span>` : '';
+    // Entry timing badge
+    const timing = computeTimingSignals(p.asset);
+    const timingBadge = `<span class="font-mono text-[9px]" style="padding: 1px 5px; border: 1px solid ${timing.color}; color: ${timing.color};" title="Entry timing score ${timing.composite}/100">${timing.verdict}</span>`;
+    // Analyst conviction badge
+    const pickAn = p.pick && p.pick.analysis;
+    const convBadge = pickAn
+      ? `<span class="font-mono text-[9px]" title="Analyst conviction ${pickAn.conviction}/5 · ${pickAn.trendAlignment}" style="color: ${pickAn.conviction >= 4 ? 'var(--bull)' : pickAn.conviction === 3 ? 'var(--cyan)' : 'var(--warn)'};">${'★'.repeat(pickAn.conviction)}${'☆'.repeat(5 - pickAn.conviction)}</span>`
+      : '';
     return `
       <div class="panel-2 p-3 flex items-center justify-between gap-3 alloc-plan-row cursor-pointer hover:border-[color:var(--cyan)]" data-symbol="${p.symbol}">
         <div class="flex items-center gap-3 min-w-0 flex-1">
@@ -2920,6 +3494,8 @@ function renderAllocator() {
               <span class="font-mono font-bold">${p.symbol}</span>
               <span class="type-badge ${kindClass}">${kindLabel}</span>
               <span class="text-[10px] text-dim">${p.pct.toFixed(1)}%</span>
+              ${timingBadge}
+              ${convBadge}
               ${tiltHtml}
             </div>
             <div class="text-[10px] text-dim truncate">${p.asset.name}</div>
@@ -3289,6 +3865,303 @@ generateTicks = function(list) {
 };
 
 /* ============================================================
+   TWELVE DATA — Real historical candles
+   Replaces the simulated priceSeries() when a key is provided.
+   Cached per (symbol, interval) for CONFIG.historyCacheHours.
+   ============================================================ */
+
+function loadTwelveKey() {
+  try { state.twelveKey = localStorage.getItem(CONFIG.twelveKeyStorageKey) || null; }
+  catch { state.twelveKey = null; }
+}
+function saveTwelveKey(key) {
+  try {
+    if (key) localStorage.setItem(CONFIG.twelveKeyStorageKey, key);
+    else localStorage.removeItem(CONFIG.twelveKeyStorageKey);
+    state.twelveKey = key || null;
+    state.historyCache = {}; // invalidate cache on key change
+  } catch (err) { console.warn('Twelve Data key save failed:', err); }
+}
+
+// Map Twelve Data symbol format quirks
+function twelveSymbol(asset) {
+  if (asset.type === 'crypto') return `${asset.symbol}/USD`;
+  if (asset.type === 'forex')  return asset.symbol; // e.g. EUR/USD already correct
+  if (asset.symbol === 'BRK.B') return 'BRK.B';
+  return asset.symbol;
+}
+
+// Fetch historical candles from Twelve Data
+async function fetchHistoricalCandles(asset, interval = '1day', outputsize = 260) {
+  if (!state.twelveKey) return null;
+  const cacheKey = `${asset.symbol}_${interval}_${outputsize}`;
+  const cached = state.historyCache[cacheKey];
+  if (cached && (Date.now() - cached.fetchedAt) < CONFIG.historyCacheHours * 3600_000) {
+    return cached.candles;
+  }
+  try {
+    const sym = twelveSymbol(asset);
+    const url = `${CONFIG.twelveDataEndpoint}?symbol=${encodeURIComponent(sym)}&interval=${interval}&outputsize=${outputsize}&apikey=${state.twelveKey}&format=JSON`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.status === 'error' || !Array.isArray(data.values)) {
+      console.warn('[Twelve Data]', asset.symbol, data.message || 'no data');
+      return null;
+    }
+    // Twelve Data returns newest-first; reverse to chronological
+    const candles = data.values.slice().reverse().map(v => ({
+      datetime: v.datetime,
+      open:   parseFloat(v.open),
+      high:   parseFloat(v.high),
+      low:    parseFloat(v.low),
+      close:  parseFloat(v.close),
+      volume: parseFloat(v.volume || 0),
+    })).filter(c => !isNaN(c.close));
+    state.historyCache[cacheKey] = { candles, fetchedAt: Date.now() };
+    return candles;
+  } catch (err) {
+    console.warn('[Twelve Data] fetch failed:', asset.symbol, err);
+    return null;
+  }
+}
+
+// Map timeframe → (interval, outputsize) for Twelve Data
+function timeframeToInterval(tf) {
+  const map = {
+    '1D':  { interval: '5min',  outputsize: 78 },   // ~1 trading day of 5min bars
+    '5D':  { interval: '30min', outputsize: 65 },   // ~5 days of 30min bars
+    '1M':  { interval: '1day',  outputsize: 22 },
+    '3M':  { interval: '1day',  outputsize: 66 },
+    '6M':  { interval: '1day',  outputsize: 130 },
+    '1Y':  { interval: '1day',  outputsize: 260 },
+  };
+  return map[tf] || map['1M'];
+}
+
+// Async price series that prefers real historical data when available
+async function priceSeriesAsync(asset, timeframe = '1Y') {
+  if (state.twelveKey) {
+    const { interval, outputsize } = timeframeToInterval(timeframe);
+    const candles = await fetchHistoricalCandles(asset, interval, outputsize);
+    if (candles && candles.length > 10) {
+      const closes = candles.map(c => c.close);
+      // Force last close to match live price if we have it
+      const live = state.livePrices[asset.symbol];
+      if (live) closes[closes.length - 1] = live.price;
+      return { prices: closes, isReal: true, candles };
+    }
+  }
+  // Fall back to simulated random walk
+  const points = { '1D': 24, '5D': 60, '1M': 30, '3M': 90, '6M': 180, '1Y': 260 }[timeframe] || 100;
+  return { prices: priceSeries(asset, points), isReal: false, candles: null };
+}
+
+/* Override drawChart to use real data when available */
+const _drawChart_original = drawChart;
+drawChart = async function(timeframe) {
+  const a = state.currentAsset;
+  if (!a) return;
+  const svg = document.getElementById('dm-chart');
+  if (!svg) return;
+
+  const { prices, isReal } = await priceSeriesAsync(a, timeframe);
+  if (!prices || prices.length < 2) return;
+  state.currentPrices = prices;
+
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const range = max - min || 1;
+  const w = 800, h = 240, padL = 50, padR = 10, padT = 20, padB = 30;
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const isUp = prices[prices.length - 1] >= prices[0];
+  const stroke = isUp ? 'var(--bull)' : 'var(--bear)';
+  const fillCol = isUp ? 'rgba(52, 211, 153, 0.12)' : 'rgba(248, 113, 113, 0.12)';
+
+  const step = innerW / (prices.length - 1);
+  const pts = prices.map((price, i) => {
+    const x = padL + i * step;
+    const y = padT + innerH - ((price - min) / range) * innerH;
+    return { x, y, price };
+  });
+
+  const linePath = pts.map((pt, i) => `${i === 0 ? 'M' : 'L'}${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' ');
+  const fillPath = `${linePath} L${padL + innerW},${padT + innerH} L${padL},${padT + innerH} Z`;
+
+  const yLabels = [];
+  for (let i = 0; i <= 4; i++) {
+    const price = min + (range * i / 4);
+    const y = padT + innerH - (i / 4) * innerH;
+    yLabels.push({ price, y });
+  }
+  const gridLines = yLabels.map(l =>
+    `<line x1="${padL}" y1="${l.y}" x2="${w - padR}" y2="${l.y}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="2,3"/>` +
+    `<text x="${padL - 6}" y="${l.y + 3}" text-anchor="end" fill="var(--dim)" font-family="JetBrains Mono" font-size="9">${fmt.price(l.price)}</text>`
+  ).join('');
+
+  // Data source badge
+  const badge = isReal
+    ? `<text x="${w - padR}" y="15" text-anchor="end" fill="var(--bull)" font-family="JetBrains Mono" font-size="9" font-weight="bold">● REAL DATA</text>`
+    : `<text x="${w - padR}" y="15" text-anchor="end" fill="var(--warn)" font-family="JetBrains Mono" font-size="9">● SIMULATED</text>`;
+
+  svg.innerHTML = `
+    ${gridLines}
+    <path d="${fillPath}" fill="${fillCol}" />
+    <path d="${linePath}" fill="none" stroke="${stroke}" stroke-width="1.5" />
+    <circle cx="${pts[pts.length-1].x}" cy="${pts[pts.length-1].y}" r="3" fill="${stroke}"/>
+    <line x1="${padL}" y1="${padT + innerH}" x2="${w - padR}" y2="${padT + innerH}" stroke="var(--border-strong)" stroke-width="1"/>
+    ${badge}
+  `;
+
+  const tooltip = document.getElementById('dm-tooltip');
+  svg.onmousemove = (e) => {
+    const rect = svg.getBoundingClientRect();
+    const scaleX = w / rect.width;
+    const mouseX = (e.clientX - rect.left) * scaleX;
+    let nearest = pts[0], minDist = Infinity;
+    pts.forEach(pt => { const d = Math.abs(pt.x - mouseX); if (d < minDist) { minDist = d; nearest = pt; } });
+    tooltip.classList.remove('hidden');
+    tooltip.textContent = fmt.price(nearest.price);
+    tooltip.style.left = `${(nearest.x / w) * rect.width + 8}px`;
+    tooltip.style.top = `${(nearest.y / h) * rect.height - 8}px`;
+  };
+  svg.onmouseleave = () => tooltip.classList.add('hidden');
+};
+
+/* Override computeTimingSignals to use real historical data when available */
+const _computeTimingSignals_original = computeTimingSignals;
+computeTimingSignals = function(asset) {
+  // Try to get real cached candles synchronously (populated by prior chart open or Portfolio Builder render)
+  const cacheKey = `${asset.symbol}_1day_260`;
+  const cached = state.historyCache[cacheKey];
+  let prices;
+  let isReal = false;
+  if (cached && cached.candles && cached.candles.length > 30) {
+    prices = cached.candles.map(c => c.close);
+    isReal = true;
+  } else {
+    prices = priceSeries(asset, 260);
+    // Warm cache asynchronously for next call
+    if (state.twelveKey) {
+      fetchHistoricalCandles(asset, '1day', 260).then(candles => {
+        if (candles && state.currentAsset && state.currentAsset.symbol === asset.symbol && state.activeDetailTab === 'timing') {
+          document.getElementById('dm-content').innerHTML = renderTimingTab();
+        }
+      });
+    }
+  }
+
+  const price = getAssetPrice(asset);
+  prices[prices.length - 1] = price;
+
+  const w52h = Math.max(...prices);
+  const w52l = Math.min(...prices);
+  const ma50 = computeSMA(prices, 50);
+  const ma200 = computeSMA(prices, 200);
+  const rsi = computeRSI(prices);
+  const ma20 = computeSMA(prices, 20);
+  const last20 = prices.slice(-20);
+  const std20 = computeStdDev(last20);
+  const bbUpper = ma20 + 2 * std20;
+  const bbLower = ma20 - 2 * std20;
+  const bbPos = (price - bbLower) / (bbUpper - bbLower);
+
+  const distFrom52H = ((price - w52h) / w52h) * 100;
+  const distFrom52L = ((price - w52l) / w52l) * 100;
+  const distFromMA200 = ((price - ma200) / ma200) * 100;
+
+  let rsiScore;
+  if (rsi < 30) rsiScore = 90;
+  else if (rsi < 45) rsiScore = 80;
+  else if (rsi < 55) rsiScore = 55;
+  else if (rsi < 65) rsiScore = 35;
+  else if (rsi < 75) rsiScore = 15;
+  else rsiScore = 5;
+
+  let highScore;
+  if (distFrom52H > -2) highScore = 10;
+  else if (distFrom52H > -5) highScore = 25;
+  else if (distFrom52H > -10) highScore = 50;
+  else if (distFrom52H > -20) highScore = 75;
+  else highScore = 90;
+
+  let bbScore;
+  if (bbPos < 0.15) bbScore = 90;
+  else if (bbPos < 0.35) bbScore = 70;
+  else if (bbPos < 0.55) bbScore = 55;
+  else if (bbPos < 0.75) bbScore = 35;
+  else bbScore = 15;
+
+  let maScore;
+  if (distFromMA200 < -10) maScore = 85;
+  else if (distFromMA200 < 0) maScore = 70;
+  else if (distFromMA200 < 10) maScore = 55;
+  else if (distFromMA200 < 25) maScore = 35;
+  else maScore = 15;
+
+  const composite = Math.round(
+    rsiScore * 0.30 + highScore * 0.25 + bbScore * 0.20 + maScore * 0.25
+  );
+
+  const zoneWait = price * 1.02;
+  const zoneFair = Math.min(price, ma20);
+  const zoneGood = Math.min(ma50 || price * 0.95, price * 0.95);
+  const zoneGreat = Math.min(bbLower, price * 0.88);
+
+  let verdict, action, color, actionDetail;
+  if (composite >= 75) {
+    verdict = 'GREAT ENTRY';
+    action = 'Buy now — good risk/reward';
+    actionDetail = 'Price is oversold or well off recent highs. Historical odds favor entry here.';
+    color = 'var(--bull)';
+  } else if (composite >= 60) {
+    verdict = 'GOOD ENTRY';
+    action = 'Buy now or DCA in';
+    actionDetail = 'Reasonable entry zone. Consider splitting into 2–3 tranches over a few weeks.';
+    color = '#86EFAC';
+  } else if (composite >= 40) {
+    verdict = 'FAIR ENTRY';
+    action = 'DCA slowly';
+    actionDetail = 'Not stretched, but not a bargain. Dollar-cost average over 4–8 weeks rather than lump sum.';
+    color = 'var(--cyan)';
+  } else if (composite >= 25) {
+    verdict = 'STRETCHED';
+    action = 'Wait for pullback';
+    actionDetail = 'Price is extended vs recent range. Better entries likely in the coming weeks.';
+    color = 'var(--warn)';
+  } else {
+    verdict = 'AVOID / WAIT';
+    action = 'Wait — high risk of near-term drop';
+    actionDetail = 'Multiple indicators screaming overbought. Very poor risk/reward for a fresh entry.';
+    color = 'var(--bear)';
+  }
+
+  return {
+    composite, verdict, action, actionDetail, color,
+    price, rsi, ma20, ma50, ma200, bbUpper, bbLower, bbPos, std20,
+    w52h, w52l, distFrom52H, distFrom52L, distFromMA200,
+    zoneWait, zoneFair, zoneGood, zoneGreat,
+    components: { rsiScore, highScore, bbScore, maScore },
+    isRealData: isReal,
+  };
+};
+
+/* Override renderTimingTab to show data-source badge */
+const _renderTimingTab_original = renderTimingTab;
+renderTimingTab = function() {
+  const html = _renderTimingTab_original();
+  const t = computeTimingSignals(state.currentAsset);
+  // Replace the "using simulated" warning with an accurate status
+  const statusLine = t.isRealData
+    ? '<p class="text-[10px] text-bull mt-2 font-mono">● Signals computed from real historical data via Twelve Data.</p>'
+    : (state.twelveKey
+        ? '<p class="text-[10px] text-warn mt-2 font-mono">⏳ Loading real historical data from Twelve Data...</p>'
+        : '<p class="text-[10px] text-warn mt-2 font-mono">⚠ Using simulated data — add Twelve Data key in Settings for real signals.</p>');
+  return html.replace(/<p class="text-\[10px\] text-warn mt-2 font-mono">.*?<\/p>/, statusLine)
+             .replace('<!-- STATUS_PLACEHOLDER -->', ''); // safety
+};
+
+/* ============================================================
    SETTINGS MODAL
    ============================================================ */
 function openSettings() {
@@ -3297,6 +4170,10 @@ function openSettings() {
   document.getElementById('api-key-input').type = 'password';
   document.getElementById('api-key-toggle').textContent = 'Show';
   document.getElementById('api-test-result').textContent = '';
+  document.getElementById('twelve-key-input').value = state.twelveKey || '';
+  document.getElementById('twelve-key-input').type = 'password';
+  document.getElementById('twelve-key-toggle').textContent = 'Show';
+  document.getElementById('twelve-test-result').textContent = '';
   refreshLiveStatus();
 }
 function closeSettings() {
@@ -3374,6 +4251,56 @@ function initSettings() {
     renderSidebar();
     if (typeof renderAllocator === 'function') renderAllocator();
   });
+
+  // ── Twelve Data handlers ──
+  document.getElementById('twelve-key-toggle').addEventListener('click', () => {
+    const inp = document.getElementById('twelve-key-input');
+    const btn = document.getElementById('twelve-key-toggle');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
+    else { inp.type = 'password'; btn.textContent = 'Show'; }
+  });
+
+  document.getElementById('twelve-key-save').addEventListener('click', () => {
+    const key = document.getElementById('twelve-key-input').value.trim();
+    if (!key) { document.getElementById('twelve-test-result').innerHTML = '<span class="text-bear">Enter a key first.</span>'; return; }
+    saveTwelveKey(key);
+    document.getElementById('twelve-test-result').innerHTML = '<span class="text-bull">Saved. Real charts &amp; timing now enabled.</span>';
+    // Warm cache for picks
+    PICKS.forEach(p => {
+      const asset = UNIVERSE.find(a => a.symbol === p.symbol);
+      if (asset) setTimeout(() => fetchHistoricalCandles(asset, '1day', 260), Math.random() * 3000);
+    });
+    // Re-render Portfolio Builder to update timing badges
+    if (typeof renderAllocator === 'function') setTimeout(renderAllocator, 5000);
+  });
+
+  document.getElementById('twelve-key-test').addEventListener('click', async () => {
+    const key = document.getElementById('twelve-key-input').value.trim();
+    if (!key) { document.getElementById('twelve-test-result').innerHTML = '<span class="text-bear">Enter a key first.</span>'; return; }
+    document.getElementById('twelve-test-result').innerHTML = '<span class="text-muted">Testing with AAPL 1M candles…</span>';
+    const oldKey = state.twelveKey;
+    state.twelveKey = key;
+    const aapl = UNIVERSE.find(a => a.symbol === 'AAPL');
+    const candles = await fetchHistoricalCandles(aapl, '1day', 22);
+    state.twelveKey = oldKey;
+    state.historyCache = {};
+    if (candles && candles.length > 5) {
+      const last = candles[candles.length - 1];
+      const first = candles[0];
+      document.getElementById('twelve-test-result').innerHTML =
+        `<span class="text-bull">✓ Works.</span> AAPL last ${candles.length} days: $${first.close.toFixed(2)} → $${last.close.toFixed(2)}`;
+    } else {
+      document.getElementById('twelve-test-result').innerHTML =
+        `<span class="text-bear">✗ Failed.</span> Check the key at twelvedata.com/account or wait (rate limit: 8/min).`;
+    }
+  });
+
+  document.getElementById('twelve-key-disable').addEventListener('click', () => {
+    saveTwelveKey(null);
+    document.getElementById('twelve-key-input').value = '';
+    document.getElementById('twelve-test-result').innerHTML = '<span class="text-muted">Historical data disabled. Charts &amp; timing back to simulated.</span>';
+    if (typeof renderAllocator === 'function') renderAllocator();
+  });
 }
 
 /* ============================================================
@@ -3413,12 +4340,409 @@ computeAllocation = function() {
 
 
 /* ============================================================
+   MY PORTFOLIO — Real holdings tracker with per-position analysis
+   ============================================================ */
+
+const PORTFOLIO_STORAGE_KEY = 'signal_portfolio_v1';
+
+// User's actual Moomoo holdings — pre-populated
+const DEFAULT_PORTFOLIO = {
+  usdMyrRate: 4.22,
+  displayCurrency: 'MYR',
+  positions: [
+    { symbol: 'GLW',    shares: 1,     avgCost: 190.70 },
+    { symbol: 'HBM',    shares: 10,    avgCost: 24.47  },
+    { symbol: 'MRVL',   shares: 5,     avgCost: 88.70  },
+    { symbol: 'MU',     shares: 0.06,  avgCost: 772.333},
+    { symbol: 'NBIS',   shares: 1,     avgCost: 109.30 },
+    { symbol: 'NVDA',   shares: 1,     avgCost: 123.36 },
+    { symbol: 'SOXL',   shares: 5,     avgCost: 41.55  },
+    { symbol: 'TQQQ',   shares: 4,     avgCost: 43.425 },
+    { symbol: 'TSM',    shares: 1,     avgCost: 277.56 },
+    { symbol: 'XBI',    shares: 3,     avgCost: 90.25  },
+    { symbol: 'SUNMED', shares: 2000,  avgCost: 1.45, currency: 'MYR' },
+  ],
+};
+
+// Per-position analysis — my custom view for each of user's holdings
+const POSITION_ANALYSIS = {
+  GLW: {
+    action: 'ACCUMULATE',
+    conviction: 4,
+    view: 'You entered above current market — you\'re down but the thesis is intact. Corning is a quiet AI-infrastructure play (optical fiber for data centers) with a growing dividend. DCA down to lower your basis rather than sell at a loss.',
+    trigger: 'Add on any weakness below $155. Full thesis reset only if optical segment revenue declines two quarters in a row.',
+    risk: 'Data center fiber orders decelerating would break the thesis.',
+  },
+  HBM: {
+    action: 'HOLD',
+    conviction: 3,
+    view: 'Copper miner benefiting from AI/electrification demand for copper. You\'re up ~9%. Cyclical commodity play — will move with copper prices, not tech-specific.',
+    trigger: 'Add if copper breaks above $5/lb sustainably. Trim if copper falls below $4.',
+    risk: 'Global growth slowdown = copper demand drop. China property overhang.',
+  },
+  MRVL: {
+    action: 'HOLD',
+    conviction: 3,
+    view: 'AI networking chip player — custom silicon for hyperscalers. You\'re up ~22%. In semi correction now but long-term thesis intact. Not urgent to add or trim.',
+    trigger: 'Add on sell-offs below $95. Trim if SMH continues correcting hard.',
+    risk: 'Hyperscaler capex peak = MRVL drops with the group.',
+  },
+  MU: {
+    action: 'TRIM CANDIDATE',
+    conviction: 3,
+    view: 'Memory chip cycle at extreme. You paid ~$772 and now at ~$875 (+13%). HBM memory demand for AI is real but memory is deeply cyclical. Position is tiny (0.06 shares) so impact is small either way.',
+    trigger: 'Consider closing this tiny position — it\'s not moving the portfolio needle. Redeploy the ~$52 into a fractional add on GLW or SGOV.',
+    risk: 'Memory cycle turn = MU can drop 40-50% quickly.',
+  },
+  NBIS: {
+    action: 'TRIM STRONGLY',
+    conviction: 3,
+    view: 'You\'re up ~92% on this. NBIS just fell ~20% in a week on convertible note dilution + broader neocloud selloff. This is a highly speculative AI infrastructure play with extreme volatility (beta ~2.89). The gain is real but at these levels, a 30-50% drawdown is normal — don\'t give it back.',
+    trigger: 'STRONG TRIM signal: sell 33-50% of position to lock in gains. Keep runner for further upside. Rule: never let a 90%+ gain evaporate.',
+    risk: 'Convertible note dilution ongoing, neocloud sector rotation, extreme leverage to AI capex sentiment.',
+  },
+  NVDA: {
+    action: 'HOLD',
+    conviction: 3,
+    view: 'You\'re up ~83% and it\'s only 1 share. Genuine AI leader but currently facing AI capex peak fears — semis sold off 30% from June highs. My general view: prefer SMH over direct NVDA now. But since you already own it small, no urgent action.',
+    trigger: 'Don\'t add more — use fresh capital for SMH instead. Trim only if you need to raise cash.',
+    risk: 'AI capex genuinely peaks = NVDA can drop 40%+ from here.',
+  },
+  SOXL: {
+    action: 'REDUCE / RISK WARNING',
+    conviction: 2,
+    view: '⚠ 3x LEVERAGED ETF — Direxion Semi Bull. You\'re up ~9% but this is dangerous. Leveraged ETFs have volatility decay (they lose money in sideways markets due to daily rebalancing) and 3x semi exposure right now = you\'re triple-long the sector that\'s in a real correction. This is NOT a long-term hold.',
+    trigger: 'Sell 50-100% of this position. If bullish semis, use SMH (1x) instead. Never hold 3x leveraged ETFs across cycles.',
+    risk: 'Semi correction extends = SOXL can lose 60%+ in weeks. Even if semis go sideways, decay eats returns.',
+  },
+  TQQQ: {
+    action: 'TAKE PROFITS URGENTLY',
+    conviction: 1,
+    view: '🚨 CRITICAL WARNING: 3x LEVERAGED Nasdaq ETF. You\'re up ~120% (~$207 on original ~$174). Nasdaq at record highs + 3x leverage + volatility decay = maximum risk. This is the classic "leveraged ETF held too long" trap. Every 1% Nasdaq drop = 3% TQQQ drop. And when Nasdaq is sideways for weeks, TQQQ still bleeds from rebalancing.',
+    trigger: 'STRONG SELL: Take profits on at least 75% of position immediately. If must stay leveraged, use QLD (2x) instead. Better: redeploy into VOO/SGOV.',
+    risk: 'Any Nasdaq correction of 10% = TQQQ drops 30-40%. Historical drawdowns of TQQQ during Nasdaq corrections have exceeded 75%.',
+  },
+  TSM: {
+    action: 'HOLD',
+    conviction: 4,
+    view: 'You\'re up ~45% on TSM. Best-in-class AI foundry — every AI chip in the world comes through TSMC. Geopolitical Taiwan risk is real but priced in. Long-term compounder.',
+    trigger: 'Add on any pullback below $370. Trim only if serious Taiwan escalation.',
+    risk: 'China-Taiwan tensions = immediate 20%+ drop possible. Otherwise very solid.',
+  },
+  XBI: {
+    action: 'HOLD',
+    conviction: 3,
+    view: 'Biotech ETF, roughly flat from entry. Good diversifier away from your heavy tech concentration. Biotech has lagged for years — waiting for rate cuts + M&A cycle to reignite. Patient hold.',
+    trigger: 'Add on weakness below $85. This is a "wait for it" position.',
+    risk: 'Biotech dead money for another year if rates stay high.',
+  },
+  SUNMED: {
+    action: 'HOLD',
+    conviction: 3,
+    view: 'Malaysian healthcare exposure. You\'re slightly up. Small position (~RM 3000). Good local currency diversifier from your USD-heavy book.',
+    trigger: 'Hold as MY market exposure. No urgent action.',
+    risk: 'Malaysian equity market underperforming — currency drag if MYR weakens further.',
+  },
+};
+
+function loadPortfolio() {
+  try {
+    const raw = localStorage.getItem(PORTFOLIO_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+function savePortfolio(data) {
+  try { localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(data)); }
+  catch (err) { console.warn('Portfolio save failed:', err); }
+}
+
+function computePositionValue(pos, portfolio) {
+  const asset = UNIVERSE.find(a => a.symbol === pos.symbol);
+  if (!asset) return null;
+  const currentPrice = getAssetPrice(asset);
+  const isMyrNative = pos.currency === 'MYR';
+  const currentValueNative = pos.shares * currentPrice;
+  const costNative = pos.shares * pos.avgCost;
+  const pnlNative = currentValueNative - costNative;
+  const pnlPct = costNative > 0 ? (pnlNative / costNative) * 100 : 0;
+
+  // Convert to display currency
+  const rate = portfolio.usdMyrRate;
+  let costMYR, currentValueMYR, pnlMYR;
+  if (isMyrNative) {
+    costMYR = costNative;
+    currentValueMYR = currentValueNative;
+    pnlMYR = pnlNative;
+  } else {
+    costMYR = costNative * rate;
+    currentValueMYR = currentValueNative * rate;
+    pnlMYR = pnlNative * rate;
+  }
+  return {
+    asset, currentPrice, currentValueNative, costNative, pnlNative, pnlPct,
+    costMYR, currentValueMYR, pnlMYR,
+    costUSD: isMyrNative ? costNative / rate : costNative,
+    currentValueUSD: isMyrNative ? currentValueNative / rate : currentValueNative,
+    pnlUSD: isMyrNative ? pnlNative / rate : pnlNative,
+    nativeCurrency: isMyrNative ? 'MYR' : 'USD',
+  };
+}
+
+function getActionStyle(action) {
+  const styles = {
+    'ACCUMULATE':               { color: 'var(--bull)',   bg: 'rgba(52,211,153,0.15)',  icon: '↑' },
+    'HOLD':                     { color: 'var(--cyan)',   bg: 'rgba(34,211,238,0.10)',  icon: '=' },
+    'TRIM CANDIDATE':           { color: 'var(--warn)',   bg: 'rgba(251,191,36,0.15)',  icon: '↓' },
+    'TRIM STRONGLY':            { color: 'var(--warn)',   bg: 'rgba(251,191,36,0.20)',  icon: '⇊' },
+    'REDUCE / RISK WARNING':    { color: 'var(--bear)',   bg: 'rgba(248,113,113,0.15)', icon: '⚠' },
+    'TAKE PROFITS URGENTLY':    { color: 'var(--bear)',   bg: 'rgba(248,113,113,0.25)', icon: '🚨' },
+  };
+  return styles[action] || styles['HOLD'];
+}
+
+function resetPortfolio() {
+  if (!confirm('Reset portfolio to your Moomoo defaults? This deletes any custom edits.')) return;
+  savePortfolio(JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO)));
+  renderPortfolio();
+}
+
+function renderPortfolio() {
+  const content = document.getElementById('livetest-content');
+  const subtitle = document.getElementById('livetest-subtitle');
+  if (!content) return;
+
+  let portfolio = loadPortfolio();
+  if (!portfolio) {
+    // First time — pre-populate with user's Moomoo holdings
+    portfolio = JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO));
+    savePortfolio(portfolio);
+  }
+
+  // Read current display currency from selector
+  const currencySel = document.getElementById('portfolio-currency');
+  if (currencySel) {
+    portfolio.displayCurrency = currencySel.value;
+    savePortfolio(portfolio);
+  }
+  const displayCur = portfolio.displayCurrency;
+  const rate = portfolio.usdMyrRate;
+  const curSym = displayCur === 'MYR' ? 'RM ' : '$';
+
+  const pnls = portfolio.positions.map(pos => ({ pos, ...computePositionValue(pos, portfolio) })).filter(x => x.asset);
+
+  // Totals
+  let totalCost = 0, totalValue = 0, totalPnl = 0;
+  pnls.forEach(p => {
+    if (displayCur === 'MYR') {
+      totalCost += p.costMYR; totalValue += p.currentValueMYR; totalPnl += p.pnlMYR;
+    } else {
+      totalCost += p.costUSD; totalValue += p.currentValueUSD; totalPnl += p.pnlUSD;
+    }
+  });
+  const totalPnlPct = totalCost > 0 ? (totalPnl / totalCost) * 100 : 0;
+
+  // Winners and losers
+  const winners = pnls.filter(p => p.pnlPct > 0).sort((a, b) => b.pnlPct - a.pnlPct);
+  const losers  = pnls.filter(p => p.pnlPct < 0).sort((a, b) => a.pnlPct - b.pnlPct);
+
+  // Sector allocation
+  const sectorMap = {};
+  pnls.forEach(p => {
+    const s = p.asset.sector || 'Other';
+    const val = displayCur === 'MYR' ? p.currentValueMYR : p.currentValueUSD;
+    sectorMap[s] = (sectorMap[s] || 0) + val;
+  });
+  const sectorArr = Object.entries(sectorMap).sort((a, b) => b[1] - a[1]);
+
+  // Risk flags
+  const riskFlags = [];
+  const leveragedValue = pnls.filter(p => ['SOXL','TQQQ'].includes(p.pos.symbol)).reduce((s, p) => s + (displayCur === 'MYR' ? p.currentValueMYR : p.currentValueUSD), 0);
+  const leveragedPct = totalValue > 0 ? (leveragedValue / totalValue) * 100 : 0;
+  if (leveragedPct > 10) riskFlags.push({ level: 'high', text: `⚠ ${leveragedPct.toFixed(0)}% in 3x leveraged ETFs (SOXL, TQQQ) — extreme decay risk, take profits soon.` });
+
+  const aiSemiSymbols = ['NVDA','MRVL','MU','NBIS','SOXL','TSM','GLW','SMH'];
+  const aiSemiValue = pnls.filter(p => aiSemiSymbols.includes(p.pos.symbol)).reduce((s, p) => s + (displayCur === 'MYR' ? p.currentValueMYR : p.currentValueUSD), 0);
+  const aiSemiPct = totalValue > 0 ? (aiSemiValue / totalValue) * 100 : 0;
+  if (aiSemiPct > 60) riskFlags.push({ level: 'medium', text: `⚠ ${aiSemiPct.toFixed(0)}% concentrated in AI/semiconductors — any capex slowdown hits everything together.` });
+
+  const hasDefensive = pnls.some(p => ['SGOV','GLD','TLT','BND'].includes(p.pos.symbol));
+  if (!hasDefensive) riskFlags.push({ level: 'medium', text: '💡 No defensive positions (SGOV/GLD). Consider adding 10-20% for downside protection.' });
+
+  subtitle.innerHTML = `<strong>${pnls.length}</strong> positions · Rate <strong>USD/MYR ${rate}</strong> · Auto-refreshes with live prices`;
+
+  content.innerHTML = `
+    <!-- PORTFOLIO SUMMARY -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div class="stat">
+        <div class="stat-label">Total Cost</div>
+        <div class="stat-value">${curSym}${fmt.price(totalCost)}</div>
+        <div class="text-[10px] text-dim mt-1">${pnls.length} positions</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Current Value</div>
+        <div class="stat-value">${curSym}${fmt.price(totalValue)}</div>
+        <div class="text-[10px] text-dim mt-1">Live prices</div>
+      </div>
+      <div class="stat" style="border-left: 2px solid ${totalPnl >= 0 ? 'var(--bull)' : 'var(--bear)'};">
+        <div class="stat-label">Unrealized P&amp;L</div>
+        <div class="stat-value ${totalPnl >= 0 ? 'text-bull' : 'text-bear'}">${totalPnl >= 0 ? '+' : ''}${curSym}${fmt.price(totalPnl)}</div>
+        <div class="text-[10px] ${totalPnlPct >= 0 ? 'text-bull' : 'text-bear'} mt-1">${totalPnlPct >= 0 ? '+' : ''}${totalPnlPct.toFixed(2)}%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Winners / Losers</div>
+        <div class="stat-value"><span class="text-bull">${winners.length}</span> <span class="text-dim">/</span> <span class="text-bear">${losers.length}</span></div>
+        <div class="text-[10px] text-dim mt-1">Position count</div>
+      </div>
+    </div>
+
+    <!-- RISK FLAGS -->
+    ${riskFlags.length > 0 ? `
+      <div class="text-[10px] font-mono tracking-wider text-warn mb-2">⚠ RISK ALERTS</div>
+      <div class="space-y-1 mb-5">
+        ${riskFlags.map(f => `
+          <div class="panel-2 p-3 text-xs" style="border-left: 2px solid ${f.level === 'high' ? 'var(--bear)' : 'var(--warn)'};">${f.text}</div>
+        `).join('')}
+      </div>
+    ` : ''}
+
+    <!-- POSITIONS -->
+    <div class="text-[10px] font-mono tracking-wider text-dim mb-2">POSITIONS · SORTED BY P&L %</div>
+    <div class="space-y-2 mb-5">
+      ${pnls.sort((a, b) => b.pnlPct - a.pnlPct).map(p => {
+        const analysis = POSITION_ANALYSIS[p.pos.symbol] || { action: 'HOLD', conviction: 3, view: 'No specific analysis for this position.', trigger: '', risk: '' };
+        const style = getActionStyle(analysis.action);
+        const isMyrNative = p.pos.currency === 'MYR';
+        const nativeSym = isMyrNative ? 'RM ' : '$';
+        const displayCost = displayCur === 'MYR' ? p.costMYR : p.costUSD;
+        const displayValue = displayCur === 'MYR' ? p.currentValueMYR : p.currentValueUSD;
+        const displayPnl = displayCur === 'MYR' ? p.pnlMYR : p.pnlUSD;
+
+        return `
+          <div class="panel-2 p-3" style="border-left: 3px solid ${style.color};">
+            <div class="flex items-center justify-between gap-3 flex-wrap mb-2">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-mono font-bold">${p.pos.symbol}</span>
+                  <span class="text-[10px] text-dim">${p.asset.sector}</span>
+                  <span class="text-[9px]" style="color: ${style.color};">${'★'.repeat(analysis.conviction)}${'☆'.repeat(5-analysis.conviction)}</span>
+                  <span class="font-mono text-[9px] px-2 py-0.5" style="background: ${style.bg}; color: ${style.color};">${style.icon} ${analysis.action}</span>
+                </div>
+                <div class="text-[10px] text-dim mt-1">
+                  ${p.pos.shares} sh @ ${nativeSym}${p.pos.avgCost.toFixed(p.pos.avgCost < 10 ? 3 : 2)} avg · Now ${nativeSym}${p.currentPrice.toFixed(p.currentPrice < 10 ? 3 : 2)}
+                </div>
+              </div>
+              <div class="text-right text-xs font-mono">
+                <div>Cost: ${curSym}${fmt.price(displayCost)}</div>
+                <div>Value: <strong>${curSym}${fmt.price(displayValue)}</strong></div>
+              </div>
+              <div class="text-right text-xs font-mono min-w-[80px]">
+                <div class="${p.pnlPct >= 0 ? 'text-bull' : 'text-bear'} font-bold text-base">${p.pnlPct >= 0 ? '+' : ''}${p.pnlPct.toFixed(2)}%</div>
+                <div class="${displayPnl >= 0 ? 'text-bull' : 'text-bear'} text-[10px]">${displayPnl >= 0 ? '+' : ''}${curSym}${fmt.price(displayPnl)}</div>
+              </div>
+            </div>
+
+            <div class="text-xs text-muted leading-relaxed mt-2 pt-2 border-t hair">
+              ${analysis.view}
+            </div>
+            ${analysis.trigger ? `
+              <div class="text-[10px] font-mono mt-2" style="color: ${style.color};">
+                ▸ ACTION: ${analysis.trigger}
+              </div>
+            ` : ''}
+            ${analysis.risk ? `
+              <div class="text-[10px] text-dim mt-1">
+                Risk: ${analysis.risk}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <!-- SECTOR ALLOCATION -->
+    <div class="text-[10px] font-mono tracking-wider text-dim mb-2 mt-6">SECTOR ALLOCATION</div>
+    <div class="panel-2 p-3 mb-4">
+      <div class="w-full h-3 flex overflow-hidden">
+        ${sectorArr.map((s, i) => {
+          const pct = (s[1] / totalValue) * 100;
+          const colors = ['var(--cyan)','var(--bull)','var(--purple)','var(--warn)','var(--bear)','var(--blue)','#86EFAC','#F9A8D4'];
+          return `<div style="width: ${pct}%; background: ${colors[i % colors.length]};" title="${s[0]}: ${pct.toFixed(1)}%"></div>`;
+        }).join('')}
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-3">
+        ${sectorArr.map((s, i) => {
+          const pct = (s[1] / totalValue) * 100;
+          const colors = ['var(--cyan)','var(--bull)','var(--purple)','var(--warn)','var(--bear)','var(--blue)','#86EFAC','#F9A8D4'];
+          return `<div class="text-[10px] font-mono flex items-center gap-1"><span style="width: 8px; height: 8px; background: ${colors[i % colors.length]}; display: inline-block;"></span>${s[0]}: ${pct.toFixed(1)}%</div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- SIGNAL'S PORTFOLIO SUMMARY -->
+    <div class="panel-2 p-4 mt-4" style="border-left: 3px solid var(--cyan);">
+      <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">SIGNAL'S OVERALL VIEW</div>
+      <p class="text-xs text-muted leading-relaxed mb-2">
+        You're running an <strong>aggressive AI/tech-heavy portfolio</strong> (${aiSemiPct.toFixed(0)}% in AI/semis). The overall thesis is right — AI infrastructure IS the multi-year theme — but you have <strong>concentration risk</strong> if AI capex peaks, and <strong>leveraged ETF risk</strong> from SOXL + TQQQ (${leveragedPct.toFixed(0)}% of book).
+      </p>
+      <p class="text-xs text-muted leading-relaxed mb-2">
+        <strong>Highest priority actions:</strong>
+      </p>
+      <ol class="text-xs text-muted leading-relaxed space-y-1 ml-4 list-decimal">
+        <li><strong class="text-bear">Take 75%+ profits on TQQQ</strong> — you're up ~120%, leverage decay is real, Nasdaq at highs.</li>
+        <li><strong class="text-warn">Reduce SOXL by 50%+</strong> — 3x leveraged into a semi correction is dangerous. If bullish semis, use SMH (1x).</li>
+        <li><strong class="text-warn">Trim NBIS 33-50%</strong> — you're up 92%, protect the win before another 20% drop.</li>
+        <li><strong class="text-bull">DCA down GLW</strong> — you're at a loss, thesis intact, add on weakness.</li>
+        <li><strong class="text-cyan">Add SGOV or GLD</strong> (10-20% of book) — no defensive positions currently.</li>
+      </ol>
+      <p class="text-[10px] text-dim mt-3 italic">
+        Analysis based on my views as of Aug 2026. Cross-check with your own research before executing. Not financial advice.
+      </p>
+    </div>
+
+    <p class="text-[10px] text-dim mt-4 font-mono text-center">
+      Portfolio stored in your browser's localStorage · Prices update every 30s from Finnhub (when enabled)
+    </p>
+  `;
+}
+
+function initPortfolioUI() {
+  document.getElementById('livetest-reset-btn').addEventListener('click', resetPortfolio);
+  document.getElementById('livetest-add-btn').addEventListener('click', () => {
+    const symbol = prompt('Symbol to add (e.g., AAPL, GLD, BTC):');
+    if (!symbol) return;
+    const asset = UNIVERSE.find(a => a.symbol === symbol.toUpperCase());
+    if (!asset) { alert(`${symbol} not found in universe. Add it manually or use a supported symbol.`); return; }
+    const sharesStr = prompt(`How many shares of ${symbol.toUpperCase()}?`);
+    if (!sharesStr) return;
+    const costStr = prompt(`Average cost per share (in ${asset.region === 'MY' ? 'RM' : 'USD'}):`);
+    if (!costStr) return;
+    const portfolio = loadPortfolio() || JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO));
+    const newPos = { symbol: symbol.toUpperCase(), shares: parseFloat(sharesStr), avgCost: parseFloat(costStr) };
+    if (asset.region === 'MY') newPos.currency = 'MYR';
+    portfolio.positions.push(newPos);
+    savePortfolio(portfolio);
+    renderPortfolio();
+  });
+  document.getElementById('portfolio-currency').addEventListener('change', renderPortfolio);
+  // Load saved currency preference
+  const saved = loadPortfolio();
+  if (saved && saved.displayCurrency) {
+    document.getElementById('portfolio-currency').value = saved.displayCurrency;
+  }
+  renderPortfolio();
+  setInterval(renderPortfolio, 30_000);
+}
+
+
+/* ============================================================
    INIT
    ============================================================ */
 function init() {
   loadWatchlist();
   loadRecent();
   loadApiKey();
+  loadTwelveKey();
 
   renderClock();
   setInterval(renderClock, 1000);
@@ -3435,9 +4759,25 @@ function init() {
   initAllocator();
   refresh();
 
-  // Kick off live price refresh if API key present
+  // Kick off live price refresh if Finnhub key present
   updateLiveIndicator();
   startLivePriceRefresh();
+
+  // Warm historical cache for picks if Twelve Data key present
+  if (state.twelveKey) {
+    PICKS.forEach((p, i) => {
+      const asset = UNIVERSE.find(a => a.symbol === p.symbol);
+      if (asset) {
+        // Stagger requests to respect 8/min rate limit
+        setTimeout(() => fetchHistoricalCandles(asset, '1day', 260).then(() => {
+          if (typeof renderAllocator === 'function') renderAllocator();
+        }), i * 8000);
+      }
+    });
+  }
+
+  // Portfolio tracker
+  initPortfolioUI();
 
   setInterval(tickCountdown, 1000);
 }
