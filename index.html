@@ -409,6 +409,7 @@
         <div id="live-indicator" class="pulse-dot"></div>
         <span id="live-label" class="text-xs font-mono tracking-wider text-bull">LIVE</span>
       </div>
+      <div id="market-regime-indicator" class="flex items-center gap-1 cursor-help" title="Live market regime detector"></div>
       <button id="settings-btn" class="btn-refresh" title="Configure live prices">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"/>
@@ -544,6 +545,66 @@
           </div>
           <div id="picks-grid-stock" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
+      </section>
+
+      <!-- THE CORE — VOO DCA TRACKER (Long-term wealth building) -->
+      <section class="mt-8 panel p-6" id="voo-dca-section" style="border-top: 3px solid var(--bull);">
+        <div class="flex items-end justify-between mb-3 flex-wrap gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--bull)" stroke-width="2">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              <div class="text-xs font-mono tracking-wider text-bull">THE CORE · LONG-TERM WEALTH BUILDING</div>
+            </div>
+            <h2 class="text-2xl font-semibold tracking-tight">VOO DCA — The Boring Plan That Actually Works</h2>
+            <p class="text-sm text-muted mt-1">70% of your wealth-building capital lives here. Set it, forget it, retire wealthy.</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button id="voo-add-entry-btn" class="btn-primary text-xs">+ Log Monthly Buy</button>
+            <button id="voo-config-btn" class="btn-ghost text-xs">Configure</button>
+          </div>
+        </div>
+        <div id="voo-content"><!-- rendered dynamically --></div>
+      </section>
+
+      <!-- MALAYSIAN IPO TRACKER -->
+      <section class="mt-8 panel p-6" id="ipo-section" style="border-top: 3px solid var(--purple);">
+        <div class="flex items-end justify-between mb-3 flex-wrap gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2">
+                <path d="M2 3h20M2 21h20M4 21V3M20 21V3M8 21v-4h8v4M8 13V9h8v4"/>
+              </svg>
+              <div class="text-xs font-mono tracking-wider" style="color: var(--purple);">BURSA MALAYSIA · IPO PIPELINE</div>
+            </div>
+            <h2 class="text-2xl font-semibold tracking-tight">Upcoming Malaysian IPOs</h2>
+            <p class="text-sm text-muted mt-1">Apply via Moomoo MY for RM0 fee. Historical Bursa IPO performance included for reference.</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button id="ipo-tab-upcoming" class="btn-primary text-xs">Upcoming</button>
+            <button id="ipo-tab-recent" class="btn-ghost text-xs">Recent Debuts</button>
+            <button id="ipo-tab-guide" class="btn-ghost text-xs">How to Apply</button>
+          </div>
+        </div>
+        <div id="ipo-content"><!-- rendered dynamically --></div>
+      </section>
+
+      <!-- NEWS-DRIVEN PICKS -->
+      <section class="mt-8 panel p-6" id="news-picks-section" style="border-top: 3px solid var(--warn);">
+        <div class="flex items-end justify-between mb-3 flex-wrap gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2">
+                <path d="M4 12h16M4 6h16M4 18h10"/>
+              </svg>
+              <div class="text-xs font-mono tracking-wider text-warn">NEWS-DRIVEN · TRENDING TODAY</div>
+            </div>
+            <h2 class="text-2xl font-semibold tracking-tight">What The Market Is Watching Right Now</h2>
+            <p class="text-sm text-muted mt-1">Auto-generated from live news scan. Refreshes hourly — cast changes as news breaks.</p>
+          </div>
+        </div>
+        <div id="news-picks-content"><!-- rendered dynamically --></div>
       </section>
 
       <!-- MY PORTFOLIO -->
@@ -3469,7 +3530,12 @@ function renderAllocator() {
 
   const planEl = document.getElementById('alloc-plan');
   planEl.innerHTML = plan.map(p => {
-    const priceInLocal = currency === 'MYR' ? p.asset.base * USD_MYR : p.asset.base;
+    // Use LIVE price from computeAllocation (p.currentPrice) — was previously using stale p.asset.base
+    const livePriceUSD = p.currentPrice;
+    const priceInLocal = currency === 'MYR' ? livePriceUSD * USD_MYR : livePriceUSD;
+    const priceStaleDot = p.isLivePrice
+      ? '<span title="Live price from Finnhub" style="display:inline-block; width:6px; height:6px; border-radius:50%; background: var(--bull); margin-right:4px; vertical-align:middle;"></span>'
+      : '<span title="Stale price — enable Finnhub in Settings for live" style="display:inline-block; width:6px; height:6px; border-radius:50%; background: var(--warn); margin-right:4px; vertical-align:middle;"></span>';
     const kindLabel = p.pick ? (p.pick.kind === 'etf' ? 'ETF' : 'STOCK') : p.asset.type.toUpperCase();
     const kindClass = p.pick && p.pick.kind === 'etf' ? 'type-fund' : 'type-stock';
     // Tilt indicator vs base
@@ -3477,9 +3543,10 @@ function renderAllocator() {
       ? `<span class="font-mono text-[9px] ${p.tilt > 0 ? 'text-bull' : 'text-bear'}" title="News signal adjustment">
            (${p.tilt > 0 ? '+' : ''}${p.tilt.toFixed(1)}% vs base ${p.basePct}%)
          </span>` : '';
-    // Entry timing badge
-    const timing = computeTimingSignals(p.asset);
-    const timingBadge = `<span class="font-mono text-[9px]" style="padding: 1px 5px; border: 1px solid ${timing.color}; color: ${timing.color};" title="Entry timing score ${timing.composite}/100">${timing.verdict}</span>`;
+    // Entry timing badge — now DYNAMIC (mechanical + news + regime)
+    const timing = computeDynamicSignalSync(p.asset);
+    const changeIcon = timing.changed ? ' ⇄' : '';
+    const timingBadge = `<span class="font-mono text-[9px]" style="padding: 1px 5px; border: 1px solid ${timing.color}; color: ${timing.color};" title="Dynamic signal: ${timing.combinedScore}/100 (mech ${timing.mechanicalScore} + news ${timing.newsSentiment.modifier} + regime ${timing.regime.modifier}). ${timing.regime.regime}: ${timing.regime.description}">${timing.verdict}${changeIcon}</span>`;
     // Analyst conviction badge
     const pickAn = p.pick && p.pick.analysis;
     const convBadge = pickAn
@@ -3503,7 +3570,7 @@ function renderAllocator() {
         </div>
         <div class="text-right flex-shrink-0">
           <div class="font-mono text-sm font-semibold">${currSym}${fmt.price(p.displayAlloc)}</div>
-          <div class="font-mono text-[10px] text-cyan">Buy ~${p.shares.toFixed(p.shares < 1 ? 4 : 2)} shares @ ${currSym}${fmt.price(priceInLocal)}</div>
+          <div class="font-mono text-[10px] text-cyan">${priceStaleDot}Buy ~${p.shares.toFixed(p.shares < 1 ? 4 : 2)} shares @ ${currSym}${fmt.price(priceInLocal)}</div>
         </div>
       </div>
     `;
@@ -4151,15 +4218,364 @@ const _renderTimingTab_original = renderTimingTab;
 renderTimingTab = function() {
   const html = _renderTimingTab_original();
   const t = computeTimingSignals(state.currentAsset);
+  const dyn = computeDynamicSignalSync(state.currentAsset);
+
   // Replace the "using simulated" warning with an accurate status
   const statusLine = t.isRealData
     ? '<p class="text-[10px] text-bull mt-2 font-mono">● Signals computed from real historical data via Twelve Data.</p>'
     : (state.twelveKey
         ? '<p class="text-[10px] text-warn mt-2 font-mono">⏳ Loading real historical data from Twelve Data...</p>'
         : '<p class="text-[10px] text-warn mt-2 font-mono">⚠ Using simulated data — add Twelve Data key in Settings for real signals.</p>');
-  return html.replace(/<p class="text-\[10px\] text-warn mt-2 font-mono">.*?<\/p>/, statusLine)
-             .replace('<!-- STATUS_PLACEHOLDER -->', ''); // safety
+
+  // Build dynamic signal breakdown card
+  const newsSrc = dyn.newsSentiment.source;
+  const newsBadge = newsSrc === 'live'
+    ? `<span class="text-[10px]" style="color: ${dyn.newsSentiment.modifier > 0 ? 'var(--bull)' : dyn.newsSentiment.modifier < 0 ? 'var(--bear)' : 'var(--dim)'};">${dyn.newsSentiment.modifier > 0 ? '+' : ''}${dyn.newsSentiment.modifier} news modifier · ${dyn.newsSentiment.totalItems || 0} scored headlines</span>`
+    : `<span class="text-[10px] text-dim">news modifier not available (${newsSrc === 'no-key' ? 'add Finnhub key' : newsSrc === 'not-fetched' ? 'fetching...' : 'no recent news'})</span>`;
+
+  const headlinesHtml = dyn.newsSentiment.headlines && dyn.newsSentiment.headlines.length > 0
+    ? `<div class="mt-2 space-y-1">${dyn.newsSentiment.headlines.map(h => `
+        <div class="text-[10px] leading-relaxed">
+          <span class="${h.sentiment === 'bullish' ? 'text-bull' : 'text-bear'}">${h.sentiment === 'bullish' ? '▲' : '▼'}</span>
+          <span class="text-muted">${h.headline}</span>
+          <span class="text-dim">${h.source ? '· ' + h.source : ''}${h.fresh ? ' · fresh' : ''}</span>
+        </div>`).join('')}</div>`
+    : '';
+
+  const dynamicCard = `
+    <div class="text-[10px] font-mono tracking-wider text-cyan mb-3 mt-6 flex items-center gap-2">
+      <span style="width: 6px; height: 6px; background: var(--cyan); display: inline-block;" class="pulse-dot"></span>
+      DYNAMIC SIGNAL · UPDATES WITH NEWS &amp; MARKET REGIME
+    </div>
+    <div class="panel-2 p-4 mb-4" style="border-left: 3px solid ${dyn.color};">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-1">DYNAMIC VERDICT</div>
+          <div class="font-mono text-lg font-bold" style="color: ${dyn.color};">${dyn.verdict}</div>
+          ${dyn.changed ? `<div class="text-[10px] text-warn mt-1">⇄ Changed from ${dyn.mechanicalVerdict}</div>` : ''}
+        </div>
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-1">SCORE BREAKDOWN</div>
+          <div class="font-mono text-xs">
+            Mechanical: <strong>${dyn.mechanicalScore}</strong><br/>
+            News: <strong style="color: ${dyn.newsSentiment.modifier > 0 ? 'var(--bull)' : dyn.newsSentiment.modifier < 0 ? 'var(--bear)' : 'var(--dim)'};">${dyn.newsSentiment.modifier > 0 ? '+' : ''}${dyn.newsSentiment.modifier}</strong><br/>
+            Regime: <strong style="color: ${dyn.regime.modifier > 0 ? 'var(--bull)' : dyn.regime.modifier < 0 ? 'var(--bear)' : 'var(--dim)'};">${dyn.regime.modifier > 0 ? '+' : ''}${dyn.regime.modifier}</strong><br/>
+            <span class="text-dim">──────────</span><br/>
+            Combined: <strong style="color: ${dyn.color};">${dyn.combinedScore}/100</strong>
+          </div>
+        </div>
+        <div>
+          <div class="text-[10px] font-mono tracking-wider text-dim mb-1">MARKET REGIME</div>
+          <div class="font-mono text-sm font-bold" style="color: ${dyn.regime.color};">${dyn.regime.regime}</div>
+          <div class="text-[10px] text-dim mt-1">VIX ${dyn.regime.vix.toFixed(1)} · Score ${dyn.regime.score}/100</div>
+          <div class="text-[10px] text-muted mt-1">${dyn.regime.description}</div>
+        </div>
+      </div>
+      <div class="pt-3 border-t hair">
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-1">NEWS SENTIMENT</div>
+        ${newsBadge}
+        ${headlinesHtml}
+      </div>
+    </div>
+  `;
+
+  // Inject the dynamic card right after the mechanical headline verdict
+  const withDynamic = html.replace(
+    /<!-- Entry price zones -->/,
+    dynamicCard + '<!-- Entry price zones -->'
+  );
+
+  return withDynamic
+    .replace(/<p class="text-\[10px\] text-warn mt-2 font-mono">.*?<\/p>/, statusLine)
+    .replace('<!-- STATUS_PLACEHOLDER -->', '');
 };
+
+/* ============================================================
+   DYNAMIC SIGNAL ENGINE
+   Combines mechanical technical + news sentiment + market regime
+   into a live signal that updates as news breaks and regime shifts.
+   ============================================================ */
+
+// Bullish/bearish keyword library (weighted by strength)
+const NEWS_KEYWORDS = {
+  strongBullish: ['beats estimates', 'record high', 'raises guidance', 'buyback', 'upgrade', 'breakthrough', 'partnership', 'wins contract', 'strong demand', 'accelerating', 'surge', 'rally', 'jumps', 'soars'],
+  bullish: ['positive', 'growth', 'expansion', 'launches', 'approved', 'gains', 'up', 'higher', 'strong', 'beat', 'bullish', 'optimistic', 'increased', 'improve', 'better than expected'],
+  bearish: ['decline', 'slowdown', 'concerns', 'weakness', 'missed', 'lower', 'cuts', 'down', 'falls', 'drops', 'bearish', 'worry', 'risk', 'headwind', 'challenge', 'pressure'],
+  strongBearish: ['plunges', 'crashes', 'lawsuit', 'investigation', 'fraud', 'bankruptcy', 'downgrade', 'slashes guidance', 'misses estimates badly', 'suspends', 'recall', 'delisted', 'restated'],
+};
+
+// Compute news sentiment for a symbol → returns modifier -25 to +25
+async function computeNewsSentiment(symbol) {
+  if (!state.apiKey) return { modifier: 0, headlines: [], source: 'no-key' };
+  const cacheKey = `news_sent_${symbol}`;
+  const cached = state.newsSentimentCache && state.newsSentimentCache[cacheKey];
+  if (cached && (Date.now() - cached.fetchedAt) < 60 * 60 * 1000) {
+    return cached.data;
+  }
+  try {
+    const news = await fetchCompanyNews(symbol);
+    if (!news || news.length === 0) return { modifier: 0, headlines: [], source: 'no-news' };
+
+    // Only weight the last 48 hours heavily
+    const twoDaysAgo = Date.now() - 48 * 60 * 60 * 1000;
+    let totalScore = 0;
+    let scored = 0;
+    const relevantHeadlines = [];
+
+    news.slice(0, 10).forEach(item => {
+      const text = (item.headline + ' ' + (item.summary || '')).toLowerCase();
+      const isFresh = item.publishedAt.getTime() > twoDaysAgo;
+      const freshMultiplier = isFresh ? 1.0 : 0.4;
+
+      let itemScore = 0;
+      NEWS_KEYWORDS.strongBullish.forEach(kw => { if (text.includes(kw)) itemScore += 3; });
+      NEWS_KEYWORDS.bullish.forEach(kw => { if (text.includes(kw)) itemScore += 1; });
+      NEWS_KEYWORDS.bearish.forEach(kw => { if (text.includes(kw)) itemScore -= 1; });
+      NEWS_KEYWORDS.strongBearish.forEach(kw => { if (text.includes(kw)) itemScore -= 3; });
+
+      itemScore *= freshMultiplier;
+      if (itemScore !== 0) {
+        totalScore += itemScore;
+        scored++;
+        if (Math.abs(itemScore) >= 1 && relevantHeadlines.length < 3) {
+          relevantHeadlines.push({
+            headline: item.headline,
+            source: item.source,
+            sentiment: itemScore > 0 ? 'bullish' : 'bearish',
+            magnitude: Math.abs(itemScore),
+            fresh: isFresh,
+          });
+        }
+      }
+    });
+
+    // Normalize to -25 to +25 range
+    const avgScore = scored > 0 ? totalScore / scored : 0;
+    const modifier = Math.max(-25, Math.min(25, avgScore * 4));
+
+    const result = { modifier: Math.round(modifier), headlines: relevantHeadlines, source: 'live', totalItems: scored };
+    state.newsSentimentCache = state.newsSentimentCache || {};
+    state.newsSentimentCache[cacheKey] = { data: result, fetchedAt: Date.now() };
+    return result;
+  } catch (err) {
+    return { modifier: 0, headlines: [], source: 'error' };
+  }
+}
+
+// Compute market regime — RISK-ON / NEUTRAL / RISK-OFF
+// Uses live prices of VIX, SPX, semi indicator, and rate-sensitive assets
+function computeMarketRegime() {
+  const vix = UNIVERSE.find(a => a.symbol === 'VIX');
+  const spx = UNIVERSE.find(a => a.symbol === 'SPX');
+  const smh = UNIVERSE.find(a => a.symbol === 'SMH');
+  const gld = UNIVERSE.find(a => a.symbol === 'GLD');
+
+  const vixPrice = vix ? getAssetPrice(vix) : 15;
+  const spxLive = state.livePrices && state.livePrices['SPX'];
+  const smhLive = state.livePrices && state.livePrices['SMH'];
+  const gldLive = state.livePrices && state.livePrices['GLD'];
+
+  let riskScore = 50; // start neutral
+
+  // VIX component (35% weight)
+  if (vixPrice < 13) riskScore += 20;         // very calm = risk-on
+  else if (vixPrice < 16) riskScore += 10;
+  else if (vixPrice < 20) riskScore += 0;     // neutral
+  else if (vixPrice < 25) riskScore -= 15;
+  else riskScore -= 25;                        // fear
+
+  // SPX daily change (30% weight)
+  if (spxLive && spxLive.changePct != null) {
+    if (spxLive.changePct > 1.5) riskScore += 15;
+    else if (spxLive.changePct > 0.3) riskScore += 8;
+    else if (spxLive.changePct > -0.3) riskScore += 0;
+    else if (spxLive.changePct > -1.5) riskScore -= 10;
+    else riskScore -= 20;
+  }
+
+  // Semi leading indicator (20% weight)
+  if (smhLive && smhLive.changePct != null) {
+    if (smhLive.changePct > 2) riskScore += 10;
+    else if (smhLive.changePct < -2) riskScore -= 10;
+    else if (smhLive.changePct < -1) riskScore -= 5;
+  }
+
+  // Gold as risk-off tell (15% weight)
+  if (gldLive && gldLive.changePct != null) {
+    if (gldLive.changePct > 1.5) riskScore -= 6;   // gold up = risk-off
+    else if (gldLive.changePct < -1) riskScore += 3; // gold down = risk-on
+  }
+
+  riskScore = Math.max(0, Math.min(100, riskScore));
+
+  let regime, color, modifier, description;
+  if (riskScore >= 70) {
+    regime = 'RISK-ON';
+    color = 'var(--bull)';
+    modifier = +5;   // slightly boost buy signals
+    description = 'Broad rally, low fear — bullish setups more likely to work';
+  } else if (riskScore >= 55) {
+    regime = 'CONSTRUCTIVE';
+    color = '#86EFAC';
+    modifier = +2;
+    description = 'Green day, moderate risk appetite';
+  } else if (riskScore >= 45) {
+    regime = 'NEUTRAL';
+    color = 'var(--cyan)';
+    modifier = 0;
+    description = 'Mixed signals, no strong regime';
+  } else if (riskScore >= 30) {
+    regime = 'CAUTIOUS';
+    color = 'var(--warn)';
+    modifier = -6;
+    description = 'Selling pressure, wait for stabilization';
+  } else {
+    regime = 'RISK-OFF';
+    color = 'var(--bear)';
+    modifier = -12;   // significantly dampen buy signals
+    description = 'Fear elevated — bullish signals should be trusted less';
+  }
+
+  return { regime, color, modifier, description, score: riskScore, vix: vixPrice };
+}
+
+// The unified dynamic signal: combines mechanical + news + regime
+async function computeDynamicSignal(asset) {
+  const mechanical = computeTimingSignals(asset);
+  const newsSentiment = await computeNewsSentiment(asset.symbol);
+  const regime = computeMarketRegime();
+
+  // Combined score = mechanical + news modifier + regime modifier
+  const combinedScore = Math.max(0, Math.min(100,
+    mechanical.composite + newsSentiment.modifier + regime.modifier
+  ));
+
+  // Rebuild verdict based on combined score
+  let verdict, action, color;
+  if (combinedScore >= 75) { verdict = 'GREAT ENTRY'; action = 'Buy now'; color = 'var(--bull)'; }
+  else if (combinedScore >= 60) { verdict = 'GOOD ENTRY'; action = 'Buy or DCA'; color = '#86EFAC'; }
+  else if (combinedScore >= 40) { verdict = 'FAIR ENTRY'; action = 'DCA slowly'; color = 'var(--cyan)'; }
+  else if (combinedScore >= 25) { verdict = 'STRETCHED'; action = 'Wait for pullback'; color = 'var(--warn)'; }
+  else { verdict = 'AVOID / WAIT'; action = 'High-risk entry'; color = 'var(--bear)'; }
+
+  // Detect if signal changed vs mechanical alone
+  const originalVerdict = mechanical.verdict;
+  const changed = verdict !== originalVerdict;
+
+  return {
+    ...mechanical,
+    combinedScore,
+    verdict, action, color,
+    mechanicalVerdict: originalVerdict,
+    mechanicalScore: mechanical.composite,
+    newsSentiment,
+    regime,
+    changed,
+    changeReason: changed ? _explainChange(mechanical.composite, newsSentiment.modifier, regime.modifier, verdict, originalVerdict) : null,
+  };
+}
+
+function _explainChange(mech, newsM, regM, newV, oldV) {
+  const parts = [];
+  if (newsM > 5) parts.push(`news bullish (+${newsM})`);
+  else if (newsM < -5) parts.push(`news bearish (${newsM})`);
+  if (regM > 0) parts.push(`regime risk-on (+${regM})`);
+  else if (regM < 0) parts.push(`regime risk-off (${regM})`);
+  const direction = newV > oldV ? 'upgraded' : 'downgraded';
+  return `Signal ${direction} from ${oldV} to ${newV} — ${parts.join(', ')}`;
+}
+
+// SYNCHRONOUS version for renders that can't await
+// Uses last-cached news sentiment; regime is always fresh (it's a synchronous computation)
+function computeDynamicSignalSync(asset) {
+  const mechanical = computeTimingSignals(asset);
+  const regime = computeMarketRegime();
+  const cacheKey = `news_sent_${asset.symbol}`;
+  const cached = state.newsSentimentCache && state.newsSentimentCache[cacheKey];
+  const newsSentiment = cached ? cached.data : { modifier: 0, headlines: [], source: 'not-fetched' };
+
+  const combinedScore = Math.max(0, Math.min(100,
+    mechanical.composite + newsSentiment.modifier + regime.modifier
+  ));
+
+  let verdict, color;
+  if (combinedScore >= 75) { verdict = 'GREAT ENTRY'; color = 'var(--bull)'; }
+  else if (combinedScore >= 60) { verdict = 'GOOD ENTRY'; color = '#86EFAC'; }
+  else if (combinedScore >= 40) { verdict = 'FAIR ENTRY'; color = 'var(--cyan)'; }
+  else if (combinedScore >= 25) { verdict = 'STRETCHED'; color = 'var(--warn)'; }
+  else { verdict = 'AVOID / WAIT'; color = 'var(--bear)'; }
+
+  return {
+    ...mechanical,
+    combinedScore,
+    verdict, color,
+    mechanicalVerdict: mechanical.verdict,
+    mechanicalScore: mechanical.composite,
+    newsSentiment,
+    regime,
+    changed: verdict !== mechanical.verdict,
+  };
+}
+
+// Refresh news sentiment for all picks + user portfolio holdings
+async function refreshAllNewsSentiment() {
+  if (!state.apiKey) return;
+  const symbolsToRefresh = [...new Set([
+    ...PICKS.map(p => p.symbol),
+    ...(loadPortfolio() ? loadPortfolio().positions.map(p => p.symbol) : []),
+  ])];
+  // Stagger requests to respect rate limits (Finnhub 60/min, we go ~1/sec)
+  for (let i = 0; i < symbolsToRefresh.length; i++) {
+    setTimeout(async () => {
+      await computeNewsSentiment(symbolsToRefresh[i]);
+      // After all fetched, re-render UI
+      if (i === symbolsToRefresh.length - 1) {
+        renderPortfolio();
+        renderPicks();
+        renderMarketRegimeHeader();
+        if (typeof renderAllocator === 'function') renderAllocator();
+      }
+    }, i * 1200);
+  }
+}
+
+// Render the market regime badge in header
+function renderMarketRegimeHeader() {
+  const el = document.getElementById('market-regime-indicator');
+  if (!el) return;
+  const regime = computeMarketRegime();
+  el.innerHTML = `
+    <span class="text-[10px] font-mono tracking-wider text-dim">REGIME:</span>
+    <span class="text-[10px] font-mono font-bold" style="color: ${regime.color};">${regime.regime}</span>
+    <span class="text-[10px] font-mono text-dim">VIX ${regime.vix.toFixed(1)}</span>
+  `;
+  el.title = `${regime.description} · Risk score: ${regime.score}/100 · Signal modifier: ${regime.modifier > 0 ? '+' : ''}${regime.modifier}`;
+}
+
+// Override renderPicks to use dynamic signal instead of static
+function _updatePickCardsDynamic() {
+  const pickCards = document.querySelectorAll('[data-pick-symbol]');
+  pickCards.forEach(card => {
+    const symbol = card.dataset.pickSymbol;
+    const asset = UNIVERSE.find(a => a.symbol === symbol);
+    if (!asset) return;
+    const sig = computeDynamicSignalSync(asset);
+    // Update or add badge inside the card
+    let badge = card.querySelector('.dynamic-signal-badge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'dynamic-signal-badge font-mono text-[9px] px-2 py-0.5 mt-1 inline-block';
+      const target = card.querySelector('.pick-header') || card.querySelector('.font-mono') || card;
+      target.appendChild(badge);
+    }
+    badge.style.border = `1px solid ${sig.color}`;
+    badge.style.color = sig.color;
+    badge.textContent = `● ${sig.verdict}${sig.changed ? ' ⇄' : ''}`;
+    badge.title = sig.changed
+      ? `Dynamic signal: ${sig.combinedScore}/100 (mechanical ${sig.mechanicalScore} + news ${sig.newsSentiment.modifier} + regime ${sig.regime.modifier}). Regime: ${sig.regime.regime}.`
+      : `Signal: ${sig.combinedScore}/100. Regime: ${sig.regime.regime}.`;
+  });
+}
 
 /* ============================================================
    SETTINGS MODAL
@@ -4612,11 +5028,16 @@ function renderPortfolio() {
       ${pnls.sort((a, b) => b.pnlPct - a.pnlPct).map(p => {
         const analysis = POSITION_ANALYSIS[p.pos.symbol] || { action: 'HOLD', conviction: 3, view: 'No specific analysis for this position.', trigger: '', risk: '' };
         const style = getActionStyle(analysis.action);
+        const dyn = computeDynamicSignalSync(p.asset);
         const isMyrNative = p.pos.currency === 'MYR';
         const nativeSym = isMyrNative ? 'RM ' : '$';
         const displayCost = displayCur === 'MYR' ? p.costMYR : p.costUSD;
         const displayValue = displayCur === 'MYR' ? p.currentValueMYR : p.currentValueUSD;
         const displayPnl = displayCur === 'MYR' ? p.pnlMYR : p.pnlUSD;
+        const signalChangedIcon = dyn.changed ? ' ⇄' : '';
+        const signalTooltip = dyn.newsSentiment.source === 'live'
+          ? `Dynamic: ${dyn.combinedScore}/100 (mech ${dyn.mechanicalScore} + news ${dyn.newsSentiment.modifier} + regime ${dyn.regime.modifier})`
+          : `Signal ${dyn.combinedScore}/100 · ${dyn.regime.regime}`;
 
         return `
           <div class="panel-2 p-3" style="border-left: 3px solid ${style.color};">
@@ -4627,6 +5048,7 @@ function renderPortfolio() {
                   <span class="text-[10px] text-dim">${p.asset.sector}</span>
                   <span class="text-[9px]" style="color: ${style.color};">${'★'.repeat(analysis.conviction)}${'☆'.repeat(5-analysis.conviction)}</span>
                   <span class="font-mono text-[9px] px-2 py-0.5" style="background: ${style.bg}; color: ${style.color};">${style.icon} ${analysis.action}</span>
+                  <span class="font-mono text-[9px] px-2 py-0.5" style="border: 1px solid ${dyn.color}; color: ${dyn.color};" title="${signalTooltip}">● ${dyn.verdict}${signalChangedIcon}</span>
                 </div>
                 <div class="text-[10px] text-dim mt-1">
                   ${p.pos.shares} sh @ ${nativeSym}${p.pos.avgCost.toFixed(p.pos.avgCost < 10 ? 3 : 2)} avg · Now ${nativeSym}${p.currentPrice.toFixed(p.currentPrice < 10 ? 3 : 2)}
@@ -4736,6 +5158,926 @@ function initPortfolioUI() {
 
 
 /* ============================================================
+   VOO DCA TRACKER — Long-term wealth building core
+   ============================================================ */
+
+const VOO_DCA_KEY = 'signal_voo_dca_v1';
+
+const DEFAULT_DCA_CONFIG = {
+  monthlyAmountMYR: 500,
+  goalAmountMYR: 500000, // RM 500k retirement target
+  startedAt: null,
+  entries: [],  // { date, amountMYR, priceUSD, shares, rate }
+};
+
+function loadVOODCA() {
+  try {
+    const raw = localStorage.getItem(VOO_DCA_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+function saveVOODCA(data) {
+  try { localStorage.setItem(VOO_DCA_KEY, JSON.stringify(data)); }
+  catch (err) { console.warn('DCA save failed:', err); }
+}
+
+function addDCAEntry() {
+  const config = loadVOODCA() || JSON.parse(JSON.stringify(DEFAULT_DCA_CONFIG));
+  const voo = UNIVERSE.find(a => a.symbol === 'VOO');
+  const currentPrice = getAssetPrice(voo);
+  const amountStr = prompt(`How much did you buy? (MYR)\nDefault: RM ${config.monthlyAmountMYR}`, config.monthlyAmountMYR);
+  if (!amountStr) return;
+  const priceStr = prompt(`VOO price you paid (USD)?\nCurrent market: $${currentPrice.toFixed(2)}`, currentPrice.toFixed(2));
+  if (!priceStr) return;
+  const rateStr = prompt(`USD/MYR rate used?\nCurrent: 4.22`, '4.22');
+  if (!rateStr) return;
+
+  const amountMYR = parseFloat(amountStr);
+  const priceUSD = parseFloat(priceStr);
+  const rate = parseFloat(rateStr);
+  const amountUSD = amountMYR / rate;
+  const shares = amountUSD / priceUSD;
+
+  config.entries.push({
+    date: new Date().toISOString().slice(0, 10),
+    amountMYR, priceUSD, shares, rate,
+  });
+  if (!config.startedAt) config.startedAt = new Date().toISOString().slice(0, 10);
+  saveVOODCA(config);
+  renderVOODCA();
+}
+
+function configureVOO() {
+  const config = loadVOODCA() || JSON.parse(JSON.stringify(DEFAULT_DCA_CONFIG));
+  const monthlyStr = prompt('Monthly DCA amount (MYR)?', config.monthlyAmountMYR);
+  if (monthlyStr) config.monthlyAmountMYR = parseFloat(monthlyStr);
+  const goalStr = prompt('Wealth goal (MYR)?', config.goalAmountMYR);
+  if (goalStr) config.goalAmountMYR = parseFloat(goalStr);
+  saveVOODCA(config);
+  renderVOODCA();
+}
+
+// Compute compound growth projection
+function projectDCA(currentValueUSD, monthlyMYR, months, annualRate, usdMyrRate) {
+  const monthlyUSD = monthlyMYR / usdMyrRate;
+  const monthlyRate = Math.pow(1 + annualRate, 1/12) - 1;
+  let value = currentValueUSD;
+  for (let i = 0; i < months; i++) {
+    value = value * (1 + monthlyRate) + monthlyUSD;
+  }
+  return value;
+}
+
+function renderVOODCA() {
+  const content = document.getElementById('voo-content');
+  if (!content) return;
+  const config = loadVOODCA();
+
+  if (!config || config.entries.length === 0) {
+    // Empty state — show pitch + setup
+    content.innerHTML = `
+      <div class="panel-2 p-5">
+        <div class="text-sm text-muted mb-4 leading-relaxed">
+          <p class="mb-2">The most reliable path to wealth for someone your age isn't picking winning stocks — it's <strong class="text-text">dollar-cost averaging into a broad market index every month for decades</strong>.</p>
+          <p class="mb-2">Historical VOO returns: <strong class="text-bull">~9-10% annualized</strong> over any 20-year period. If you invest RM 500/month for 30 years at 8%, you end with <strong class="text-bull">~RM 745,000</strong> — most of that is compound interest.</p>
+          <p>Once set up, this section tracks every monthly buy, shows projected growth, and helps you migrate your individual stocks into this boring wealth-builder.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+          <div class="stat"><div class="stat-label">Historical Return</div><div class="stat-value text-bull">~9-10%/yr</div><div class="text-[10px] text-dim mt-1">S&P 500 long-run avg</div></div>
+          <div class="stat"><div class="stat-label">Expense Ratio</div><div class="stat-value">0.03%</div><div class="text-[10px] text-dim mt-1">Basically free</div></div>
+          <div class="stat"><div class="stat-label">30-Year Positive Return</div><div class="stat-value text-bull">~100%</div><div class="text-[10px] text-dim mt-1">Never lost money over 30Y</div></div>
+        </div>
+        <button id="voo-start-btn" class="btn-primary">Start My VOO DCA Plan</button>
+        <p class="text-[10px] text-dim mt-3 font-mono">Recommended: RM 500/month via Moomoo recurring buy. Set on 1st of each month, never miss it.</p>
+      </div>
+    `;
+    document.getElementById('voo-start-btn').addEventListener('click', () => {
+      configureVOO();
+      addDCAEntry();
+    });
+    return;
+  }
+
+  // Active DCA tracker
+  const voo = UNIVERSE.find(a => a.symbol === 'VOO');
+  const currentPrice = getAssetPrice(voo);
+  const totalShares = config.entries.reduce((s, e) => s + e.shares, 0);
+  const totalInvestedMYR = config.entries.reduce((s, e) => s + e.amountMYR, 0);
+  const totalInvestedUSD = config.entries.reduce((s, e) => s + (e.amountMYR / e.rate), 0);
+  const currentValueUSD = totalShares * currentPrice;
+  const currentRate = 4.22;
+  const currentValueMYR = currentValueUSD * currentRate;
+  const pnlMYR = currentValueMYR - totalInvestedMYR;
+  const pnlPct = totalInvestedMYR > 0 ? (pnlMYR / totalInvestedMYR) * 100 : 0;
+  const avgCostUSD = totalShares > 0 ? totalInvestedUSD / totalShares : 0;
+
+  // Projections
+  const bear5Y = projectDCA(currentValueUSD, config.monthlyAmountMYR, 60, 0.05, currentRate) * currentRate;
+  const base5Y = projectDCA(currentValueUSD, config.monthlyAmountMYR, 60, 0.08, currentRate) * currentRate;
+  const bull5Y = projectDCA(currentValueUSD, config.monthlyAmountMYR, 60, 0.11, currentRate) * currentRate;
+  const bear10Y = projectDCA(currentValueUSD, config.monthlyAmountMYR, 120, 0.05, currentRate) * currentRate;
+  const base10Y = projectDCA(currentValueUSD, config.monthlyAmountMYR, 120, 0.08, currentRate) * currentRate;
+  const bull10Y = projectDCA(currentValueUSD, config.monthlyAmountMYR, 120, 0.11, currentRate) * currentRate;
+  const base20Y = projectDCA(currentValueUSD, config.monthlyAmountMYR, 240, 0.08, currentRate) * currentRate;
+  const base30Y = projectDCA(currentValueUSD, config.monthlyAmountMYR, 360, 0.08, currentRate) * currentRate;
+
+  const goalProgressPct = config.goalAmountMYR > 0 ? Math.min(100, (currentValueMYR / config.goalAmountMYR) * 100) : 0;
+
+  // Portfolio migration analysis
+  const portfolio = loadPortfolio();
+  let individualStocksValueMYR = 0;
+  if (portfolio) {
+    portfolio.positions.forEach(pos => {
+      const asset = UNIVERSE.find(a => a.symbol === pos.symbol);
+      if (asset && pos.symbol !== 'VOO') {
+        const price = getAssetPrice(asset);
+        const isMY = pos.currency === 'MYR';
+        const valUSD = isMY ? (pos.shares * price / currentRate) : pos.shares * price;
+        individualStocksValueMYR += valUSD * currentRate;
+      }
+    });
+  }
+  const totalWealth = individualStocksValueMYR + currentValueMYR;
+  const vooPct = totalWealth > 0 ? (currentValueMYR / totalWealth) * 100 : 0;
+  const stocksPct = totalWealth > 0 ? (individualStocksValueMYR / totalWealth) * 100 : 0;
+
+  content.innerHTML = `
+    <!-- Current status -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div class="stat">
+        <div class="stat-label">Total Invested</div>
+        <div class="stat-value">RM ${fmt.price(totalInvestedMYR)}</div>
+        <div class="text-[10px] text-dim mt-1">${config.entries.length} buys · started ${config.startedAt || '—'}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Current Value</div>
+        <div class="stat-value">RM ${fmt.price(currentValueMYR)}</div>
+        <div class="text-[10px] text-dim mt-1">${totalShares.toFixed(4)} VOO shares</div>
+      </div>
+      <div class="stat" style="border-left: 2px solid ${pnlMYR >= 0 ? 'var(--bull)' : 'var(--bear)'};">
+        <div class="stat-label">Unrealized P&amp;L</div>
+        <div class="stat-value ${pnlMYR >= 0 ? 'text-bull' : 'text-bear'}">${pnlMYR >= 0 ? '+' : ''}RM ${fmt.price(pnlMYR)}</div>
+        <div class="text-[10px] ${pnlPct >= 0 ? 'text-bull' : 'text-bear'} mt-1">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Avg Cost / Now</div>
+        <div class="stat-value">$${avgCostUSD.toFixed(2)}</div>
+        <div class="text-[10px] text-dim mt-1">Live: $${currentPrice.toFixed(2)}</div>
+      </div>
+    </div>
+
+    <!-- Goal progress -->
+    <div class="panel-2 p-3 mb-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-[10px] font-mono tracking-wider text-dim">WEALTH GOAL PROGRESS</div>
+        <div class="text-xs font-mono">${goalProgressPct.toFixed(2)}% of RM ${fmt.price(config.goalAmountMYR)}</div>
+      </div>
+      <div class="w-full h-3 bg-[color:var(--border)] mb-1">
+        <div style="width: ${goalProgressPct}%; height: 100%; background: linear-gradient(90deg, var(--bull), var(--cyan));"></div>
+      </div>
+      <div class="text-[10px] text-dim">At current pace, you'll hit goal in approximately ${goalProgressPct > 0 && config.monthlyAmountMYR > 0 ? Math.ceil((config.goalAmountMYR - currentValueMYR) / (config.monthlyAmountMYR * 12 * (1 + 0.08))) : '—'} years.</div>
+    </div>
+
+    <!-- Portfolio migration status -->
+    ${totalWealth > 0 ? `
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-2">PORTFOLIO MIGRATION · TARGET 70% VOO / 30% INDIVIDUAL</div>
+      <div class="panel-2 p-3 mb-4">
+        <div class="flex items-center justify-between mb-2 text-xs font-mono">
+          <span class="text-bull">VOO: ${vooPct.toFixed(1)}% (RM ${fmt.price(currentValueMYR)})</span>
+          <span class="text-warn">Individual: ${stocksPct.toFixed(1)}% (RM ${fmt.price(individualStocksValueMYR)})</span>
+        </div>
+        <div class="w-full h-3 flex overflow-hidden mb-2">
+          <div style="width: ${vooPct}%; background: var(--bull);"></div>
+          <div style="width: ${stocksPct}%; background: var(--warn);"></div>
+        </div>
+        <div class="w-full h-1 flex overflow-hidden" title="Target allocation">
+          <div style="width: 70%; background: rgba(52,211,153,0.4);"></div>
+          <div style="width: 30%; background: rgba(251,191,36,0.4);"></div>
+        </div>
+        <div class="text-[10px] text-dim mt-2">
+          ${vooPct < 60
+            ? `⚠ You need to migrate <strong class="text-warn">RM ${fmt.price(totalWealth * 0.7 - currentValueMYR)}</strong> more into VOO to hit 70% target. See "Migration Priority" in My Portfolio.`
+            : vooPct > 80
+              ? `✓ Above target — great core allocation. Room to add ~RM ${fmt.price(totalWealth * 0.3 - individualStocksValueMYR)} to individual stocks bucket for learning.`
+              : `✓ On target — well-balanced core + trading split.`}
+        </div>
+      </div>
+    ` : ''}
+
+    <!-- Projections -->
+    <div class="text-[10px] font-mono tracking-wider text-dim mb-2">PROJECTED FUTURE VALUE · ASSUMING RM ${fmt.price(config.monthlyAmountMYR)}/MONTH CONTINUED</div>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-4">
+      <div class="stat" style="border-top: 2px solid var(--cyan);">
+        <div class="stat-label">In 5 Years</div>
+        <div class="stat-value">RM ${fmt.price(base5Y)}</div>
+        <div class="text-[10px] text-dim mt-1">Bear: RM ${fmt.price(bear5Y)}</div>
+        <div class="text-[10px] text-bull mt-0.5">Bull: RM ${fmt.price(bull5Y)}</div>
+      </div>
+      <div class="stat" style="border-top: 2px solid var(--cyan);">
+        <div class="stat-label">In 10 Years</div>
+        <div class="stat-value">RM ${fmt.price(base10Y)}</div>
+        <div class="text-[10px] text-dim mt-1">Bear: RM ${fmt.price(bear10Y)}</div>
+        <div class="text-[10px] text-bull mt-0.5">Bull: RM ${fmt.price(bull10Y)}</div>
+      </div>
+      <div class="stat" style="border-top: 2px solid var(--bull);">
+        <div class="stat-label">In 20 Years</div>
+        <div class="stat-value text-bull">RM ${fmt.price(base20Y)}</div>
+        <div class="text-[10px] text-dim mt-1">at 8% avg</div>
+      </div>
+      <div class="stat" style="border-top: 2px solid var(--bull);">
+        <div class="stat-label">In 30 Years</div>
+        <div class="stat-value text-bull">RM ${fmt.price(base30Y)}</div>
+        <div class="text-[10px] text-dim mt-1">at 8% avg</div>
+      </div>
+    </div>
+
+    <!-- Recent DCA log -->
+    <details class="mb-2">
+      <summary class="text-[10px] font-mono tracking-wider text-dim cursor-pointer">DCA LOG (${config.entries.length} entries) — click to expand</summary>
+      <div class="panel-2 p-3 mt-2 max-h-40 overflow-y-auto">
+        <div class="space-y-1 text-xs font-mono">
+          ${config.entries.slice().reverse().slice(0, 12).map(e => `
+            <div class="flex justify-between border-b hair pb-1">
+              <span class="text-dim">${e.date}</span>
+              <span>RM ${e.amountMYR.toFixed(2)} @ $${e.priceUSD.toFixed(2)} = ${e.shares.toFixed(4)} sh</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </details>
+
+    <p class="text-[10px] text-dim mt-3 font-mono text-center">
+      Boring wins. Every dollar here compounds silently while you sleep. Log your Moomoo VOO buy above every month.
+    </p>
+  `;
+}
+
+
+/* ============================================================
+   MALAYSIAN IPO TRACKER — Bursa pipeline + performance
+   ============================================================ */
+
+// Real Bursa IPO pipeline data (Aug 2026) — curated from BursaMalaysia + rates.my
+const IPO_UPCOMING = [
+  {
+    ticker: 'UNIPAC',
+    name: 'United Asiapac Energy Bhd',
+    listingDate: '2026-08-19',
+    board: 'ACE Market',
+    sector: 'Energy Services',
+    ipoPrice: 'TBA',
+    marketCap: '~RM 150-200M',
+    subscriptionClose: 'Closed',
+    analystView: {
+      conviction: 3,
+      action: 'CONSIDER',
+      rationale: 'Small-cap energy services play. Moderate risk — ACE Market listings historically underperform Main Market. Watch first-day price action before deciding.',
+      color: 'var(--cyan)',
+    }
+  },
+  {
+    ticker: 'GB BOND',
+    name: 'GB Bond Holdings',
+    listingDate: 'TBA (Q4 2026)',
+    board: 'TBA',
+    sector: 'Financial Services',
+    ipoPrice: 'TBA',
+    marketCap: 'TBA',
+    subscriptionClose: 'Prospectus not yet filed',
+    status: 'Approved',
+    analystView: {
+      conviction: 2,
+      action: 'WAIT',
+      rationale: 'Approval received but prospectus pending. Wait for details before evaluating.',
+      color: 'var(--dim)',
+    }
+  },
+  {
+    ticker: 'PIXLR',
+    name: 'Pixlr Group',
+    listingDate: 'TBA',
+    board: 'ACE Market',
+    sector: 'Technology / SaaS',
+    ipoPrice: 'TBA',
+    marketCap: 'TBA',
+    subscriptionClose: 'Draft filed',
+    status: 'Draft',
+    analystView: {
+      conviction: 3,
+      action: 'WATCH CLOSELY',
+      rationale: 'Global online image editor — real user base and revenue. Tech IPOs on ACE historically volatile but strong upside potential. Read prospectus carefully when released.',
+      color: 'var(--cyan)',
+    }
+  },
+  {
+    ticker: 'EKONUSA',
+    name: 'Ekonusa Berhad',
+    listingDate: 'TBA',
+    board: 'TBA',
+    sector: 'TBA',
+    ipoPrice: 'TBA',
+    marketCap: 'TBA',
+    subscriptionClose: 'Draft filed',
+    status: 'Draft',
+    analystView: {
+      conviction: 2,
+      action: 'WAIT',
+      rationale: 'Insufficient information at this stage. Await prospectus.',
+      color: 'var(--dim)',
+    }
+  },
+  {
+    ticker: 'RAIDEN',
+    name: 'Raiden Holdings',
+    listingDate: 'TBA',
+    board: 'TBA',
+    sector: 'TBA',
+    ipoPrice: 'TBA',
+    marketCap: 'TBA',
+    subscriptionClose: 'Draft filed',
+    status: 'Draft',
+    analystView: {
+      conviction: 2,
+      action: 'WAIT',
+      rationale: 'Insufficient information at this stage.',
+      color: 'var(--dim)',
+    }
+  },
+  {
+    ticker: 'IOIPG REIT',
+    name: 'IOI Properties Group REIT',
+    listingDate: 'TBA (Q4 2026 expected)',
+    board: 'Main Market',
+    sector: 'Real Estate (REIT)',
+    ipoPrice: 'TBA',
+    marketCap: '~RM 3-5B (est)',
+    subscriptionClose: 'Not yet',
+    status: 'In pipeline',
+    analystView: {
+      conviction: 4,
+      action: 'STRONG WATCH',
+      rationale: 'One of the "one or two large IPOs" Bursa expects in H2 2026. REITs offer dividend yield + property exposure. IOI is established quality — worth applying if oversubscription rate looks moderate (<10x).',
+      color: '#86EFAC',
+    }
+  },
+];
+
+// Recent Bursa IPOs with first-day performance (for reference/learning)
+const IPO_RECENT = [
+  {
+    ticker: 'SKYECHIP',
+    name: 'SkyeChip Berhad',
+    listingDate: '2026-05-20',
+    ipoPrice: 0.88,
+    day1Pct: 269.3,
+    oversub: 'Very high',
+    sector: 'Semiconductors',
+    lesson: 'AI-adjacent semiconductor stocks priced for tech supercycle. Massive first-day pop — but hard to actually get shares due to oversubscription.',
+  },
+  {
+    ticker: 'STRATUS',
+    name: 'Stratus Bhd',
+    listingDate: '2026-Jan',
+    ipoPrice: null,
+    day1Pct: 278.7,
+    oversub: 'Very high',
+    sector: 'Tech',
+    lesson: 'Highest first-day return of 2026 so far. Retail rarely gets allocation on hot ACE listings.',
+  },
+  {
+    ticker: 'SUNMED',
+    name: 'Sunway Healthcare Holdings',
+    listingDate: '2026-03-18',
+    ipoPrice: 2.50,
+    day1Pct: 40.7,
+    oversub: '5.57x',
+    sector: 'Healthcare',
+    lesson: 'Largest 2026 IPO (RM 2.86B). Moderate oversubscription meant most applicants got shares. Steady +40% return.',
+  },
+  {
+    ticker: 'EMPIRE',
+    name: 'Empire Premium Food (Sushi)',
+    listingDate: '2026-04-17',
+    ipoPrice: 0.70,
+    day1Pct: 47.1,
+    oversub: '23.30x',
+    sector: 'Consumer / F&B',
+    lesson: 'Consumer brand recognition (Empire Sushi) attracted heavy retail interest. Solid pop but hard to get shares.',
+  },
+  {
+    ticker: 'MMCS',
+    name: 'MMCS Bhd',
+    listingDate: '2026-Q2',
+    ipoPrice: null,
+    day1Pct: 102.3,
+    oversub: 'High',
+    sector: 'Industrial',
+    lesson: 'ACE Market listings can double on day 1 if under-owned by institutions.',
+  },
+  {
+    ticker: 'GDGROUP',
+    name: 'GD Group',
+    listingDate: '2026-Q2',
+    ipoPrice: null,
+    day1Pct: -15.6,
+    oversub: 'Low',
+    sector: 'Various',
+    lesson: 'Not every IPO wins. Low oversubscription can signal weak demand — often followed by day-1 decline.',
+  },
+  {
+    ticker: 'GOLDLI',
+    name: 'Gold Li',
+    listingDate: '2026',
+    ipoPrice: null,
+    day1Pct: -30.8,
+    oversub: 'Low',
+    sector: 'Various',
+    lesson: 'Worst 2026 debut. Reminder that IPOs are NOT guaranteed profit — do your research on business fundamentals.',
+  },
+];
+
+function renderIPO(tab = 'upcoming') {
+  const content = document.getElementById('ipo-content');
+  if (!content) return;
+
+  // Update tab active states
+  ['upcoming', 'recent', 'guide'].forEach(t => {
+    const btn = document.getElementById(`ipo-tab-${t}`);
+    if (btn) btn.className = t === tab ? 'btn-primary text-xs' : 'btn-ghost text-xs';
+  });
+
+  if (tab === 'upcoming') {
+    content.innerHTML = `
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">
+        ${IPO_UPCOMING.length} IPOs IN PIPELINE · Data current Aug 2026
+      </div>
+      <div class="space-y-2 mb-4">
+        ${IPO_UPCOMING.map(ipo => {
+          const av = ipo.analystView;
+          const stars = '★'.repeat(av.conviction) + '☆'.repeat(5 - av.conviction);
+          return `
+            <div class="panel-2 p-3" style="border-left: 3px solid ${av.color};">
+              <div class="flex items-start justify-between gap-3 flex-wrap mb-2">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 flex-wrap mb-1">
+                    <span class="font-mono font-bold">${ipo.ticker}</span>
+                    <span class="text-[10px] text-dim">${ipo.sector}</span>
+                    <span class="text-[10px] px-2 py-0.5" style="background: rgba(192,132,252,0.15); color: var(--purple);">${ipo.board}</span>
+                    <span class="text-[9px]" style="color: ${av.color};">${stars}</span>
+                    <span class="font-mono text-[9px] px-2 py-0.5" style="border: 1px solid ${av.color}; color: ${av.color};">${av.action}</span>
+                  </div>
+                  <div class="text-sm font-medium">${ipo.name}</div>
+                </div>
+                <div class="text-right text-xs font-mono">
+                  <div class="text-dim">Listing: <strong class="text-text">${ipo.listingDate}</strong></div>
+                  <div class="text-dim">Price: ${ipo.ipoPrice}</div>
+                  <div class="text-dim">Cap: ${ipo.marketCap}</div>
+                </div>
+              </div>
+              <div class="text-xs text-muted leading-relaxed pt-2 border-t hair">
+                <strong style="color: ${av.color};">${av.action}:</strong> ${av.rationale}
+              </div>
+              <div class="text-[10px] text-dim mt-1">Subscription: ${ipo.subscriptionClose}${ipo.status ? ' · ' + ipo.status : ''}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div class="panel-2 p-3 mt-4" style="border-left: 2px solid var(--warn);">
+        <div class="text-[10px] font-mono tracking-wider text-warn mb-1">⚠ IPO REALITY CHECK</div>
+        <ul class="text-xs text-muted space-y-1 leading-relaxed">
+          <li>• Historical Bursa IPO win rate: ~65% positive day-1 returns, ~50% still positive after 30 days</li>
+          <li>• Best returns often go to institutional/Bumiputera pools — retail allocations shrink at high oversubscription</li>
+          <li>• Never invest more than you can afford to lose on unproven public companies</li>
+          <li>• Consider Bumiputera MITI portal (sahamonline.miti.gov.my) if eligible — separate allocation pool = 2× chance</li>
+        </ul>
+      </div>
+    `;
+  } else if (tab === 'recent') {
+    // Sort by absolute performance
+    const sorted = IPO_RECENT.slice().sort((a, b) => b.day1Pct - a.day1Pct);
+    content.innerHTML = `
+      <div class="text-[10px] font-mono tracking-wider text-dim mb-3">RECENT BURSA DEBUTS · LEARN FROM WHAT HAPPENED</div>
+      <div class="space-y-2 mb-4">
+        ${sorted.map(ipo => {
+          const color = ipo.day1Pct > 0 ? 'var(--bull)' : 'var(--bear)';
+          return `
+            <div class="panel-2 p-3" style="border-left: 3px solid ${color};">
+              <div class="flex items-start justify-between gap-3 flex-wrap mb-2">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 flex-wrap mb-1">
+                    <span class="font-mono font-bold">${ipo.ticker}</span>
+                    <span class="text-[10px] text-dim">${ipo.sector}</span>
+                    <span class="text-[10px] text-dim">${ipo.listingDate}</span>
+                    ${ipo.oversub ? `<span class="text-[10px] text-dim">${ipo.oversub} oversub</span>` : ''}
+                  </div>
+                  <div class="text-sm font-medium">${ipo.name}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-mono font-bold" style="color: ${color};">${ipo.day1Pct >= 0 ? '+' : ''}${ipo.day1Pct.toFixed(1)}%</div>
+                  <div class="text-[10px] text-dim">Day 1 return${ipo.ipoPrice ? ` from RM ${ipo.ipoPrice}` : ''}</div>
+                </div>
+              </div>
+              <div class="text-xs text-muted leading-relaxed pt-2 border-t hair">
+                <strong class="text-cyan">Lesson:</strong> ${ipo.lesson}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div class="panel-2 p-3 mt-4">
+        <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">▲ AVERAGES</div>
+        <div class="text-xs text-muted leading-relaxed">
+          Median day-1 return across these ${IPO_RECENT.length} recent IPOs: <strong class="text-text">+${(IPO_RECENT.reduce((s, i) => s + i.day1Pct, 0) / IPO_RECENT.length).toFixed(1)}%</strong> · Positive: <strong class="text-bull">${IPO_RECENT.filter(i => i.day1Pct > 0).length}/${IPO_RECENT.length}</strong> · Negative: <strong class="text-bear">${IPO_RECENT.filter(i => i.day1Pct < 0).length}/${IPO_RECENT.length}</strong>
+        </div>
+      </div>
+    `;
+  } else if (tab === 'guide') {
+    content.innerHTML = `
+      <div class="space-y-3">
+        <div class="panel-2 p-4">
+          <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">STEP 1 · CHECK ELIGIBILITY</div>
+          <ul class="text-xs text-muted space-y-1 leading-relaxed">
+            <li>• Active <strong class="text-text">CDS account</strong> required (get one via any Malaysian broker)</li>
+            <li>• Minimum age 18</li>
+            <li>• Bumiputera investors: separate MITI allocation pool via <span class="text-cyan">sahamonline.miti.gov.my</span> (2× chance to get shares)</li>
+          </ul>
+        </div>
+
+        <div class="panel-2 p-4">
+          <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">STEP 2 · APPLY (RM 0 FEE)</div>
+          <ul class="text-xs text-muted space-y-1 leading-relaxed">
+            <li>• <strong class="text-text">Moomoo MY</strong> app: Markets → IPO → Apply (RM 0 fee, fully digital) — recommended</li>
+            <li>• Internet banking (Maybank2u, CIMB, RHB, Public Bank): RM 1 fee</li>
+            <li>• Minimum 1 lot = 100 shares</li>
+            <li>• Apply before subscription window closes</li>
+          </ul>
+        </div>
+
+        <div class="panel-2 p-4">
+          <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">STEP 3 · WAIT FOR ALLOTMENT (1-3 BUSINESS DAYS)</div>
+          <div class="text-xs text-muted leading-relaxed mb-2">
+            <strong class="text-text">Oversubscription rate = your chance of getting shares:</strong>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+            <div class="stat text-center"><div class="text-bull font-bold">1-3x</div><div class="text-[10px] text-dim">30-100% chance</div></div>
+            <div class="stat text-center"><div class="text-cyan font-bold">5-10x</div><div class="text-[10px] text-dim">10-20% chance</div></div>
+            <div class="stat text-center"><div class="text-warn font-bold">20-30x</div><div class="text-[10px] text-dim">3-5% chance</div></div>
+            <div class="stat text-center"><div class="text-bear font-bold">50x+</div><div class="text-[10px] text-dim">Lottery (&lt;2%)</div></div>
+          </div>
+        </div>
+
+        <div class="panel-2 p-4">
+          <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">STEP 4 · LISTING DAY DECISIONS</div>
+          <ul class="text-xs text-muted space-y-1 leading-relaxed">
+            <li>• <strong class="text-bull">Flip-and-sell:</strong> Sell at market open for quick profit — statistically most retail investors do this</li>
+            <li>• <strong class="text-cyan">Hold:</strong> If fundamentals are strong AND you'd buy at IPO price without the "IPO" label</li>
+            <li>• <strong class="text-warn">Set price target:</strong> Base decision on business quality, not FOMO on the pop</li>
+            <li>• Track first-day price action in Moomoo — sometimes shares peak in first 30 minutes then fade</li>
+          </ul>
+        </div>
+
+        <div class="panel-2 p-4" style="border-left: 2px solid var(--warn);">
+          <div class="text-[10px] font-mono tracking-wider text-warn mb-2">⚠ SIGNAL'S HONEST TAKE ON IPO INVESTING</div>
+          <p class="text-xs text-muted leading-relaxed">
+            IPO investing at retail scale is <strong class="text-text">essentially a lottery</strong> — the good deals are massively oversubscribed (you get 5-10% of what you asked for), the ones with easy allocation are usually the bad ones (see GD Group -15.6%, Gold Li -30.8%). Great for supplemental returns and learning about companies, but <strong class="text-text">not a reliable path to wealth</strong>. Your VOO DCA remains the reliable path — treat IPOs as fun side bets with money you can afford to lose.
+          </p>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function initVOOandIPO() {
+  document.getElementById('voo-add-entry-btn').addEventListener('click', addDCAEntry);
+  document.getElementById('voo-config-btn').addEventListener('click', configureVOO);
+  document.getElementById('ipo-tab-upcoming').addEventListener('click', () => renderIPO('upcoming'));
+  document.getElementById('ipo-tab-recent').addEventListener('click', () => renderIPO('recent'));
+  document.getElementById('ipo-tab-guide').addEventListener('click', () => renderIPO('guide'));
+  renderVOODCA();
+  renderIPO('upcoming');
+  setInterval(renderVOODCA, 30_000); // refresh live value
+}
+
+
+/* ============================================================
+   DYNAMIC NEWS-DRIVEN PICKS
+   Scans market news, extracts trending tickers, generates
+   a rolling execution plan that changes as news breaks.
+   ============================================================ */
+
+const NEWS_PICKS_KEY = 'signal_news_picks_v1';
+const NEWS_PICKS_REFRESH_MS = 60 * 60 * 1000; // hourly
+
+// Extended universe eligible for news-driven picks (curated quality set + user's holdings)
+const NEWS_ELIGIBLE_SYMBOLS = new Set([
+  // Core ETFs
+  'SGOV','VOO','SPY','QQQ','VTI','GLD','SLV','SMH','SOXX','IBIT','XLE','XLF','XLK','XLV','XLI','XLU','XLP','XLY','XBI','SCHD','VYM','TLT','BND','VNQ','ARKK','FXI','EWJ','EWM','VWO','INDA',
+  // AI / semiconductors
+  'NVDA','AMD','INTC','TSM','AVGO','MU','MRVL','GLW','SMCI','NBIS','COHR','WDC','STX',
+  // Mega-cap tech
+  'MSFT','AAPL','GOOGL','META','AMZN','TSLA','ORCL','CRM','ADBE','PLTR',
+  // Banks / financials
+  'JPM','BAC','V','MA','BRK.B',
+  // Consumer / defensive
+  'WMT','COST','JNJ','PFE','UNH','DIS','NFLX',
+  // Energy
+  'XOM','CVX',
+  // Crypto
+  'COIN','MSTR','BTC','ETH',
+  // Leveraged (user holds — but flag as risk)
+  'SOXL','TQQQ',
+]);
+
+// Company-name-to-ticker map for entity extraction (partial — most common companies)
+const COMPANY_TO_TICKER = {
+  'nvidia': 'NVDA', 'apple': 'AAPL', 'microsoft': 'MSFT', 'alphabet': 'GOOGL', 'google': 'GOOGL',
+  'meta': 'META', 'facebook': 'META', 'amazon': 'AMZN', 'tesla': 'TSLA',
+  'amd': 'AMD', 'intel': 'INTC', 'taiwan semiconductor': 'TSM', 'tsmc': 'TSM',
+  'broadcom': 'AVGO', 'micron': 'MU', 'marvell': 'MRVL', 'corning': 'GLW',
+  'super micro': 'SMCI', 'nebius': 'NBIS', 'coherent': 'COHR', 'western digital': 'WDC',
+  'jpmorgan': 'JPM', 'jp morgan': 'JPM', 'bank of america': 'BAC', 'visa': 'V',
+  'mastercard': 'MA', 'berkshire': 'BRK.B', 'walmart': 'WMT', 'costco': 'COST',
+  'johnson & johnson': 'JNJ', 'unitedhealth': 'UNH', 'disney': 'DIS', 'netflix': 'NFLX',
+  'salesforce': 'CRM', 'oracle': 'ORCL', 'adobe': 'ADBE', 'palantir': 'PLTR',
+  'exxon': 'XOM', 'chevron': 'CVX', 'coinbase': 'COIN', 'microstrategy': 'MSTR',
+  'bitcoin': 'BTC', 'ethereum': 'ETH',
+};
+
+// Category detection — themes that group related picks
+const THEME_KEYWORDS = {
+  'AI Infrastructure': ['ai', 'artificial intelligence', 'gpu', 'data center', 'hyperscaler', 'nvidia', 'chip', 'compute'],
+  'Semiconductors': ['semiconductor', 'chip', 'foundry', 'memory', 'silicon', 'lithography'],
+  'Fed / Rates': ['fed', 'federal reserve', 'rate cut', 'rate hike', 'inflation', 'jerome powell', 'fomc'],
+  'Oil / Energy': ['oil', 'crude', 'opec', 'gasoline', 'energy prices', 'brent', 'wti'],
+  'Geopolitics': ['iran', 'russia', 'ukraine', 'middle east', 'china tension', 'taiwan', 'sanctions', 'war'],
+  'Crypto': ['bitcoin', 'crypto', 'ethereum', 'blockchain', 'defi', 'stablecoin'],
+  'Banking': ['bank', 'lending', 'credit', 'deposit', 'yield curve', 'net interest margin'],
+  'Healthcare / Biotech': ['fda', 'drug', 'trial', 'biotech', 'pharma', 'medicare'],
+  'Earnings Season': ['earnings', 'revenue', 'guidance', 'beat estimates', 'missed', 'quarterly'],
+};
+
+// Fetch general market news from Finnhub
+async function fetchMarketNews() {
+  if (!state.apiKey) return [];
+  try {
+    const url = `https://finnhub.io/api/v1/news?category=general&token=${state.apiKey}`;
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!Array.isArray(data)) return [];
+    // Only news from last 24h
+    const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+    return data.filter(n => (n.datetime * 1000) > dayAgo).slice(0, 80);
+  } catch (err) {
+    console.warn('[Market news] fetch failed:', err);
+    return [];
+  }
+}
+
+// Extract ticker mentions from a news item
+function extractTickers(item) {
+  const text = (item.headline + ' ' + (item.summary || '')).toLowerCase();
+  const found = new Set();
+
+  // Direct ticker patterns: $AAPL, (NASDAQ:AAPL), (NYSE:AAPL)
+  const tickerPatterns = /\$([A-Z]{1,5})\b|(?:nasdaq|nyse):([A-Z]{1,5})\b/gi;
+  let match;
+  while ((match = tickerPatterns.exec(item.headline + ' ' + (item.summary || ''))) !== null) {
+    const t = (match[1] || match[2] || '').toUpperCase();
+    if (NEWS_ELIGIBLE_SYMBOLS.has(t)) found.add(t);
+  }
+
+  // Related field from Finnhub (they tag tickers)
+  if (item.related && typeof item.related === 'string') {
+    item.related.split(',').forEach(t => {
+      const clean = t.trim().toUpperCase();
+      if (NEWS_ELIGIBLE_SYMBOLS.has(clean)) found.add(clean);
+    });
+  }
+
+  // Company name matching
+  Object.entries(COMPANY_TO_TICKER).forEach(([name, ticker]) => {
+    if (text.includes(name) && NEWS_ELIGIBLE_SYMBOLS.has(ticker)) {
+      found.add(ticker);
+    }
+  });
+
+  return Array.from(found);
+}
+
+// Score sentiment of a headline (-3 to +3)
+function scoreNewsItem(item) {
+  const text = (item.headline + ' ' + (item.summary || '')).toLowerCase();
+  let score = 0;
+  NEWS_KEYWORDS.strongBullish.forEach(kw => { if (text.includes(kw)) score += 3; });
+  NEWS_KEYWORDS.bullish.forEach(kw => { if (text.includes(kw)) score += 1; });
+  NEWS_KEYWORDS.bearish.forEach(kw => { if (text.includes(kw)) score -= 1; });
+  NEWS_KEYWORDS.strongBearish.forEach(kw => { if (text.includes(kw)) score -= 3; });
+  return score;
+}
+
+// Detect trending themes from headlines
+function detectThemes(newsItems) {
+  const themeScores = {};
+  Object.keys(THEME_KEYWORDS).forEach(t => themeScores[t] = 0);
+  newsItems.forEach(item => {
+    const text = (item.headline + ' ' + (item.summary || '')).toLowerCase();
+    Object.entries(THEME_KEYWORDS).forEach(([theme, keywords]) => {
+      keywords.forEach(kw => { if (text.includes(kw)) themeScores[theme] += 1; });
+    });
+  });
+  return Object.entries(themeScores)
+    .filter(([, s]) => s >= 3)
+    .sort((a, b) => b[1] - a[1]);
+}
+
+// Generate today's news-driven picks
+async function generateNewsPicks() {
+  const news = await fetchMarketNews();
+  if (news.length === 0) return null;
+
+  // Aggregate ticker mentions with weighted scoring
+  const now = Date.now();
+  const tickerData = {};
+
+  news.forEach(item => {
+    const tickers = extractTickers(item);
+    const sentiment = scoreNewsItem(item);
+    const hoursOld = (now - item.datetime * 1000) / (1000 * 60 * 60);
+    // Fresher news = more weight (2x for <4h, 1.5x for <12h, 1x otherwise)
+    const freshWeight = hoursOld < 4 ? 2.0 : hoursOld < 12 ? 1.5 : 1.0;
+
+    tickers.forEach(t => {
+      if (!tickerData[t]) tickerData[t] = { mentions: 0, sentimentSum: 0, weight: 0, headlines: [] };
+      tickerData[t].mentions++;
+      tickerData[t].sentimentSum += sentiment * freshWeight;
+      tickerData[t].weight += freshWeight;
+      if (tickerData[t].headlines.length < 3) {
+        tickerData[t].headlines.push({
+          headline: item.headline,
+          source: item.source,
+          sentiment,
+          hoursOld: Math.round(hoursOld),
+        });
+      }
+    });
+  });
+
+  // Rank tickers: score = mentions × weight × magnitude
+  const ranked = Object.entries(tickerData)
+    .map(([symbol, d]) => ({
+      symbol,
+      mentions: d.mentions,
+      avgSentiment: d.weight > 0 ? d.sentimentSum / d.weight : 0,
+      relevanceScore: d.mentions * d.weight,
+      headlines: d.headlines,
+    }))
+    .filter(t => t.mentions >= 2 || Math.abs(t.avgSentiment) >= 2)
+    .sort((a, b) => b.relevanceScore - a.relevanceScore)
+    .slice(0, 12);
+
+  const themes = detectThemes(news);
+
+  const result = {
+    generatedAt: now,
+    newsCount: news.length,
+    picks: ranked,
+    themes,
+  };
+  try { localStorage.setItem(NEWS_PICKS_KEY, JSON.stringify(result)); } catch {}
+  return result;
+}
+
+function loadNewsPicks() {
+  try {
+    const raw = localStorage.getItem(NEWS_PICKS_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    // Expire if older than 90 min
+    if (Date.now() - data.generatedAt > 90 * 60 * 1000) return null;
+    return data;
+  } catch { return null; }
+}
+
+function renderNewsPicks() {
+  const content = document.getElementById('news-picks-content');
+  if (!content) return;
+  const data = loadNewsPicks();
+
+  if (!data) {
+    if (!state.apiKey) {
+      content.innerHTML = `
+        <div class="panel-2 p-4 text-center">
+          <div class="text-sm text-muted mb-3">Requires Finnhub API key to scan live market news.</div>
+          <button onclick="openSettings()" class="btn-primary text-xs">Configure API Keys</button>
+        </div>
+      `;
+      return;
+    }
+    content.innerHTML = `
+      <div class="panel-2 p-4 text-center">
+        <div class="text-sm text-muted mb-3">Scanning market news for trending tickers...</div>
+        <div class="text-[10px] text-dim">This runs automatically every hour. First scan takes ~5 seconds.</div>
+      </div>
+    `;
+    return;
+  }
+
+  const minsAgo = Math.floor((Date.now() - data.generatedAt) / 60000);
+  const themesHtml = data.themes.length > 0
+    ? `<div class="flex flex-wrap gap-1 mb-3">
+        ${data.themes.map(([t, c]) => `<span class="text-[10px] font-mono px-2 py-0.5" style="background: rgba(34,211,238,0.12); color: var(--cyan); border: 1px solid var(--cyan);">${t} · ${c} stories</span>`).join('')}
+      </div>`
+    : '<div class="text-[10px] text-dim mb-3">No dominant themes detected today.</div>';
+
+  content.innerHTML = `
+    <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+      <div class="text-[10px] font-mono tracking-wider text-dim">
+        ${data.picks.length} TICKERS TRENDING · ${data.newsCount} HEADLINES SCANNED · UPDATED ${minsAgo} MIN AGO
+      </div>
+      <button id="news-picks-refresh" class="btn-ghost text-xs">↻ Refresh Now</button>
+    </div>
+
+    <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">TODAY'S HOT THEMES</div>
+    ${themesHtml}
+
+    <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">TRENDING PICKS · RANKED BY NEWS ACTIVITY</div>
+    <div class="space-y-2 mb-4">
+      ${data.picks.map((p, idx) => {
+        const asset = UNIVERSE.find(a => a.symbol === p.symbol);
+        if (!asset) return '';
+        const dyn = computeDynamicSignalSync(asset);
+        const price = getAssetPrice(asset);
+        const sentimentLabel = p.avgSentiment > 1 ? 'BULLISH' : p.avgSentiment < -1 ? 'BEARISH' : 'MIXED';
+        const sentimentColor = p.avgSentiment > 1 ? 'var(--bull)' : p.avgSentiment < -1 ? 'var(--bear)' : 'var(--cyan)';
+        const rankBadge = idx < 3 ? `<span class="text-[9px] font-bold" style="color: var(--warn);">🔥 #${idx+1}</span>` : `<span class="text-[9px] text-dim">#${idx+1}</span>`;
+        return `
+          <div class="panel-2 p-3" style="border-left: 3px solid ${sentimentColor};">
+            <div class="flex items-center justify-between gap-3 flex-wrap mb-2">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  ${rankBadge}
+                  <span class="font-mono font-bold">${p.symbol}</span>
+                  <span class="text-[10px] text-dim">${asset.sector}</span>
+                  <span class="text-[10px] font-mono px-2 py-0.5" style="background: rgba(0,0,0,0.3); color: ${sentimentColor};">${sentimentLabel}</span>
+                  <span class="font-mono text-[9px] px-2 py-0.5" style="border: 1px solid ${dyn.color}; color: ${dyn.color};">${dyn.verdict}</span>
+                </div>
+                <div class="text-[10px] text-dim mt-1">${p.mentions} stories · avg sentiment ${p.avgSentiment >= 0 ? '+' : ''}${p.avgSentiment.toFixed(1)}</div>
+              </div>
+              <div class="text-right text-xs font-mono">
+                <div class="text-dim">$${price.toFixed(2)}</div>
+              </div>
+            </div>
+            <div class="text-[10px] text-muted leading-relaxed space-y-0.5 mt-1 pt-2 border-t hair">
+              ${p.headlines.slice(0, 2).map(h => `
+                <div>
+                  <span class="${h.sentiment > 0 ? 'text-bull' : h.sentiment < 0 ? 'text-bear' : 'text-dim'}">${h.sentiment > 0 ? '▲' : h.sentiment < 0 ? '▼' : '·'}</span>
+                  ${h.headline}
+                  <span class="text-dim">· ${h.source} · ${h.hoursOld}h ago</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <div class="panel-2 p-3 mt-4" style="border-left: 2px solid var(--warn);">
+      <div class="text-[10px] font-mono tracking-wider text-warn mb-1">⚠ HOW TO USE THIS</div>
+      <p class="text-xs text-muted leading-relaxed">
+        These are stocks with heavy news flow — not automatic buy signals. A trending ticker often means the price has ALREADY moved. Use this as: (1) a screener for what's active today, (2) context for why your positions are moving, (3) idea starter — then dig deeper before buying. Combine with the Entry Timing tab of any stock for a full picture.
+      </p>
+    </div>
+  `;
+
+  document.getElementById('news-picks-refresh').addEventListener('click', async () => {
+    content.innerHTML = '<div class="panel-2 p-4 text-center text-sm text-muted">Refreshing...</div>';
+    await generateNewsPicks();
+    renderNewsPicks();
+  });
+}
+
+async function initNewsPicks() {
+  // Try to load cached first for instant render
+  renderNewsPicks();
+  // Then refresh if no data or expired
+  if (state.apiKey) {
+    const cached = loadNewsPicks();
+    if (!cached) {
+      await generateNewsPicks();
+      renderNewsPicks();
+    }
+    // Auto-refresh every hour
+    setInterval(async () => {
+      await generateNewsPicks();
+      renderNewsPicks();
+    }, NEWS_PICKS_REFRESH_MS);
+  }
+}
+
+
+/* ============================================================
    INIT
    ============================================================ */
 function init() {
@@ -4778,6 +6120,21 @@ function init() {
 
   // Portfolio tracker
   initPortfolioUI();
+
+  // VOO DCA + Malaysian IPO tracker
+  initVOOandIPO();
+
+  // News-driven trending picks
+  initNewsPicks();
+
+  // Dynamic signal engine: market regime + news sentiment
+  renderMarketRegimeHeader();
+  setInterval(renderMarketRegimeHeader, 30_000); // regime updates with prices
+  // Initial news sentiment fetch (staggered) then refresh hourly
+  if (state.apiKey) {
+    setTimeout(refreshAllNewsSentiment, 5000);
+    setInterval(refreshAllNewsSentiment, 60 * 60 * 1000); // 1 hour
+  }
 
   setInterval(tickCountdown, 1000);
 }
