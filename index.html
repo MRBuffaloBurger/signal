@@ -4766,17 +4766,20 @@ const DEFAULT_PORTFOLIO = {
   usdMyrRate: 4.22,
   displayCurrency: 'MYR',
   positions: [
-    { symbol: 'GLW',    shares: 1,     avgCost: 190.70 },
-    { symbol: 'HBM',    shares: 10,    avgCost: 24.47  },
-    { symbol: 'MRVL',   shares: 5,     avgCost: 88.70  },
-    { symbol: 'MU',     shares: 0.06,  avgCost: 772.333},
-    { symbol: 'NBIS',   shares: 1,     avgCost: 109.30 },
-    { symbol: 'NVDA',   shares: 1,     avgCost: 123.36 },
-    { symbol: 'SOXL',   shares: 5,     avgCost: 41.55  },
-    { symbol: 'TQQQ',   shares: 4,     avgCost: 43.425 },
-    { symbol: 'TSM',    shares: 1,     avgCost: 277.56 },
-    { symbol: 'XBI',    shares: 3,     avgCost: 90.25  },
-    { symbol: 'SUNMED', shares: 2000,  avgCost: 1.45, currency: 'MYR' },
+    { symbol: 'GLW',    shares: 1,      avgCost: 190.70  },
+    { symbol: 'HBM',    shares: 10,     avgCost: 24.47   },
+    { symbol: 'MRVL',   shares: 5,      avgCost: 88.70   },
+    { symbol: 'MSFT',   shares: 0.0276, avgCost: 486.594 },
+    { symbol: 'MU',     shares: 0.06,   avgCost: 772.333 },
+    { symbol: 'NBIS',   shares: 1,      avgCost: 109.30  },
+    { symbol: 'NVDA',   shares: 1,      avgCost: 123.36  },
+    { symbol: 'SMH',    shares: 0.032,  avgCost: 553.438 },
+    { symbol: 'SOXL',   shares: 2.5,    avgCost: 41.55   },
+    { symbol: 'TQQQ',   shares: 1,      avgCost: 43.425  },
+    { symbol: 'TSM',    shares: 1,      avgCost: 277.56  },
+    { symbol: 'VOO',    shares: 0.0478, avgCost: 703.556 },
+    { symbol: 'XBI',    shares: 3,      avgCost: 90.25   },
+    { symbol: 'SUNMED', shares: 2000,   avgCost: 1.45, currency: 'MYR' },
   ],
 };
 
@@ -4788,6 +4791,27 @@ const POSITION_ANALYSIS = {
     view: 'You entered above current market — you\'re down but the thesis is intact. Corning is a quiet AI-infrastructure play (optical fiber for data centers) with a growing dividend. DCA down to lower your basis rather than sell at a loss.',
     trigger: 'Add on any weakness below $155. Full thesis reset only if optical segment revenue declines two quarters in a row.',
     risk: 'Data center fiber orders decelerating would break the thesis.',
+  },
+  MSFT: {
+    action: 'ACCUMULATE',
+    conviction: 4,
+    view: 'Great start with 0.0276 shares — this is the highest-quality AI exposure available. Azure remains capacity-constrained (which is a bullish signal). Currently around your $486 entry. Good pick to keep DCA-ing into.',
+    trigger: 'Add on any pullback below $470. This is a "add regularly forever" name.',
+    risk: 'Broader mega-cap tech de-rating on rate spike; slower AI monetization.',
+  },
+  SMH: {
+    action: 'ACCUMULATE',
+    conviction: 4,
+    view: 'Great addition — 0.032 shares at $553 gets you diversified semi exposure without single-stock risk of NVDA. Semis are still in a correction from June highs, which makes DCA-ing in now smart (contrarian setup).',
+    trigger: 'Add aggressively if SMH drops another 5-10%. This is the "buy the correction" position.',
+    risk: 'AI capex genuinely peaks — could see another 20-30% downside before recovery.',
+  },
+  VOO: {
+    action: 'ACCUMULATE',
+    conviction: 5,
+    view: '✓ You started your DCA! 0.0478 shares at $703.55. This is your core wealth-building position. Never sell, add every month regardless of price. Time in market beats timing the market.',
+    trigger: 'Add RM 500 automatically every month via Moomoo recurring buy. Ignore price, ignore signals, just execute.',
+    risk: 'Only real risk is stopping the DCA. VOO drawdowns are temporary; missing years of compounding is permanent.',
   },
   HBM: {
     action: 'HOLD',
@@ -4825,18 +4849,18 @@ const POSITION_ANALYSIS = {
     risk: 'AI capex genuinely peaks = NVDA can drop 40%+ from here.',
   },
   SOXL: {
-    action: 'REDUCE / RISK WARNING',
+    action: 'CONTINUE REDUCING',
     conviction: 2,
-    view: '⚠ 3x LEVERAGED ETF — Direxion Semi Bull. You\'re up ~9% but this is dangerous. Leveraged ETFs have volatility decay (they lose money in sideways markets due to daily rebalancing) and 3x semi exposure right now = you\'re triple-long the sector that\'s in a real correction. This is NOT a long-term hold.',
-    trigger: 'Sell 50-100% of this position. If bullish semis, use SMH (1x) instead. Never hold 3x leveraged ETFs across cycles.',
-    risk: 'Semi correction extends = SOXL can lose 60%+ in weeks. Even if semis go sideways, decay eats returns.',
+    view: '✓ You already halved this from 5 → 2.5 shares. Good move. This remaining 2.5 shares (~$282) is still 3x leveraged into semis during correction. Consider closing the last 2.5 shares too — if bullish semis, use SMH (which you now own).',
+    trigger: 'Close remaining 2.5 shares. Redeploy $282 into your SMH position (same thesis, no leverage decay).',
+    risk: 'Every day you hold leveraged ETFs, you lose to decay even if the market goes nowhere.',
   },
   TQQQ: {
-    action: 'TAKE PROFITS URGENTLY',
-    conviction: 1,
-    view: '🚨 CRITICAL WARNING: 3x LEVERAGED Nasdaq ETF. You\'re up ~120% (~$207 on original ~$174). Nasdaq at record highs + 3x leverage + volatility decay = maximum risk. This is the classic "leveraged ETF held too long" trap. Every 1% Nasdaq drop = 3% TQQQ drop. And when Nasdaq is sideways for weeks, TQQQ still bleeds from rebalancing.',
-    trigger: 'STRONG SELL: Take profits on at least 75% of position immediately. If must stay leveraged, use QLD (2x) instead. Better: redeploy into VOO/SGOV.',
-    risk: 'Any Nasdaq correction of 10% = TQQQ drops 30-40%. Historical drawdowns of TQQQ during Nasdaq corrections have exceeded 75%.',
+    action: 'HOLD (SMALL POSITION)',
+    conviction: 2,
+    view: '✓ Excellent — you took profits down from 4 → 1 share. Locked in most of the ~120% gain. What remains ($69) is a "let it run" position. If Nasdaq keeps rallying, you still benefit. If it crashes, you only risk $69.',
+    trigger: 'Optional: close final 1 share to fully exit leveraged ETFs. Or hold small = small loss max if wrong.',
+    risk: 'Same as before — leverage decay, 3x amplified drops. But with only 1 share left, damage is capped.',
   },
   TSM: {
     action: 'HOLD',
@@ -4908,10 +4932,17 @@ function computePositionValue(pos, portfolio) {
 function getActionStyle(action) {
   const styles = {
     'ACCUMULATE':               { color: 'var(--bull)',   bg: 'rgba(52,211,153,0.15)',  icon: '↑' },
+    'ACCUMULATE STRONGLY':      { color: 'var(--bull)',   bg: 'rgba(52,211,153,0.25)',  icon: '⇈' },
+    'ADD ON STRENGTH':          { color: 'var(--bull)',   bg: 'rgba(52,211,153,0.15)',  icon: '↑' },
     'HOLD':                     { color: 'var(--cyan)',   bg: 'rgba(34,211,238,0.10)',  icon: '=' },
+    'HOLD (STRONG)':            { color: 'var(--bull)',   bg: 'rgba(52,211,153,0.10)',  icon: '=' },
+    'HOLD (RUNNER)':            { color: 'var(--cyan)',   bg: 'rgba(34,211,238,0.10)',  icon: '=' },
+    'HOLD (SMALL POSITION)':    { color: 'var(--cyan)',   bg: 'rgba(34,211,238,0.10)',  icon: '=' },
     'TRIM CANDIDATE':           { color: 'var(--warn)',   bg: 'rgba(251,191,36,0.15)',  icon: '↓' },
     'TRIM STRONGLY':            { color: 'var(--warn)',   bg: 'rgba(251,191,36,0.20)',  icon: '⇊' },
     'REDUCE / RISK WARNING':    { color: 'var(--bear)',   bg: 'rgba(248,113,113,0.15)', icon: '⚠' },
+    'CONTINUE REDUCING':        { color: 'var(--warn)',   bg: 'rgba(251,191,36,0.20)',  icon: '↓' },
+    'CUT LOSSES':               { color: 'var(--bear)',   bg: 'rgba(248,113,113,0.20)', icon: '✕' },
     'TAKE PROFITS URGENTLY':    { color: 'var(--bear)',   bg: 'rgba(248,113,113,0.25)', icon: '🚨' },
   };
   return styles[action] || styles['HOLD'];
@@ -4922,6 +4953,144 @@ function resetPortfolio() {
   savePortfolio(JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO)));
   renderPortfolio();
 }
+
+/* ============================================================
+   DYNAMIC ACTION COMPOSER
+   Derives fresh action recommendations every hour from:
+   - Current P&L% vs entry
+   - Dynamic signal (mechanical + news + regime)
+   - News sentiment for this ticker specifically
+   - Static thesis (from POSITION_ANALYSIS)
+   ============================================================ */
+
+// Track previous signal state per symbol to detect changes
+const _lastSignalState = {};
+
+function composeDynamicAction(pos, pnl, asset) {
+  const staticAnalysis = POSITION_ANALYSIS[pos.symbol] || {
+    action: 'HOLD', conviction: 3,
+    view: 'No specific analysis available for this position.',
+    trigger: '', risk: '',
+  };
+  const dyn = computeDynamicSignalSync(asset);
+  const newsSentiment = dyn.newsSentiment;
+
+  // Detect signal change vs last render (persist for 30 minutes)
+  const prev = _lastSignalState[pos.symbol];
+  const now = Date.now();
+  let signalChange = null;
+  if (prev && prev.verdict !== dyn.verdict && (now - prev.timestamp) < 30 * 60 * 1000) {
+    signalChange = { from: prev.verdict, to: dyn.verdict, minsAgo: Math.round((now - prev.timestamp) / 60000) };
+  }
+  if (!prev || prev.verdict !== dyn.verdict) {
+    _lastSignalState[pos.symbol] = { verdict: dyn.verdict, timestamp: now };
+  }
+
+  // ─── DERIVE DYNAMIC ACTION based on P&L + signal + news + static conviction ───
+  const isUp = pnl.pnlPct > 5;
+  const isBigUp = pnl.pnlPct > 30;
+  const isMassiveUp = pnl.pnlPct > 80;
+  const isDown = pnl.pnlPct < -3;
+  const isBigDown = pnl.pnlPct < -15;
+  const conviction = staticAnalysis.conviction;
+  const signalScore = dyn.combinedScore;
+  const newsBad = newsSentiment.modifier < -8;
+  const newsGood = newsSentiment.modifier > 8;
+  const isLeveraged = ['SOXL', 'TQQQ', 'SPXL', 'TMV'].includes(pos.symbol);
+
+  let action, actionColor, contextLine;
+
+  // Leveraged ETFs get special treatment — always warn if held
+  if (isLeveraged && pos.shares > 0) {
+    action = 'REDUCE / RISK WARNING';
+    actionColor = 'var(--bear)';
+    contextLine = 'Leveraged ETF — decay accumulates daily regardless of direction. Never a "hold" position.';
+  }
+  // Massive gain + bearish news = take profits
+  else if (isMassiveUp && (newsBad || signalScore < 30)) {
+    action = 'TAKE PROFITS URGENTLY';
+    actionColor = 'var(--bear)';
+    contextLine = `Up ${pnl.pnlPct.toFixed(0)}% and news/signal turning negative — protect the gain.`;
+  }
+  // Big gain + weakening signal = trim
+  else if (isBigUp && signalScore < 40) {
+    action = 'TRIM STRONGLY';
+    actionColor = 'var(--warn)';
+    contextLine = `Up ${pnl.pnlPct.toFixed(0)}% with weakening signals — lock in some.`;
+  }
+  // Big gain, stable = hold and let run
+  else if (isBigUp && signalScore >= 40 && signalScore < 60) {
+    action = 'HOLD (RUNNER)';
+    actionColor = 'var(--cyan)';
+    contextLine = `Up ${pnl.pnlPct.toFixed(0)}% with mixed signals — let it run but set mental stop-loss.`;
+  }
+  // Big gain + strong signal = keep holding
+  else if (isBigUp && signalScore >= 60) {
+    action = 'HOLD (STRONG)';
+    actionColor = 'var(--bull)';
+    contextLine = `Up ${pnl.pnlPct.toFixed(0)}% and signal still strong — no reason to sell.`;
+  }
+  // Down big + high conviction + oversold = strong accumulate
+  else if (isBigDown && conviction >= 4 && signalScore >= 60) {
+    action = 'ACCUMULATE STRONGLY';
+    actionColor = 'var(--bull)';
+    contextLine = `Down ${Math.abs(pnl.pnlPct).toFixed(0)}% but thesis intact and signal shows oversold — the DCA opportunity.`;
+  }
+  // Down + high conviction = accumulate
+  else if (isDown && conviction >= 4) {
+    action = 'ACCUMULATE';
+    actionColor = 'var(--bull)';
+    contextLine = `Down ${Math.abs(pnl.pnlPct).toFixed(0)}% but ${conviction}★ conviction — DCA down.`;
+  }
+  // Down + low conviction + bearish news = get out
+  else if (isDown && conviction <= 2 && newsBad) {
+    action = 'CUT LOSSES';
+    actionColor = 'var(--bear)';
+    contextLine = `Down ${Math.abs(pnl.pnlPct).toFixed(0)}% + low conviction + bad news — consider exit.`;
+  }
+  // Slight up + very positive news = add
+  else if (isUp && newsGood && signalScore >= 55) {
+    action = 'ADD ON STRENGTH';
+    actionColor = 'var(--bull)';
+    contextLine = `News catalyst positive — momentum building.`;
+  }
+  // Flat/small move + strong signal = hold with option to add
+  else if (Math.abs(pnl.pnlPct) < 5 && signalScore >= 60 && conviction >= 4) {
+    action = 'ACCUMULATE';
+    actionColor = 'var(--bull)';
+    contextLine = `Near your entry with strong signals — good time to add.`;
+  }
+  // Everything else — default to hold
+  else {
+    action = 'HOLD';
+    actionColor = 'var(--cyan)';
+    contextLine = signalScore >= 60 ? 'Positive setup, no urgent action.' :
+                  signalScore >= 40 ? 'Neutral zone — wait and watch.' :
+                  'Signals mixed — patient hold.';
+  }
+
+  return {
+    action,
+    actionColor,
+    contextLine,
+    signalChange,
+    dyn,
+    newsCount: newsSentiment.headlines ? newsSentiment.headlines.length : 0,
+    newsModifier: newsSentiment.modifier,
+    lastComputed: new Date().toISOString(),
+  };
+}
+
+// Format a "last updated" indicator
+function formatUpdateAge(timestamp) {
+  if (!timestamp) return 'never';
+  const mins = Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.floor(mins / 60);
+  return `${hrs}h ${mins % 60}m ago`;
+}
+
 
 function renderPortfolio() {
   const content = document.getElementById('livetest-content');
@@ -5026,9 +5195,11 @@ function renderPortfolio() {
     <div class="text-[10px] font-mono tracking-wider text-dim mb-2">POSITIONS · SORTED BY P&L %</div>
     <div class="space-y-2 mb-5">
       ${pnls.sort((a, b) => b.pnlPct - a.pnlPct).map(p => {
-        const analysis = POSITION_ANALYSIS[p.pos.symbol] || { action: 'HOLD', conviction: 3, view: 'No specific analysis for this position.', trigger: '', risk: '' };
-        const style = getActionStyle(analysis.action);
-        const dyn = computeDynamicSignalSync(p.asset);
+        const staticAnalysis = POSITION_ANALYSIS[p.pos.symbol] || { action: 'HOLD', conviction: 3, view: 'No specific analysis for this position.', trigger: '', risk: '' };
+        // NEW: derive dynamic action based on live P&L + signal + news
+        const dynamic = composeDynamicAction(p.pos, p, p.asset);
+        const style = getActionStyle(dynamic.action);
+        const dyn = dynamic.dyn;
         const isMyrNative = p.pos.currency === 'MYR';
         const nativeSym = isMyrNative ? 'RM ' : '$';
         const displayCost = displayCur === 'MYR' ? p.costMYR : p.costUSD;
@@ -5039,6 +5210,16 @@ function renderPortfolio() {
           ? `Dynamic: ${dyn.combinedScore}/100 (mech ${dyn.mechanicalScore} + news ${dyn.newsSentiment.modifier} + regime ${dyn.regime.modifier})`
           : `Signal ${dyn.combinedScore}/100 · ${dyn.regime.regime}`;
 
+        // News badge
+        const newsBadge = dynamic.newsCount > 0
+          ? `<span class="text-[9px] font-mono" style="color: ${dynamic.newsModifier > 3 ? 'var(--bull)' : dynamic.newsModifier < -3 ? 'var(--bear)' : 'var(--dim)'};">${dynamic.newsCount} news · ${dynamic.newsModifier > 0 ? '+' : ''}${dynamic.newsModifier}</span>`
+          : '';
+
+        // Signal change alert
+        const signalChangeAlert = dynamic.signalChange
+          ? `<div class="text-[10px] font-mono mt-1 px-2 py-1" style="background: rgba(192,132,252,0.10); border-left: 2px solid var(--purple); color: var(--purple);">⇄ Signal shifted from <strong>${dynamic.signalChange.from}</strong> to <strong>${dynamic.signalChange.to}</strong> · ${dynamic.signalChange.minsAgo} min ago</div>`
+          : '';
+
         return `
           <div class="panel-2 p-3" style="border-left: 3px solid ${style.color};">
             <div class="flex items-center justify-between gap-3 flex-wrap mb-2">
@@ -5046,9 +5227,10 @@ function renderPortfolio() {
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="font-mono font-bold">${p.pos.symbol}</span>
                   <span class="text-[10px] text-dim">${p.asset.sector}</span>
-                  <span class="text-[9px]" style="color: ${style.color};">${'★'.repeat(analysis.conviction)}${'☆'.repeat(5-analysis.conviction)}</span>
-                  <span class="font-mono text-[9px] px-2 py-0.5" style="background: ${style.bg}; color: ${style.color};">${style.icon} ${analysis.action}</span>
+                  <span class="text-[9px]" style="color: ${style.color};" title="Long-term conviction (${staticAnalysis.conviction}/5)">${'★'.repeat(staticAnalysis.conviction)}${'☆'.repeat(5-staticAnalysis.conviction)}</span>
+                  <span class="font-mono text-[9px] px-2 py-0.5" style="background: ${style.bg}; color: ${style.color};" title="Live action recommendation — updates with signal + news">${style.icon} ${dynamic.action}</span>
                   <span class="font-mono text-[9px] px-2 py-0.5" style="border: 1px solid ${dyn.color}; color: ${dyn.color};" title="${signalTooltip}">● ${dyn.verdict}${signalChangedIcon}</span>
+                  ${newsBadge}
                 </div>
                 <div class="text-[10px] text-dim mt-1">
                   ${p.pos.shares} sh @ ${nativeSym}${p.pos.avgCost.toFixed(p.pos.avgCost < 10 ? 3 : 2)} avg · Now ${nativeSym}${p.currentPrice.toFixed(p.currentPrice < 10 ? 3 : 2)}
@@ -5064,22 +5246,38 @@ function renderPortfolio() {
               </div>
             </div>
 
-            <div class="text-xs text-muted leading-relaxed mt-2 pt-2 border-t hair">
-              ${analysis.view}
+            ${signalChangeAlert}
+
+            <!-- LIVE dynamic context (updates hourly with news/signals) -->
+            <div class="text-xs mt-2 pt-2 border-t hair" style="color: ${style.color};">
+              <strong>▸ NOW:</strong> ${dynamic.contextLine}
             </div>
-            ${analysis.trigger ? `
-              <div class="text-[10px] font-mono mt-2" style="color: ${style.color};">
-                ▸ ACTION: ${analysis.trigger}
+
+            <!-- Long-term thesis (static, my written view) -->
+            <details class="mt-2">
+              <summary class="text-[10px] font-mono tracking-wider text-dim cursor-pointer">LONG-TERM THESIS · Click to expand</summary>
+              <div class="text-xs text-muted leading-relaxed mt-2">
+                ${staticAnalysis.view}
               </div>
-            ` : ''}
-            ${analysis.risk ? `
-              <div class="text-[10px] text-dim mt-1">
-                Risk: ${analysis.risk}
-              </div>
-            ` : ''}
+              ${staticAnalysis.trigger ? `
+                <div class="text-[10px] font-mono mt-2" style="color: ${style.color};">
+                  ▸ TRIGGER: ${staticAnalysis.trigger}
+                </div>
+              ` : ''}
+              ${staticAnalysis.risk ? `
+                <div class="text-[10px] text-dim mt-1">
+                  Risk: ${staticAnalysis.risk}
+                </div>
+              ` : ''}
+            </details>
           </div>
         `;
       }).join('')}
+    </div>
+
+    <!-- Live update indicator -->
+    <div class="text-[10px] text-dim font-mono text-center mb-4">
+      ● Live action recommendations refresh every hour with news &amp; market signals · Last update: ${new Date().toLocaleTimeString()}
     </div>
 
     <!-- SECTOR ALLOCATION -->
@@ -5105,17 +5303,17 @@ function renderPortfolio() {
     <div class="panel-2 p-4 mt-4" style="border-left: 3px solid var(--cyan);">
       <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">SIGNAL'S OVERALL VIEW</div>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        You're running an <strong>aggressive AI/tech-heavy portfolio</strong> (${aiSemiPct.toFixed(0)}% in AI/semis). The overall thesis is right — AI infrastructure IS the multi-year theme — but you have <strong>concentration risk</strong> if AI capex peaks, and <strong>leveraged ETF risk</strong> from SOXL + TQQQ (${leveragedPct.toFixed(0)}% of book).
+        <strong class="text-bull">✓ Great execution</strong> — you took TQQQ profits (4→1 shares), halved SOXL (5→2.5), started VOO DCA, and added MSFT + SMH. The portfolio is meaningfully healthier than 2 weeks ago. You still have ${aiSemiPct.toFixed(0)}% in AI/semis (still concentrated) and ${leveragedPct.toFixed(0)}% in leveraged ETFs (down from ~18%).
       </p>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        <strong>Highest priority actions:</strong>
+        <strong>Remaining priority actions:</strong>
       </p>
       <ol class="text-xs text-muted leading-relaxed space-y-1 ml-4 list-decimal">
-        <li><strong class="text-bear">Take 75%+ profits on TQQQ</strong> — you're up ~120%, leverage decay is real, Nasdaq at highs.</li>
-        <li><strong class="text-warn">Reduce SOXL by 50%+</strong> — 3x leveraged into a semi correction is dangerous. If bullish semis, use SMH (1x).</li>
-        <li><strong class="text-warn">Trim NBIS 33-50%</strong> — you're up 92%, protect the win before another 20% drop.</li>
-        <li><strong class="text-bull">DCA down GLW</strong> — you're at a loss, thesis intact, add on weakness.</li>
-        <li><strong class="text-cyan">Add SGOV or GLD</strong> (10-20% of book) — no defensive positions currently.</li>
+        <li><strong class="text-warn">Continue reducing SOXL</strong> to zero — you have SMH now for semi exposure without leverage decay.</li>
+        <li><strong class="text-bull">Increase VOO DCA size</strong> — 0.0478 shares is a start. Aim for RM 500/month recurring to build the core.</li>
+        <li><strong class="text-bull">DCA into GLW</strong> — still at a loss, still high conviction. Add on any weakness below $155.</li>
+        <li><strong class="text-cyan">Add SGOV or GLD</strong> for defensive allocation (10-20% of book).</li>
+        <li><strong class="text-warn">Consider trimming NBIS</strong> if it recovers to previous highs — still up ~90% on entry.</li>
       </ol>
       <p class="text-[10px] text-dim mt-3 italic">
         Analysis based on my views as of Aug 2026. Cross-check with your own research before executing. Not financial advice.
