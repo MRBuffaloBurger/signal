@@ -951,7 +951,7 @@ const state = {
    ============================================================ */
 const UNIVERSE = [
   // ═══ US STOCKS — prices verified Aug 13-14, 2026 ═══
-  { symbol: 'NVDA',  name: 'NVIDIA Corporation',        type: 'stock', region: 'US', base: 225.30, sector: 'Semiconductors' },
+  { symbol: 'NVDA',  name: 'NVIDIA Corporation',        type: 'stock', region: 'US', base: 227.98, sector: 'Semiconductors' },
   { symbol: 'AAPL',  name: 'Apple Inc.',                type: 'stock', region: 'US', base: 302.25, sector: 'Consumer Tech' },
   { symbol: 'MSFT',  name: 'Microsoft Corporation',     type: 'stock', region: 'US', base: 499.99, sector: 'Software' },
   { symbol: 'GOOGL', name: 'Alphabet Inc. Class A',     type: 'stock', region: 'US', base: 343.80, sector: 'Internet' },
@@ -962,7 +962,7 @@ const UNIVERSE = [
   { symbol: 'TSM',   name: 'Taiwan Semiconductor',      type: 'stock', region: 'US', base: 403.31, sector: 'Semiconductors' },
   { symbol: 'AVGO',  name: 'Broadcom Inc.',             type: 'stock', region: 'US', base: 387.84, sector: 'Semiconductors' },
   { symbol: 'GLW',   name: 'Corning Incorporated',      type: 'stock', region: 'US', base: 158.54, sector: 'Optical Comms' },
-  { symbol: 'MU',    name: 'Micron Technology',         type: 'stock', region: 'US', base: 874.66, sector: 'Semiconductors' },
+  { symbol: 'MU',    name: 'Micron Technology',         type: 'stock', region: 'US', base: 480.20, sector: 'Semiconductors' },
   { symbol: 'WDC',   name: 'Western Digital',           type: 'stock', region: 'US', base: 128.44, sector: 'Storage' },
   { symbol: 'STX',   name: 'Seagate Technology',        type: 'stock', region: 'US', base: 168.72, sector: 'Storage' },
   { symbol: 'COHR',  name: 'Coherent Corp.',            type: 'stock', region: 'US', base: 142.55, sector: 'Optical Comms' },
@@ -1068,7 +1068,7 @@ const UNIVERSE = [
   { symbol: 'XBI',  name: 'SPDR S&P Biotech ETF',            type: 'fund', region: 'US', base: 92.18,  sector: 'Biotech' },
 
   // ═══ INDICES — prices verified Aug 13, 2026 close ═══
-  { symbol: 'SPX',   name: 'S&P 500 Index',           type: 'index', region: 'US', base: 7798.99 },
+  { symbol: 'SPX',   name: 'S&P 500 Index',           type: 'index', region: 'US', base: 7551.81 },
   { symbol: 'IXIC',  name: 'Nasdaq Composite',        type: 'index', region: 'US', base: 26803.03 },
   { symbol: 'DJI',   name: 'Dow Jones Industrial Avg',type: 'index', region: 'US', base: 53839.99 },
   { symbol: 'RUT',   name: 'Russell 2000 Index',      type: 'index', region: 'US', base: 3052.85 },
@@ -1083,7 +1083,7 @@ const UNIVERSE = [
   { symbol: 'KS11',  name: 'KOSPI Composite Index',   type: 'index', region: 'KR', base: 6813.34 },
   { symbol: 'AXJO',  name: 'S&P/ASX 200 Index',       type: 'index', region: 'AU', base: 9188.50 },
   { symbol: 'BSESN', name: 'BSE SENSEX Index',        type: 'index', region: 'IN', base: 82412.30 },
-  { symbol: 'VIX',   name: 'CBOE Volatility Index',   type: 'index', region: 'US', base: 14.52 },
+  { symbol: 'VIX',   name: 'CBOE Volatility Index',   type: 'index', region: 'US', base: 17.10 },
 
   // ═══ CRYPTO — prices verified Aug 13, 2026 ═══
   { symbol: 'BTC', name: 'Bitcoin', type: 'crypto', base: 63558.45 },
@@ -2959,14 +2959,14 @@ const PICKS = [
     analysis: {
       conviction: 5,
       trendAlignment: 'strong-tailwind',
-      trendReasoning: "Fed paused after 75bps of cuts, with hawkish dissents at recent meetings and 10Y at 5.2% (highest since 2007). Front-end rates likely stay elevated well into 2027.",
+      trendReasoning: "Fed just HIKED 25bps on Sept 16 to 3.75-4.00% — first hike since 2023. Chair Warsh at Jackson Hole said inflation 'running too hot, work to do'. Dot plot median now 4.1% by year-end. SGOV yield locked at ~4.5-5%.",
       signalTrust: 'trust-always',
-      signalReasoning: "SGOV price is stable by design (~$100). Timing signals are essentially meaningless — buy anytime, sell anytime.",
-      view: "This is the most attractive it's been in years. ~5% yield with near-zero risk while equity risk premium is at historical lows. Every dollar you're not sure what to do with should live here.",
-      catalysts: ["10Y at 5.2%, keeps SGOV yield ~5%", "Hawkish Fed dissents = no near-term cuts", "Bear-steepening curve punishes duration"],
-      risks: ["Fed pivot dovish → yield grinds down to 3.5-4%", "Very unlikely: emergency rate cuts"],
-      invalidation: "Fed announces surprise emergency cuts or QE — you'd want to leave SGOV for duration or equities.",
-      updated: "Aug 2026"
+      signalReasoning: "SGOV price is stable by design (~$100.50). Timing signals are meaningless — buy anytime, sell anytime.",
+      view: "The best it's been in years just got better. Fed is HIKING while equities are stretched — a nearly risk-free 5% yield is genuinely competitive with expected stock returns. Every dollar you're unsure about should live here.",
+      catalysts: ["Fed HIKED — more hikes possible (dot plot median 4.1%)", "10Y above 5% again", "Political tension: Trump/Vance want cuts, Warsh Fed hiking — volatility keeps yields high", "Iran conflict + oil = sticky inflation"],
+      risks: ["Fed pivot dovish → yield grinds down (very unlikely near-term)", "US fiscal crisis forces emergency cuts"],
+      invalidation: "Recession triggers surprise cuts. Not the current setup.",
+      updated: "Sept 18 2026"
     }
   },
 
@@ -2984,14 +2984,14 @@ const PICKS = [
     analysis: {
       conviction: 3,
       trendAlignment: 'mixed',
-      trendReasoning: "SPX at record highs ~7,800 (up 14% YTD). Bull market intact but equity risk premium near zero and heavy concentration in AI mega-caps. Vanguard forecasts elevated but not euphoric.",
+      trendReasoning: "SPX at 7,551 — pulled back 3% from August peak on Fed rate HIKE (Sept 16, +25bps to 3.75-4.00%) and Iran escalation. Still up ~11% YTD. Bull market intact but valuation stretched (P/E 27+) and Fed no longer supportive.",
       signalTrust: 'nuanced',
-      signalReasoning: "'GREAT ENTRY' signals on VOO right now are suspect — index is 15%+ above its 200D MA. Better to trust 'STRETCHED' signals and wait for real pullbacks (5-10%+).",
-      view: "Long-term you'll be fine — VOO always is. But this is a bad moment for lump-sum. The AI capex peak-fear rotation started in July with semis down 30%. DCA over 4-6 months rather than deploying all at once.",
-      catalysts: ["Fed rate cuts continue (2 more expected)", "AI productivity gains broadening to non-tech sectors", "OBBBA fiscal stimulus"],
-      risks: ["AI capex disappointment (Alphabet -7%, Meta -8% on capex guidance)", "10Y at 5.2% pressuring multiples", "Middle East oil shock + Fed hawkish pivot", "Concentration risk: top 10 stocks = 38% of index"],
-      invalidation: "Meaningful pullback of 10%+ or clear earnings recession = flip to aggressive buying instead of DCA.",
-      updated: "Aug 2026"
+      signalReasoning: "'GREAT ENTRY' signals on VOO right now still suspect — index above 200D MA even after pullback. Better to trust 'STRETCHED' signals during rallies, treat pullbacks as DCA opportunities.",
+      view: "Long-term you'll be fine — VOO always is. Post-Fed hike environment favors DCA more than ever. Deploy monthly, ignore the news, trust the 20-year math. If SPX drops another 5-10%, accelerate buying.",
+      catalysts: ["Q3 earnings season (Oct) — hyperscaler AI capex guidance", "Fed pause after this hike would be relief rally", "Trump/Vance political pressure = eventual dovish shift"],
+      risks: ["Fed HIKED — more hikes possible if inflation stays hot", "10Y yield above 5% pressures multiples", "Iran/Middle East oil shock ongoing", "Seasonal: September/October historically weakest months", "Concentration risk: top 10 stocks = 38% of index"],
+      invalidation: "Real 10%+ pullback shifts advice from DCA to lump-sum. Real earnings recession = pause DCA temporarily.",
+      updated: "Sept 18 2026"
     }
   },
 
@@ -3007,16 +3007,16 @@ const PICKS = [
     thesis: "Central-bank buying (China, Poland, India) has structurally repriced gold. Works as a hedge against currency debasement and geopolitical risk without correlating with equities. Size as 5–10% of portfolio.",
     bestFor: "Portfolio insurance during macro stress",
     analysis: {
-      conviction: 4,
+      conviction: 5,
       trendAlignment: 'strong-tailwind',
-      trendReasoning: "Gold at $4,387 spot — up 57% since Jan 2026. Central bank buying persistent, dollar weakness, Middle East tensions, sticky inflation all supportive. Historically a 'stealth QE' beneficiary.",
+      trendReasoning: "Every tailwind intensified. Fed just HIKED (Sept 16) but still can't get in front of inflation — 2026 PCE forecast raised to 3.7%. Iran conflict re-escalated (US struck rocket launchers). Central banks buying at record pace. Gold structurally repriced.",
       signalTrust: 'trust-bullish',
-      signalReasoning: "Trust 'GREAT ENTRY' signals. Even 'STRETCHED' pullbacks tend to be shallow (5-10%) in strong secular uptrends. Don't wait for perfect entry.",
-      view: "One of the highest-conviction macro trades right now. Multi-decade central bank de-dollarization + geopolitical tail risk + fiscal excess = structural bid. Own 5-10% of portfolio and don't overthink it.",
-      catalysts: ["Middle East tensions escalating (Iran truce collapsed)", "Central bank buying record pace (China, Poland, India)", "Dollar weakness accelerating", "US fiscal deficit widening"],
-      risks: ["Aggressive Fed hike → real yields spike (mild negative)", "Middle East de-escalation (short-term profit taking only)", "Speculative positioning already crowded"],
-      invalidation: "Sustained dollar strength + real yields above 3% would break the thesis. Not imminent.",
-      updated: "Aug 2026"
+      signalReasoning: "Trust 'GREAT ENTRY' signals. Even 'STRETCHED' pullbacks stay shallow (5-10%) in this secular uptrend. Don't wait for perfect entry.",
+      view: "Highest-conviction macro trade on this list right now. Fed HIKING can't tame inflation (it's supply-side, not demand-side), Iran conflict live, dollar under political pressure — every driver bullish. Own 5-10% of portfolio, don't overthink.",
+      catalysts: ["Iran/Middle East conflict active (US recently struck)", "Fed hiked but inflation still 3.7% PCE — losing the war", "Central bank buying record pace", "Political pressure on Fed (Trump/Vance want cuts) = dollar risk", "Oil above $88 = sticky inflation"],
+      risks: ["Aggressive Fed hike beyond dot plot → real yields spike (mild negative)", "Middle East de-escalation (short-term profit taking)", "Speculative positioning already extended"],
+      invalidation: "Sustained dollar strength + real yields above 3% would break thesis. Not imminent.",
+      updated: "Sept 18 2026"
     }
   },
 
@@ -3033,15 +3033,15 @@ const PICKS = [
     bestFor: "Betting on the compute demand curve",
     analysis: {
       conviction: 4,
-      trendAlignment: 'headwind',
-      trendReasoning: "SMH sold off ~30% from June highs on AI capex peak fears. Market treating Alphabet/Meta's higher capex guidance as bearish rather than bullish — flipped narrative. This IS the drawdown the horizon note warned about.",
-      signalTrust: 'contrarian',
-      signalReasoning: "This is when timing signals are MOST valuable. 'GREAT ENTRY' or 'STRETCHED' signals should be trusted more than usual because we're actually in a real correction, not a shallow dip.",
-      view: "The best contrarian setup on this list right now. Fundamentals of AI infra buildout are intact ($520B hyperscaler capex in 2026 is real spending) but sentiment has capitulated. This is when you accumulate — DCA aggressively over the next 2-3 months. Don't try to catch bottom.",
-      catalysts: ["Post-correction technicals — 30% drawdown historically = strong 12M forward returns", "Q3 earnings could reset sentiment if capex guidance stabilizes", "AI capex actually spending, not slowing"],
-      risks: ["Capex genuinely peaks → 40-60% further downside", "Recession = memory cycle collapse (MU could halve)", "Chinese semi self-sufficiency accelerating"],
-      invalidation: "Two consecutive quarters of hyperscaler capex cuts (not just slower growth) — that's the signal the cycle is really over.",
-      updated: "Aug 2026"
+      trendAlignment: 'tailwind',
+      trendReasoning: "PHLX Semi index UP 63% YTD. The August 'contrarian buy' call played out — NVDA blowout Q2 (guided $108B for Q3), Broadcom AI revenue +143% Y/Y, MRVL raised guidance. Jensen: 'supply-constrained through FY28'. Thesis vindicated.",
+      signalTrust: 'nuanced',
+      signalReasoning: "'GREAT ENTRY' signals now suspect — sector at highs. Trust 'STRETCHED' signals on rallies, treat any 10%+ pullback as add opportunity. This is a different regime from July.",
+      view: "The August contrarian setup played out beautifully — up 63% YTD. Now the game shifts: from 'accumulate at the bottom' to 'let it run but protect gains'. Continue DCA on pullbacks, don't chase strength. Fundamentals still intact (supply-constrained AI compute) but pricing is no longer cheap.",
+      catalysts: ["Micron earnings Sept 30 — memory pricing update", "Q3 hyperscaler capex guidance (Oct)", "Supply constraint narrative continues into FY28", "AI compute demand structural, not cyclical"],
+      risks: ["Fed hike cycle re-starts (already hiked once) = valuation compression", "Hyperscaler capex growth decelerates (still growing, but slower)", "Chinese self-sufficiency accelerates", "Sector at highs — 20-30% correction possible without breaking thesis"],
+      invalidation: "Two consecutive quarters of hyperscaler capex CUTS (not just slower growth) breaks the bull case.",
+      updated: "Sept 18 2026"
     }
   },
 
@@ -3059,14 +3059,14 @@ const PICKS = [
     analysis: {
       conviction: 3,
       trendAlignment: 'headwind',
-      trendReasoning: "BTC ~$63K, down ~33% from earlier 2026 highs near $94K. Higher long yields (10Y at 5.2%) traditionally hurt zero-yield assets. Post-halving cycle historically enters 12-18 month consolidation before next leg up.",
+      trendReasoning: "BTC around $63K, down from 2026 highs. Fed HIKED (Sept 16) — higher real yields hurt zero-yield assets. Post-halving cycle in typical 12-18 month consolidation. But: institutional adoption steady, no fundamental cracks.",
       signalTrust: 'nuanced',
-      signalReasoning: "In BTC drawdowns, mechanical timing signals often say 'GREAT ENTRY' too early — BTC can stay oversold for months. Weight the horizon note over the timing signal.",
-      view: "Not the peak buying moment but decent DCA setup. If you're not already positioned, start small (25% of target size) and add on further weakness to $50-55K. Cycle math still favors patient holders — 2028 halving is only 2 years out.",
-      catalysts: ["ETF inflow persistence — BlackRock IBIT still net creations", "Institutional treasury adoption expanding beyond MSTR", "2028 halving supply shock preparation"],
-      risks: ["Higher real yields → more selling pressure", "Regulatory shift under new administration", "Correlation with tech unwinds during SPX corrections"],
-      invalidation: "BTC breaking below $45K decisively would suggest cycle top is in and 2-year bear needed. Reassess sizing.",
-      updated: "Aug 2026"
+      signalReasoning: "In BTC drawdowns, mechanical timing signals often say 'GREAT ENTRY' too early. BTC can stay oversold for months. Weight the horizon note over the timing signal.",
+      view: "Not the peak buying moment. Fed hike is a headwind. If you don't own any, start small (25% of target size) and DCA on weakness to $50-55K. 2028 halving is only 2 years out — cycle math still favors patient holders.",
+      catalysts: ["ETF inflows still net positive (BlackRock IBIT)", "Institutional treasury adoption expanding beyond MSTR", "2028 halving supply shock preparation"],
+      risks: ["Fed HIKED — real yields spiking = crypto pressure", "Regulatory shift under current administration", "Correlation with tech unwinds during SPX corrections"],
+      invalidation: "BTC breaking below $45K decisively = cycle top may be in, 2-year bear needed. Reassess sizing.",
+      updated: "Sept 18 2026"
     }
   },
 
@@ -3084,15 +3084,15 @@ const PICKS = [
     bestFor: "Blue-chip growth as a stock, not an ETF",
     analysis: {
       conviction: 4,
-      trendAlignment: 'mixed',
-      trendReasoning: "MSFT ~$500 near highs but softer than pure AI plays. Azure remains capacity-constrained (bullish signal) but market punishing all AI capex commitments. Best-positioned mega-cap through the rotation.",
+      trendAlignment: 'tailwind',
+      trendReasoning: "MSFT solid despite market turbulence — recurring revenue softens rate-hike blow. Azure capacity-constrained (bullish signal), hyperscaler capex accelerating per NVDA/AVGO commentary. Best-positioned mega-cap through Fed hike environment.",
       signalTrust: 'trust-bullish',
-      signalReasoning: "MSFT's recurring revenue model means drawdowns are shallower than pure-play AI names. Trust 'GOOD ENTRY' and 'GREAT ENTRY' signals when they appear — they've historically worked well.",
-      view: "The highest-quality way to own AI without the whipsaw. Azure is capacity-constrained (rare admission = truly strong demand) while OpenAI partnership provides asymmetric upside. Even in a broader tech correction, MSFT tends to lose less. Core holding for anyone building a stock portfolio.",
-      catalysts: ["Azure capacity constraints suggest FY27 revenue upside", "OpenAI GPT-5+ integration monetization", "$80B+ annual buyback authorization", "Gaming/Activision synergies materializing"],
-      risks: ["Capex commitments if AI monetization slower than hoped", "Regulatory pressure on Activision or OpenAI relationship", "General mega-cap tech de-rating on 10Y yield spike"],
-      invalidation: "Azure growth deceleration below 25% Y/Y would signal AI demand rolling over — reassess.",
-      updated: "Aug 2026"
+      signalReasoning: "MSFT's recurring revenue model = shallower drawdowns than pure-play AI names. Trust 'GOOD ENTRY' signals when they appear — historically reliable for this name.",
+      view: "The highest-quality way to own AI without the whipsaw. Azure capacity-constrained (rare admission = truly strong demand) while OpenAI partnership provides asymmetric upside. Even in Fed-hike environment, MSFT tends to lose less. Core holding for anyone building a stock portfolio.",
+      catalysts: ["Azure capacity constraints suggest FY27 revenue upside", "OpenAI GPT-5+ integration monetization", "$80B+ annual buyback authorization", "Beneficiary of accelerating AI capex (see NVDA's $108B Q3 guide)"],
+      risks: ["Fed HIKED — mega-cap multiple compression risk", "Capex commitments if AI monetization slower than hoped", "Regulatory pressure on Activision or OpenAI relationship"],
+      invalidation: "Azure growth deceleration below 25% Y/Y would signal AI demand rolling over.",
+      updated: "Sept 18 2026"
     }
   },
 
@@ -3110,14 +3110,14 @@ const PICKS = [
     analysis: {
       conviction: 4,
       trendAlignment: 'tailwind',
-      trendReasoning: "GLW at $158.54 in a healthy consolidation after big run. Optical fiber demand accelerating with data center buildout — GLW is the physical layer play the market underweights vs semis. Dividend yield near 2.8% provides income while waiting.",
+      trendReasoning: "GLW around $158 in healthy consolidation. Optical fiber demand accelerating with hyperscaler capex ($108B guided by NVDA alone for Q3). GLW is the physical-layer play underweighted vs semis — quiet AI-infra beneficiary. Dividend cushions the wait.",
       signalTrust: 'trust-bullish',
-      signalReasoning: "GLW is less crowded than pure AI names, so timing signals here are more reliable. 'GREAT ENTRY' at oversold RSI historically leads to 15-25% moves in 6 months.",
-      view: "Under-owned AI infrastructure play. While NVDA gets the headlines, every AI data center needs miles of Corning optical fiber. Trades at reasonable multiples vs pure-play AI names. The dividend + AI upside combination is rare — worth accumulating on any weakness. Note: your original entry was above current, but thesis is intact — DCA down to lower your basis rather than sell.",
-      catalysts: ["Hyperscaler fiber orders accelerating", "800G optical transceiver ramp in 2026-2027", "Display glass exposure to premium OLED cycle", "Consistent dividend growth (2%+ per year)"],
-      risks: ["Optical component pricing pressure from Chinese competitors", "Data center pause slows fiber orders", "Non-AI segments (auto glass, containers) cyclical drag"],
-      invalidation: "Two quarters of declining optical segment revenue = thesis is early or wrong. Reassess.",
-      updated: "Aug 2026"
+      signalReasoning: "GLW less crowded than pure AI names, so timing signals here more reliable. 'GREAT ENTRY' at oversold RSI historically leads to 15-25% moves in 6 months.",
+      view: "Under-owned AI infrastructure play. While NVDA gets headlines (justifiably — see their Sept update), every AI data center needs miles of Corning optical fiber. Trades at reasonable multiples vs pure-play AI names. Dividend + AI upside combination is rare — worth accumulating on any weakness. Note: your original entry was above current, but thesis is intact — DCA down to lower your basis rather than sell.",
+      catalysts: ["Hyperscaler fiber orders accelerating alongside $108B NVDA guide", "800G optical transceiver ramp continuing", "Display glass exposure to premium OLED cycle", "Consistent dividend growth"],
+      risks: ["Optical component pricing pressure from Chinese competitors", "Fed hike environment pressures capex-adjacent names", "Non-AI segments (auto glass, containers) cyclical drag"],
+      invalidation: "Two quarters of declining optical segment revenue = thesis is early or wrong.",
+      updated: "Sept 18 2026"
     }
   },
 
@@ -3133,16 +3133,16 @@ const PICKS = [
     thesis: "The best-run US megabank — leading market share in consumer, investment banking, and asset management. Benefits from higher rates and normalized yield curve. Dimon successor plan reduces key-person risk.",
     bestFor: "Financial-sector exposure with dividend income",
     analysis: {
-      conviction: 4,
+      conviction: 5,
       trendAlignment: 'strong-tailwind',
-      trendReasoning: "JPM at $363 - benefits from every current macro theme: yield curve bear-steepening (wider NIM), Fed hawkish pivot (higher for longer), credit quality still healthy, IB deal activity picking up. Everything working.",
+      trendReasoning: "Fed just HIKED (Sept 16) — every macro theme now confirmed bullish for JPM. Yield curve bear-steepening → wider NIM. Higher-for-longer confirmed by dot plot (4.1% year-end). Credit quality still healthy. IB deal activity picking up. Everything working.",
       signalTrust: 'trust-bullish',
-      signalReasoning: "Trust bullish timing signals here. Bank valuations remain reasonable and 'STRETCHED' signals from other picks don't apply — JPM re-rated but not extreme.",
-      view: "The most quietly compelling pick on this list right now. Every macro condition favors JPM — higher long yields, steeper curve, deregulation tailwind, and Dimon still at the helm. Investment banking waking up. Trades at fair valuation without the AI hype premium. If you want steady wealth-building without whipsaw, this is it.",
-      catalysts: ["10Y at 5.2% + steeper curve = record NIM", "IB revenue recovery from 2023-2024 slump", "Deregulation under new administration", "Dimon successor plan de-risks leadership"],
-      risks: ["Recession = credit losses (though JPM well-provisioned)", "Commercial real estate exposure", "Sudden Fed cuts compress NIM"],
+      signalReasoning: "Trust bullish timing signals. Bank valuations reasonable and 'STRETCHED' signals from other picks don't apply — JPM re-rated but not extreme.",
+      view: "Upgraded to 5-star conviction. The Fed hiking cycle re-starting is the exact scenario JPM benefits most from. Every macro theme favors banks — higher long yields, steeper curve, deregulation, Dimon-successor plan, IB waking up. Trades at fair valuation without AI hype premium. Best risk-adjusted setup on the entire list right now.",
+      catalysts: ["Fed HIKED — NIM expansion confirmed", "Dot plot median 4.1% by year-end = more hikes possible", "IB revenue recovery accelerating", "Deregulation continuing", "Dimon successor plan de-risks leadership"],
+      risks: ["Recession = credit losses (JPM well-provisioned though)", "Commercial real estate exposure", "Sudden Fed pivot to cuts (unlikely near-term)"],
       invalidation: "Credit metric deterioration (NPLs, charge-offs above 0.75%) would signal cycle turn.",
-      updated: "Aug 2026"
+      updated: "Sept 18 2026"
     }
   },
 
@@ -3155,19 +3155,19 @@ const PICKS = [
       optimal: "5–10 years",
       note: "Concentrated bet on continued AI capex. When AI infrastructure spending inevitably slows, expect 40%+ drawdowns. Size accordingly."
     },
-    thesis: "The pick-and-shovel play for the AI gold rush. CUDA software moat + Blackwell architecture leadership + fully-allocated supply through 2026. Direct alternative to SMH if you want concentrated conviction.",
+    thesis: "The pick-and-shovel play for the AI gold rush. CUDA software moat + Blackwell architecture leadership + fully-allocated supply through 2028. Direct alternative to SMH if you want concentrated conviction.",
     bestFor: "Direct AI exposure without ETF dilution",
     analysis: {
-      conviction: 3,
-      trendAlignment: 'headwind',
-      trendReasoning: "NVDA down significantly from highs as part of the July semi rout. Market is questioning AI capex peak — every hyperscaler capex increase is now being sold, not bought. This is a real regime change, not noise.",
-      signalTrust: 'nuanced',
-      signalReasoning: "'GREAT ENTRY' signals on individual AI names during a real correction can trigger multiple times before actual bottom. Use SMH exposure instead for diversified semi bet — safer expression of the same thesis.",
-      view: "Great company, wrong time for concentrated position. If SMH is already down 30%, individual AI names can drop 40-50% before the cycle turns. NVDA's fundamentals are excellent, but the stock price has to work through overhang from capex peak narrative. **Prefer SMH exposure over direct NVDA right now** — same thesis, less single-name volatility. If you must own NVDA, small position + DCA very slowly.",
-      catalysts: ["Blackwell demand still exceeding supply", "China H20 sales resumption", "Sovereign AI wave (Middle East, EU)", "GTC 2026 unveils Rubin architecture"],
-      risks: ["Hyperscaler capex genuinely peaks (Alphabet already at $200B/yr)", "Custom silicon from Google/Amazon eating share", "Government export restrictions widening", "Cyclical semi downcycle amplified by cyclicality"],
-      invalidation: "Q4 revenue guidance below consensus for the first time — that's the market's confirmation the cycle is turning.",
-      updated: "Aug 2026"
+      conviction: 4,
+      trendAlignment: 'strong-tailwind',
+      trendReasoning: "MAJOR PIVOT from August view. NVDA delivered blowout Q2 FY27 on Aug 26: $96B revenue, $89B data center, guided Q3 to $108B (+5.7% above their own guide). Jensen: 'supply-constrained through FY28'. Stock at $227.98, up 22% YTD. The August 'prefer SMH' call is now stale.",
+      signalTrust: 'trust-bullish',
+      signalReasoning: "Post-earnings clarity resolved the 'prefer SMH' hedge. Trust bullish signals on NVDA directly now — supply-constrained through FY28 is a rare durable moat statement.",
+      view: "Upgraded from HOLD to STRONG BUY. Q2 FY27 earnings resolved the 'AI capex peak' fear that dominated summer. Jensen said supply-constrained through FY28 — that's 2+ years of visibility. NVDA still has 92% GPU market share, Blackwell demand exceeds supply, sovereign AI just starting. If you already own NVDA, hold and add on dips. If you don't own it, this is a legitimate entry — DCA over 2-3 tranches to be safe. Still concentrated bet — don't overweight.",
+      catalysts: ["Q2 FY27 blowout confirms multi-year visibility", "Guided Q3 $108B vs street $97B — MASSIVE upside surprise", "'Supply constrained through FY28' per Jensen", "China H20 resumption possibility", "GTC 2026 Rubin architecture unveil"],
+      risks: ["Fed HIKED = tech multiple compression", "Custom silicon from Google/Amazon eating share (Broadcom AVGO up 143% AI rev)", "Government export restrictions widening", "Cyclical semi downcycle when capex eventually rolls over"],
+      invalidation: "Q3 revenue below $108B guide midpoint would break the supply-constrained narrative.",
+      updated: "Sept 18 2026"
     }
   },
 
@@ -3184,14 +3184,15 @@ const PICKS = [
     bestFor: "Levered crypto adoption via a listed stock",
     analysis: {
       conviction: 2,
-      trendAlignment: 'strong-headwind',
-      trendReasoning: "COIN at $148 - massively down from earlier highs. BTC correction + interest income compression (as rates come down eventually) + trading volume collapse in bear market = triple squeeze.",
+      trendAlignment: 'headwind',
+      trendReasoning: "COIN around $148 - hurt by Fed hike (rates HIGHER not lower means USDC interest income actually rises, but higher discount rates crush growth valuations). BTC in consolidation. Trading volume tepid.",
       signalTrust: 'contrarian',
-      signalReasoning: "COIN mechanically follows BTC but with 2-3x leverage. Any 'GREAT ENTRY' signal must be validated against underlying BTC health first. Ignore isolated COIN signals.",
-      view: "The most speculative pick on this list — treat as such. If you're bullish crypto long-term, IBIT is a cleaner expression. COIN adds business execution risk on top of crypto risk. Only for those who understand: this can 3x or halve in a year. If you buy, ≤2% position and treat it as venture capital, not investment.",
-      catalysts: ["Regulatory clarity in US crypto framework", "Institutional custody wins", "Perpetuals rollout scaling revenue", "Base L2 monetization"],
-      risks: ["Extended crypto bear = 70%+ drawdown", "Competition from Robinhood, traditional brokers", "USDC interest income compressing", "Regulatory setback"],
-      invalidation: "Sustained BTC below $45K = COIN heading to $80. Reassess sizing."
+      signalReasoning: "COIN follows BTC with 2-3x leverage. Any 'GREAT ENTRY' signal must be validated against underlying BTC health first. Ignore isolated COIN signals.",
+      view: "Still the most speculative pick on this list. Fed hike is a wash — USDC interest income actually rises with rates (positive), but growth-stock multiple compression is real (negative). If you're bullish crypto long-term, IBIT is a cleaner expression. Only for those who understand: this can 3x or halve in a year. If you buy, ≤2% position and treat it as venture capital.",
+      catalysts: ["Regulatory clarity in US crypto framework", "Higher rates = higher USDC interest income (offset)", "Institutional custody wins", "Perpetuals rollout scaling revenue", "Base L2 monetization"],
+      risks: ["Extended crypto bear = 70%+ drawdown", "Competition from Robinhood, traditional brokers", "Fed hike = growth multiple compression", "Regulatory setback"],
+      invalidation: "Sustained BTC below $45K = COIN heading to $80. Reassess sizing.",
+      updated: "Sept 18 2026"
     }
   },
 ];
@@ -3814,7 +3815,8 @@ function scheduleWsReRender() {
 async function fetchCompanyNews(symbol) {
   if (!state.apiKey) return null;
   const to = new Date();
-  const from = new Date(to.getTime() - 14 * 24 * 60 * 60 * 1000);
+  // Newest-first: fetch last 5 days only (was 14) for freshness
+  const from = new Date(to.getTime() - 5 * 24 * 60 * 60 * 1000);
   const fmtDate = (d) => d.toISOString().slice(0, 10);
   const url = `https://finnhub.io/api/v1/company-news?symbol=${encodeURIComponent(symbol)}&from=${fmtDate(from)}&to=${fmtDate(to)}&token=${state.apiKey}`;
   try {
@@ -3822,7 +3824,9 @@ async function fetchCompanyNews(symbol) {
     if (!res.ok) return null;
     const data = await res.json();
     if (!Array.isArray(data)) return null;
-    return data.slice(0, 12).map(n => ({
+    // Sort newest-first (Finnhub sometimes returns unsorted)
+    const sorted = data.slice().sort((a, b) => (b.datetime || 0) - (a.datetime || 0));
+    return sorted.slice(0, 12).map(n => ({
       headline: n.headline,
       summary: n.summary || '',
       source: n.source || 'Finnhub',
@@ -4309,23 +4313,29 @@ async function computeNewsSentiment(symbol) {
   if (!state.apiKey) return { modifier: 0, headlines: [], source: 'no-key' };
   const cacheKey = `news_sent_${symbol}`;
   const cached = state.newsSentimentCache && state.newsSentimentCache[cacheKey];
-  if (cached && (Date.now() - cached.fetchedAt) < 60 * 60 * 1000) {
+  // Reduce cache from 60 min to 30 min for fresher signals
+  if (cached && (Date.now() - cached.fetchedAt) < 30 * 60 * 1000) {
     return cached.data;
   }
   try {
     const news = await fetchCompanyNews(symbol);
     if (!news || news.length === 0) return { modifier: 0, headlines: [], source: 'no-news' };
 
-    // Only weight the last 48 hours heavily
-    const twoDaysAgo = Date.now() - 48 * 60 * 60 * 1000;
+    // News already sorted newest-first from fetchCompanyNews
+    // Weight: <6h = 2.5x, <24h = 1.5x, <48h = 1x, older = 0.3x
     let totalScore = 0;
     let scored = 0;
     const relevantHeadlines = [];
+    const now = Date.now();
 
-    news.slice(0, 10).forEach(item => {
+    news.forEach(item => {
       const text = (item.headline + ' ' + (item.summary || '')).toLowerCase();
-      const isFresh = item.publishedAt.getTime() > twoDaysAgo;
-      const freshMultiplier = isFresh ? 1.0 : 0.4;
+      const hoursOld = (now - item.publishedAt.getTime()) / (60 * 60 * 1000);
+      let freshMultiplier;
+      if (hoursOld < 6) freshMultiplier = 2.5;         // very fresh
+      else if (hoursOld < 24) freshMultiplier = 1.5;   // fresh
+      else if (hoursOld < 48) freshMultiplier = 1.0;   // recent
+      else freshMultiplier = 0.3;                       // older
 
       let itemScore = 0;
       NEWS_KEYWORDS.strongBullish.forEach(kw => { if (text.includes(kw)) itemScore += 3; });
@@ -4337,13 +4347,15 @@ async function computeNewsSentiment(symbol) {
       if (itemScore !== 0) {
         totalScore += itemScore;
         scored++;
-        if (Math.abs(itemScore) >= 1 && relevantHeadlines.length < 3) {
+        if (Math.abs(itemScore) >= 1 && relevantHeadlines.length < 4) {
           relevantHeadlines.push({
             headline: item.headline,
             source: item.source,
+            url: item.url,
             sentiment: itemScore > 0 ? 'bullish' : 'bearish',
             magnitude: Math.abs(itemScore),
-            fresh: isFresh,
+            hoursOld: Math.round(hoursOld * 10) / 10,
+            veryFresh: hoursOld < 6,
           });
         }
       }
@@ -4353,7 +4365,7 @@ async function computeNewsSentiment(symbol) {
     const avgScore = scored > 0 ? totalScore / scored : 0;
     const modifier = Math.max(-25, Math.min(25, avgScore * 4));
 
-    const result = { modifier: Math.round(modifier), headlines: relevantHeadlines, source: 'live', totalItems: scored };
+    const result = { modifier: Math.round(modifier), headlines: relevantHeadlines, source: 'live', totalItems: scored, freshestHours: news[0] ? (now - news[0].publishedAt.getTime()) / (60 * 60 * 1000) : null };
     state.newsSentimentCache = state.newsSentimentCache || {};
     state.newsSentimentCache[cacheKey] = { data: result, fetchedAt: Date.now() };
     return result;
@@ -4800,11 +4812,11 @@ const POSITION_ANALYSIS = {
     risk: 'Broader mega-cap tech de-rating on rate spike; slower AI monetization.',
   },
   SMH: {
-    action: 'ACCUMULATE',
+    action: 'HOLD (RUNNER)',
     conviction: 4,
-    view: 'Great addition — 0.032 shares at $553 gets you diversified semi exposure without single-stock risk of NVDA. Semis are still in a correction from June highs, which makes DCA-ing in now smart (contrarian setup).',
-    trigger: 'Add aggressively if SMH drops another 5-10%. This is the "buy the correction" position.',
-    risk: 'AI capex genuinely peaks — could see another 20-30% downside before recovery.',
+    view: 'REVISED (Sept 18): The August contrarian buy call worked — PHLX Semi index up 63% YTD. Your 0.032 shares at $553 basis is now nicely positive. Thesis played out: NVDA guided $108B Q3, Broadcom AI rev +143%, MRVL raised guidance. Now the setup is different: from "buy the dip" to "let it run but protect gains".',
+    trigger: 'Continue DCA on 10%+ pullbacks. Don\'t chase strength at these levels. If SMH breaks above $650, consider trimming 25%.',
+    risk: 'Sector at highs — Fed hike environment makes 20-30% correction possible without breaking the AI thesis. Would be painful but healthy.',
   },
   VOO: {
     action: 'ACCUMULATE',
@@ -4821,32 +4833,32 @@ const POSITION_ANALYSIS = {
     risk: 'Global growth slowdown = copper demand drop. China property overhang.',
   },
   MRVL: {
-    action: 'HOLD',
-    conviction: 3,
-    view: 'AI networking chip player — custom silicon for hyperscalers. You\'re up ~22%. In semi correction now but long-term thesis intact. Not urgent to add or trim.',
-    trigger: 'Add on sell-offs below $95. Trim if SMH continues correcting hard.',
-    risk: 'Hyperscaler capex peak = MRVL drops with the group.',
-  },
-  MU: {
     action: 'TRIM CANDIDATE',
     conviction: 3,
-    view: 'Memory chip cycle at extreme. You paid ~$772 and now at ~$875 (+13%). HBM memory demand for AI is real but memory is deeply cyclical. Position is tiny (0.06 shares) so impact is small either way.',
-    trigger: 'Consider closing this tiny position — it\'s not moving the portfolio needle. Redeploy the ~$52 into a fractional add on GLW or SGOV.',
-    risk: 'Memory cycle turn = MU can drop 40-50% quickly.',
+    view: 'MAJOR UPDATE (Sept 18): MRVL up ~150% YTD — CEO raised guidance for FY27 and FY28. You\'re up ~22% from your entry. This has run enormously. Custom silicon partner for hyperscalers is real but pricing is no longer cheap. Consider taking partial profits given the size of the move.',
+    trigger: 'Trim 25-33% (~1-2 shares) to lock in gains. Keep remainder as runner. Never let a 150%+ sector move fully evaporate.',
+    risk: 'Fed hike + hyperscaler capex any deceleration = 30%+ drawdown very possible from these levels.',
+  },
+  MU: {
+    action: 'HOLD (SMALL POSITION)',
+    conviction: 3,
+    view: 'REVISED (Sept 18): MU now around $480 (my earlier $875 was a stale data point). Your 0.06 shares cost basis at $772 means you\'re actually DOWN ~38% on paper. Management flagged "meaningful moderation in the rate of price increases" for Q4 — memory pricing peak may be in. HBM demand for AI still strong but cycle turn risk elevated. Earnings Sept 30 will be key.',
+    trigger: 'Position is tiny (~$29). Wait for Sept 30 earnings — either close it after or use as micro-DCA opportunity if oversold post-earnings.',
+    risk: 'Memory pricing cycle turn = 30-40% additional downside. But your $29 exposure is essentially trivial to the portfolio.',
   },
   NBIS: {
     action: 'TRIM STRONGLY',
     conviction: 3,
-    view: 'You\'re up ~92% on this. NBIS just fell ~20% in a week on convertible note dilution + broader neocloud selloff. This is a highly speculative AI infrastructure play with extreme volatility (beta ~2.89). The gain is real but at these levels, a 30-50% drawdown is normal — don\'t give it back.',
-    trigger: 'STRONG TRIM signal: sell 33-50% of position to lock in gains. Keep runner for further upside. Rule: never let a 90%+ gain evaporate.',
-    risk: 'Convertible note dilution ongoing, neocloud sector rotation, extreme leverage to AI capex sentiment.',
+    view: 'REVISED (Sept 18): You\'re still up substantially from your $109 entry. NBIS is a high-beta neocloud play that benefits from the same "supply-constrained through FY28" thesis NVDA just confirmed. But — extreme volatility (beta ~2.9), convertible dilution overhang, sector concentration. A 30-50% drawdown at any time remains normal for this name. Take some profits before Fed hike volatility hits.',
+    trigger: 'Sell 33-50% to lock in gains. Keep a runner for further AI upside. Rule: never let a big single-stock gain fully evaporate on a name this volatile.',
+    risk: 'Convertible note dilution, neocloud sector rotation, Fed hike = growth multiple compression = 40%+ drawdown possible even with strong thesis.',
   },
   NVDA: {
-    action: 'HOLD',
-    conviction: 3,
-    view: 'You\'re up ~83% and it\'s only 1 share. Genuine AI leader but currently facing AI capex peak fears — semis sold off 30% from June highs. My general view: prefer SMH over direct NVDA now. But since you already own it small, no urgent action.',
-    trigger: 'Don\'t add more — use fresh capital for SMH instead. Trim only if you need to raise cash.',
-    risk: 'AI capex genuinely peaks = NVDA can drop 40%+ from here.',
+    action: 'ACCUMULATE',
+    conviction: 4,
+    view: 'UPGRADED (Sept 18): NVDA delivered blowout Q2 FY27 — $96B revenue, guided $108B for Q3, "supply-constrained through FY28" per Jensen. Your ~1 share (up ~85%) is now on a much clearer runway. The August "prefer SMH" hedge no longer applies — direct NVDA thesis reactivated with 2+ years of visibility.',
+    trigger: 'Add on any 5-10% pullback. This is a legitimate accumulate now, not just a hold. But size discipline — still concentrated single-name risk.',
+    risk: 'Fed HIKED = tech multiple compression is the real risk now, not fundamentals. Custom silicon (Google TPU, Amazon Trainium) chipping away at share.',
   },
   SOXL: {
     action: 'CONTINUE REDUCING',
@@ -5301,22 +5313,27 @@ function renderPortfolio() {
 
     <!-- SIGNAL'S PORTFOLIO SUMMARY -->
     <div class="panel-2 p-4 mt-4" style="border-left: 3px solid var(--cyan);">
-      <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">SIGNAL'S OVERALL VIEW</div>
+      <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">SIGNAL'S OVERALL VIEW · UPDATED SEPT 18 2026</div>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        <strong class="text-bull">✓ Great execution</strong> — you took TQQQ profits (4→1 shares), halved SOXL (5→2.5), started VOO DCA, and added MSFT + SMH. The portfolio is meaningfully healthier than 2 weeks ago. You still have ${aiSemiPct.toFixed(0)}% in AI/semis (still concentrated) and ${leveragedPct.toFixed(0)}% in leveraged ETFs (down from ~18%).
+        <strong class="text-warn">MAJOR REGIME CHANGE:</strong> Fed HIKED 25bps to 3.75-4.00% on Sept 16 (first hike since 2023). Chair Warsh said inflation "running too hot". Dot plot median 4.1% year-end. Iran conflict re-escalated. VIX at 17. This changes several of my August views — see updated position notes.
       </p>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        <strong>Remaining priority actions:</strong>
+        <strong class="text-bull">✓ Great execution so far:</strong> You took TQQQ profits, halved SOXL, started VOO DCA, added MSFT + SMH. That August playbook was correct. Your portfolio is meaningfully healthier than 6 weeks ago.
+      </p>
+      <p class="text-xs text-muted leading-relaxed mb-2">
+        <strong>September priority actions (new setup):</strong>
       </p>
       <ol class="text-xs text-muted leading-relaxed space-y-1 ml-4 list-decimal">
-        <li><strong class="text-warn">Continue reducing SOXL</strong> to zero — you have SMH now for semi exposure without leverage decay.</li>
-        <li><strong class="text-bull">Increase VOO DCA size</strong> — 0.0478 shares is a start. Aim for RM 500/month recurring to build the core.</li>
-        <li><strong class="text-bull">DCA into GLW</strong> — still at a loss, still high conviction. Add on any weakness below $155.</li>
-        <li><strong class="text-cyan">Add SGOV or GLD</strong> for defensive allocation (10-20% of book).</li>
-        <li><strong class="text-warn">Consider trimming NBIS</strong> if it recovers to previous highs — still up ~90% on entry.</li>
+        <li><strong class="text-warn">Trim MRVL 25-33%</strong> — up 150% YTD, take some off the table before Fed volatility hits.</li>
+        <li><strong class="text-warn">Trim NBIS 33-50%</strong> — still your biggest paper win, protect it.</li>
+        <li><strong class="text-bull">Grow SGOV position</strong> — Fed HIKING = 5% locked-in yield with zero risk is genuinely competitive with equities now.</li>
+        <li><strong class="text-bull">Increase VOO DCA to RM 500/month</strong> — recurring buy on Moomoo, boring wins.</li>
+        <li><strong class="text-cyan">MU earnings Sept 30</strong> — decide about your 0.06 shares after (price dropped from $875 to $480, position now down ~38%).</li>
+        <li><strong class="text-warn">Continue reducing SOXL</strong> — 3x leverage decay accumulates every day.</li>
+        <li><strong class="text-bull">NVDA thesis reactivated</strong> — Q2 blowout, "supply constrained through FY28". Your 1 share can stay, add on 5%+ pullbacks.</li>
       </ol>
       <p class="text-[10px] text-dim mt-3 italic">
-        Analysis based on my views as of Aug 2026. Cross-check with your own research before executing. Not financial advice.
+        Analysis updated Sept 18, 2026 for Fed hike + NVDA blowout + Middle East escalation. Cross-check with your own research. Not financial advice.
       </p>
     </div>
 
@@ -5965,7 +5982,7 @@ function initVOOandIPO() {
    ============================================================ */
 
 const NEWS_PICKS_KEY = 'signal_news_picks_v1';
-const NEWS_PICKS_REFRESH_MS = 60 * 60 * 1000; // hourly
+const NEWS_PICKS_REFRESH_MS = 30 * 60 * 1000; // 30 minutes (was hourly)
 
 // Extended universe eligible for news-driven picks (curated quality set + user's holdings)
 const NEWS_ELIGIBLE_SYMBOLS = new Set([
@@ -6015,7 +6032,7 @@ const THEME_KEYWORDS = {
   'Earnings Season': ['earnings', 'revenue', 'guidance', 'beat estimates', 'missed', 'quarterly'],
 };
 
-// Fetch general market news from Finnhub
+// Fetch general market news from Finnhub — newest first, last 12 hours only
 async function fetchMarketNews() {
   if (!state.apiKey) return [];
   try {
@@ -6024,9 +6041,12 @@ async function fetchMarketNews() {
     if (!res.ok) return [];
     const data = await res.json();
     if (!Array.isArray(data)) return [];
-    // Only news from last 24h
-    const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
-    return data.filter(n => (n.datetime * 1000) > dayAgo).slice(0, 80);
+    // Only news from last 12 hours (was 24h) for FRESHER picks
+    const cutoff = Date.now() - 12 * 60 * 60 * 1000;
+    return data
+      .filter(n => (n.datetime * 1000) > cutoff)
+      .sort((a, b) => (b.datetime || 0) - (a.datetime || 0))
+      .slice(0, 100);
   } catch (err) {
     console.warn('[Market news] fetch failed:', err);
     return [];
@@ -6103,26 +6123,33 @@ async function generateNewsPicks() {
     const tickers = extractTickers(item);
     const sentiment = scoreNewsItem(item);
     const hoursOld = (now - item.datetime * 1000) / (1000 * 60 * 60);
-    // Fresher news = more weight (2x for <4h, 1.5x for <12h, 1x otherwise)
-    const freshWeight = hoursOld < 4 ? 2.0 : hoursOld < 12 ? 1.5 : 1.0;
+    // AGGRESSIVE freshness weighting: <1h = 4x, <3h = 2.5x, <6h = 1.8x, <12h = 1x
+    let freshWeight;
+    if (hoursOld < 1) freshWeight = 4.0;
+    else if (hoursOld < 3) freshWeight = 2.5;
+    else if (hoursOld < 6) freshWeight = 1.8;
+    else freshWeight = 1.0;
 
     tickers.forEach(t => {
-      if (!tickerData[t]) tickerData[t] = { mentions: 0, sentimentSum: 0, weight: 0, headlines: [] };
+      if (!tickerData[t]) tickerData[t] = { mentions: 0, sentimentSum: 0, weight: 0, headlines: [], freshestHours: Infinity };
       tickerData[t].mentions++;
       tickerData[t].sentimentSum += sentiment * freshWeight;
       tickerData[t].weight += freshWeight;
+      if (hoursOld < tickerData[t].freshestHours) tickerData[t].freshestHours = hoursOld;
       if (tickerData[t].headlines.length < 3) {
         tickerData[t].headlines.push({
           headline: item.headline,
           source: item.source,
+          url: item.url,
           sentiment,
-          hoursOld: Math.round(hoursOld),
+          hoursOld: Math.round(hoursOld * 10) / 10,
+          veryFresh: hoursOld < 3,
         });
       }
     });
   });
 
-  // Rank tickers: score = mentions × weight × magnitude
+  // Rank tickers: score = mentions × weight × magnitude × freshness_bonus
   const ranked = Object.entries(tickerData)
     .map(([symbol, d]) => ({
       symbol,
@@ -6130,6 +6157,7 @@ async function generateNewsPicks() {
       avgSentiment: d.weight > 0 ? d.sentimentSum / d.weight : 0,
       relevanceScore: d.mentions * d.weight,
       headlines: d.headlines,
+      freshestHours: d.freshestHours,
     }))
     .filter(t => t.mentions >= 2 || Math.abs(t.avgSentiment) >= 2)
     .sort((a, b) => b.relevanceScore - a.relevanceScore)
@@ -6152,8 +6180,8 @@ function loadNewsPicks() {
     const raw = localStorage.getItem(NEWS_PICKS_KEY);
     if (!raw) return null;
     const data = JSON.parse(raw);
-    // Expire if older than 90 min
-    if (Date.now() - data.generatedAt > 90 * 60 * 1000) return null;
+    // Expire faster: 45 min max (was 90)
+    if (Date.now() - data.generatedAt > 45 * 60 * 1000) return null;
     return data;
   } catch { return null; }
 }
@@ -6200,7 +6228,7 @@ function renderNewsPicks() {
     <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">TODAY'S HOT THEMES</div>
     ${themesHtml}
 
-    <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">TRENDING PICKS · RANKED BY NEWS ACTIVITY</div>
+    <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">TRENDING PICKS · RANKED BY NEWS ACTIVITY · NEWEST FIRST</div>
     <div class="space-y-2 mb-4">
       ${data.picks.map((p, idx) => {
         const asset = UNIVERSE.find(a => a.symbol === p.symbol);
@@ -6210,6 +6238,12 @@ function renderNewsPicks() {
         const sentimentLabel = p.avgSentiment > 1 ? 'BULLISH' : p.avgSentiment < -1 ? 'BEARISH' : 'MIXED';
         const sentimentColor = p.avgSentiment > 1 ? 'var(--bull)' : p.avgSentiment < -1 ? 'var(--bear)' : 'var(--cyan)';
         const rankBadge = idx < 3 ? `<span class="text-[9px] font-bold" style="color: var(--warn);">🔥 #${idx+1}</span>` : `<span class="text-[9px] text-dim">#${idx+1}</span>`;
+        // Freshness badge
+        const freshBadge = p.freshestHours < 1
+          ? `<span class="text-[9px] font-mono px-1.5 py-0.5" style="background: rgba(248,113,113,0.20); color: var(--bear); border: 1px solid var(--bear);" title="Very fresh news">🔴 &lt;1h ago</span>`
+          : p.freshestHours < 3
+            ? `<span class="text-[9px] font-mono px-1.5 py-0.5" style="background: rgba(251,191,36,0.15); color: var(--warn); border: 1px solid var(--warn);" title="Fresh news">🟡 ${p.freshestHours.toFixed(1)}h ago</span>`
+            : `<span class="text-[9px] font-mono px-1.5 py-0.5" style="color: var(--dim); border: 1px solid var(--border);" title="Older news">${p.freshestHours.toFixed(1)}h ago</span>`;
         return `
           <div class="panel-2 p-3" style="border-left: 3px solid ${sentimentColor};">
             <div class="flex items-center justify-between gap-3 flex-wrap mb-2">
@@ -6218,6 +6252,7 @@ function renderNewsPicks() {
                   ${rankBadge}
                   <span class="font-mono font-bold">${p.symbol}</span>
                   <span class="text-[10px] text-dim">${asset.sector}</span>
+                  ${freshBadge}
                   <span class="text-[10px] font-mono px-2 py-0.5" style="background: rgba(0,0,0,0.3); color: ${sentimentColor};">${sentimentLabel}</span>
                   <span class="font-mono text-[9px] px-2 py-0.5" style="border: 1px solid ${dyn.color}; color: ${dyn.color};">${dyn.verdict}</span>
                 </div>
@@ -6227,14 +6262,20 @@ function renderNewsPicks() {
                 <div class="text-dim">$${price.toFixed(2)}</div>
               </div>
             </div>
-            <div class="text-[10px] text-muted leading-relaxed space-y-0.5 mt-1 pt-2 border-t hair">
-              ${p.headlines.slice(0, 2).map(h => `
-                <div>
-                  <span class="${h.sentiment > 0 ? 'text-bull' : h.sentiment < 0 ? 'text-bear' : 'text-dim'}">${h.sentiment > 0 ? '▲' : h.sentiment < 0 ? '▼' : '·'}</span>
-                  ${h.headline}
-                  <span class="text-dim">· ${h.source} · ${h.hoursOld}h ago</span>
-                </div>
-              `).join('')}
+            <div class="text-[10px] text-muted leading-relaxed space-y-1 mt-1 pt-2 border-t hair">
+              ${p.headlines.slice(0, 3).map(h => {
+                const timeStr = h.hoursOld < 1 ? 'just now' : h.hoursOld < 2 ? `${Math.round(h.hoursOld * 60)}m ago` : `${h.hoursOld.toFixed(1)}h ago`;
+                const linkHtml = h.url
+                  ? `<a href="${h.url}" target="_blank" rel="noopener" class="link-src hover:underline">${h.headline}</a>`
+                  : h.headline;
+                return `
+                  <div>
+                    <span class="${h.sentiment > 0 ? 'text-bull' : h.sentiment < 0 ? 'text-bear' : 'text-dim'}">${h.sentiment > 0 ? '▲' : h.sentiment < 0 ? '▼' : '·'}</span>
+                    ${linkHtml}
+                    <span class="text-dim">· ${h.source} · <strong style="color: ${h.veryFresh ? 'var(--warn)' : 'var(--dim)'};">${timeStr}</strong></span>
+                  </div>
+                `;
+              }).join('')}
             </div>
           </div>
         `;
@@ -6325,13 +6366,21 @@ function init() {
   // News-driven trending picks
   initNewsPicks();
 
+  // Faster news sentiment refresh — every 30 min (was 60) for fresher signals
+  if (state.apiKey) {
+    // Override the hourly interval set inside the news-picks module
+    setInterval(() => {
+      if (typeof refreshAllNewsSentiment === 'function') refreshAllNewsSentiment();
+    }, 30 * 60 * 1000);
+  }
+
   // Dynamic signal engine: market regime + news sentiment
   renderMarketRegimeHeader();
   setInterval(renderMarketRegimeHeader, 30_000); // regime updates with prices
   // Initial news sentiment fetch (staggered) then refresh hourly
   if (state.apiKey) {
     setTimeout(refreshAllNewsSentiment, 5000);
-    setInterval(refreshAllNewsSentiment, 60 * 60 * 1000); // 1 hour
+    setInterval(refreshAllNewsSentiment, 30 * 60 * 1000); // 30 min (was 1 hour) for fresher signals
   }
 
   setInterval(tickCountdown, 1000);
