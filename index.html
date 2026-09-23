@@ -619,6 +619,7 @@
             </div>
             <h2 class="text-2xl font-semibold tracking-tight">Live Portfolio Analysis</h2>
             <p class="text-sm text-muted mt-1" id="livetest-subtitle">Track your real holdings against live prices with per-position analysis and recommended actions.</p>
+            <p class="text-[10px] text-dim mt-1">💡 Live prices via Finnhub (auto-refresh 30s). Fallback prices verified Sept 23, 2026 but leveraged ETFs (SOXL, TQQQ) move fast — Moomoo is always the source of truth for exact market price.</p>
           </div>
           <div class="flex gap-2 flex-wrap">
             <select id="portfolio-currency" class="alloc-input text-xs">
@@ -1043,7 +1044,7 @@ const UNIVERSE = [
   { symbol: 'EWT',  name: 'iShares MSCI Taiwan ETF',         type: 'fund', region: 'TW', base: 72.30,  sector: 'Taiwan' },
   { symbol: 'EWY',  name: 'iShares MSCI South Korea ETF',    type: 'fund', region: 'KR', base: 68.22,  sector: 'South Korea' },
   { symbol: 'EWA',  name: 'iShares MSCI Australia ETF',      type: 'fund', region: 'AU', base: 28.71,  sector: 'Australia' },
-  { symbol: 'SMH',  name: 'VanEck Semiconductor ETF',        type: 'fund', region: 'GBL',base: 695.10, sector: 'Semiconductors' },
+  { symbol: 'SMH',  name: 'VanEck Semiconductor ETF',        type: 'fund', region: 'GBL',base: 607.46, sector: 'Semiconductors' },
   { symbol: 'SOXX', name: 'iShares Semiconductor ETF',       type: 'fund', region: 'GBL',base: 548.41, sector: 'Semiconductors' },
   { symbol: 'XLK',  name: 'Technology Select Sector SPDR',   type: 'fund', region: 'US', base: 288.55, sector: 'Technology' },
   { symbol: 'XLF',  name: 'Financial Select Sector SPDR',    type: 'fund', region: 'US', base: 62.42,  sector: 'Financials' },
@@ -1063,8 +1064,8 @@ const UNIVERSE = [
   { symbol: 'BND',  name: 'Vanguard Total Bond Market ETF',  type: 'fund', region: 'US', base: 72.30,  sector: 'Bonds' },
   { symbol: 'IBIT', name: 'iShares Bitcoin Trust',           type: 'fund', region: 'US', base: 36.13,  sector: 'Crypto' },
   { symbol: 'ETHE', name: 'Grayscale Ethereum Trust',        type: 'fund', region: 'US', base: 18.44,  sector: 'Crypto' },
-  { symbol: 'SOXL', name: 'Direxion Semiconductor Bull 3x',  type: 'fund', region: 'US', base: 92.75,  sector: 'Leveraged Semi' },
-  { symbol: 'TQQQ', name: 'ProShares UltraPro QQQ (3x)',     type: 'fund', region: 'US', base: 147.20, sector: 'Leveraged Nasdaq' },
+  { symbol: 'SOXL', name: 'Direxion Semiconductor Bull 3x',  type: 'fund', region: 'US', base: 151.95, sector: 'Leveraged Semi' },
+  { symbol: 'TQQQ', name: 'ProShares UltraPro QQQ (3x)',     type: 'fund', region: 'US', base: 80.83,  sector: 'Leveraged Nasdaq' },
   { symbol: 'XBI',  name: 'SPDR S&P Biotech ETF',            type: 'fund', region: 'US', base: 98.40,  sector: 'Biotech' },
 
   // ═══ INDICES — prices verified Aug 13, 2026 close ═══
@@ -5000,25 +5001,25 @@ const SELL_LADDER = {
   },
   SOXL: {
     strategy: 'convert-to-etf',
-    label: 'EXIT LEVERAGED → VOO or SMH',
-    reasoning: '3x leverage decay accumulates daily. Even if semis rally, you underperform SMH long-term. You already halved this — finish the job.',
+    label: 'EXIT NOW → SMH or VOO (up 265% already)',
+    reasoning: '🚨 URGENT: SOXL is now around $152 vs your $41.55 entry — you are up ~265%. Every additional day of holding = leverage decay eating this gift. Close all 2.5 shares at market price today and redirect proceeds. If bullish semis, use SMH (1x, no decay).',
     tranches: [
-      { atPrice: 48, sellPct: 100, note: 'Close remaining 2.5 shares on any strength → SMH or VOO' },
+      { atPrice: 140, sellPct: 100, note: 'Any price above $140 = close immediately. This is a "sell now" position, not "wait for ladder"' },
     ],
-    stopLoss: 32,
+    stopLoss: 120,
     convertTo: 'SMH',
-    reviewTrigger: 'Any close above $50 = close position that day regardless.',
+    reviewTrigger: 'Close today at market — do not wait for a specific price. Leverage decay + Fed hike environment = risk far outweighs remaining upside.',
   },
   TQQQ: {
     strategy: 'convert-to-etf',
-    label: 'CLOSE remaining share → VOO',
-    reasoning: 'You already took 75% profits. The last 1 share is a "let it run" bet but the leverage decay math is against you. Small enough to close cleanly.',
+    label: 'CLOSE remaining share NOW → VOO',
+    reasoning: 'TQQQ around $80 vs your $43.43 entry = up ~86%. You already took 75% profits smartly. The last 1 share is small but same leverage decay math still applies. Simple to close now, redirect to VOO.',
     tranches: [
-      { atPrice: 80, sellPct: 100, note: 'Close final share → buy 0.11 shares of VOO' },
+      { atPrice: 75, sellPct: 100, note: 'Close final share at market price today → buy ~0.11 shares of VOO' },
     ],
-    stopLoss: 45,
+    stopLoss: 60,
     convertTo: 'VOO',
-    reviewTrigger: 'Any close above $80 = fully exit, redirect to VOO.',
+    reviewTrigger: 'Close today at market — the last share is not worth managing separately.',
   },
   TSM: {
     strategy: 'hold-quality',
