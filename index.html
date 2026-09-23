@@ -4897,6 +4897,220 @@ const POSITION_ANALYSIS = {
   },
 };
 
+/* ============================================================
+   SELL LADDER — Hybrid strategy per position
+   Strategy types:
+     'sell-ladder'      → Overextended winners, take profits in tranches
+     'hold-quality'     → Core convictions, only sell if thesis breaks
+     'convert-to-etf'   → Migrate proceeds to VOO on any strength
+     'accumulate'       → Down but thesis intact, DCA more
+     'hold-tiny'        → Position too small to matter, wait for catalyst
+   ============================================================ */
+
+const SELL_LADDER = {
+  GLW: {
+    strategy: 'accumulate',
+    label: 'ACCUMULATE — do not sell',
+    reasoning: 'You are still at a loss on GLW. Thesis is intact (AI fiber demand). Selling here locks in loss unnecessarily. DCA down to lower basis instead.',
+    tranches: [],
+    stopLoss: null,
+    convertTo: null,
+    reviewTrigger: 'Two consecutive quarters of declining optical segment revenue = reassess.',
+  },
+  HBM: {
+    strategy: 'sell-ladder',
+    label: 'PARTIAL EXITS on copper strength',
+    reasoning: 'Copper cyclical play. Up ~9% now. Set targets to capture copper cycle upside.',
+    tranches: [
+      { atPrice: 32, sellPct: 33, note: 'First trim — locks in ~30% gain on 1/3 of position' },
+      { atPrice: 38, sellPct: 33, note: 'Second trim — sell if copper spikes above $5/lb' },
+      { atPrice: 45, sellPct: 34, note: 'Full exit — copper cycle peak' },
+    ],
+    stopLoss: 20,
+    convertTo: 'SGOV',
+    reviewTrigger: 'Copper falls below $4/lb sustainably = full exit regardless of price.',
+  },
+  MRVL: {
+    strategy: 'sell-ladder',
+    label: 'TRIM winner — up ~150% YTD',
+    reasoning: 'Massive run in 2026. Custom silicon story is real but pricing extended. Lock in gains in tranches.',
+    tranches: [
+      { atPrice: 255, sellPct: 33, note: 'First trim — takes ~1-2 shares off, locks in gain' },
+      { atPrice: 290, sellPct: 33, note: 'Second trim — if AI capex momentum continues' },
+      { atPrice: 340, sellPct: 34, note: 'Full exit — extreme extension zone' },
+    ],
+    stopLoss: 175,
+    convertTo: 'VOO',
+    reviewTrigger: 'MRVL guides Q3 FY27 below street = trim faster regardless of price.',
+  },
+  MSFT: {
+    strategy: 'hold-quality',
+    label: 'HOLD FOREVER — quality core',
+    reasoning: 'One of the highest-quality companies in the world. Recurring revenue, Azure capacity-constrained, OpenAI partnership. Never sell voluntarily.',
+    tranches: [],
+    stopLoss: null,
+    convertTo: null,
+    reviewTrigger: 'Azure growth below 25% Y/Y for 2 quarters = reassess thesis.',
+  },
+  MU: {
+    strategy: 'convert-to-etf',
+    label: 'CLOSE small position → VOO',
+    reasoning: 'Your 0.06 shares (~$29) is too small to matter. Memory cycle risk high (pricing moderating). Redeploy into your core VOO.',
+    tranches: [
+      { atPrice: 500, sellPct: 100, note: 'Close entire position on any strength → buy VOO fractional' },
+    ],
+    stopLoss: 420,
+    convertTo: 'VOO',
+    reviewTrigger: 'Sept 30 earnings — wait one day, then close regardless.',
+  },
+  NBIS: {
+    strategy: 'sell-ladder',
+    label: 'STRONG TRIM — protect big gain',
+    reasoning: 'You are up ~100% from $109 entry. High-beta neocloud (beta 2.9). Convertible dilution ongoing. Never let this size gain evaporate.',
+    tranches: [
+      { atPrice: 240, sellPct: 50, note: 'MAJOR trim — lock in half the gain immediately' },
+      { atPrice: 320, sellPct: 30, note: 'Second trim on further strength' },
+      { atPrice: 400, sellPct: 20, note: 'Keep small runner for further AI upside' },
+    ],
+    stopLoss: 170,
+    convertTo: 'SGOV',
+    reviewTrigger: 'Any convertible note issuance news = trim faster.',
+  },
+  NVDA: {
+    strategy: 'hold-quality',
+    label: 'HOLD (Q2 blowout reactivated thesis)',
+    reasoning: 'Jensen said "supply constrained through FY28" on Aug 26 earnings. Your 1 share (~$228) is on multi-year runway. Only trim if you need to raise cash for other opportunities.',
+    tranches: [
+      { atPrice: 300, sellPct: 25, note: 'Optional trim if you want to rotate to SGOV — not required' },
+    ],
+    stopLoss: 160,
+    convertTo: null,
+    reviewTrigger: 'Q3 FY27 revenue below $108B guide midpoint = thesis broken.',
+  },
+  SMH: {
+    strategy: 'hold-quality',
+    label: 'HOLD (Runner) — up 63% YTD',
+    reasoning: 'August contrarian call played out. Broad semi exposure = safer than single-stock. Keep holding, add on 10%+ pullbacks.',
+    tranches: [
+      { atPrice: 700, sellPct: 20, note: 'Small trim if extreme extension' },
+    ],
+    stopLoss: 430,
+    convertTo: null,
+    reviewTrigger: 'Two consecutive quarters of hyperscaler capex cuts = trim aggressively.',
+  },
+  SOXL: {
+    strategy: 'convert-to-etf',
+    label: 'EXIT LEVERAGED → VOO or SMH',
+    reasoning: '3x leverage decay accumulates daily. Even if semis rally, you underperform SMH long-term. You already halved this — finish the job.',
+    tranches: [
+      { atPrice: 48, sellPct: 100, note: 'Close remaining 2.5 shares on any strength → SMH or VOO' },
+    ],
+    stopLoss: 32,
+    convertTo: 'SMH',
+    reviewTrigger: 'Any close above $50 = close position that day regardless.',
+  },
+  TQQQ: {
+    strategy: 'convert-to-etf',
+    label: 'CLOSE remaining share → VOO',
+    reasoning: 'You already took 75% profits. The last 1 share is a "let it run" bet but the leverage decay math is against you. Small enough to close cleanly.',
+    tranches: [
+      { atPrice: 80, sellPct: 100, note: 'Close final share → buy 0.11 shares of VOO' },
+    ],
+    stopLoss: 45,
+    convertTo: 'VOO',
+    reviewTrigger: 'Any close above $80 = fully exit, redirect to VOO.',
+  },
+  TSM: {
+    strategy: 'hold-quality',
+    label: 'HOLD FOREVER — quality core',
+    reasoning: 'The AI foundry king. Every AI chip goes through TSMC. Up ~50% on you. Taiwan risk priced in. This is a keep-forever position.',
+    tranches: [
+      { atPrice: 500, sellPct: 25, note: 'Optional trim if extreme extension — not required' },
+    ],
+    stopLoss: 290,
+    convertTo: null,
+    reviewTrigger: 'Serious Taiwan geopolitical escalation = temporary risk-off trim.',
+  },
+  VOO: {
+    strategy: 'hold-quality',
+    label: 'CORE — NEVER SELL',
+    reasoning: 'Your wealth-building engine. VOO is not a "position" — it is your retirement plan. Add every month via DCA. Only sell when you literally need money in retirement.',
+    tranches: [],
+    stopLoss: null,
+    convertTo: null,
+    reviewTrigger: 'Only "sell" trigger is retirement, house down payment, or emergency fund need.',
+  },
+  XBI: {
+    strategy: 'hold-quality',
+    label: 'PATIENT HOLD — waiting for catalyst',
+    reasoning: 'Biotech has lagged. Waiting for GLP-1 continuation + M&A cycle to reignite. Roughly flat from entry. Diversifier from your tech-heavy book.',
+    tranches: [
+      { atPrice: 115, sellPct: 33, note: 'First trim if biotech finally rallies' },
+      { atPrice: 140, sellPct: 33, note: 'Second trim on cycle top' },
+    ],
+    stopLoss: 78,
+    convertTo: 'VOO',
+    reviewTrigger: 'Biotech breaks $110 = start trimming.',
+  },
+  SUNMED: {
+    strategy: 'hold-quality',
+    label: 'HOLD — MY market diversifier',
+    reasoning: 'Malaysian healthcare exposure. Up ~7%. Good MYR diversifier from your USD-heavy book. Small position, no urgent action.',
+    tranches: [
+      { atPrice: 2.20, sellPct: 50, note: 'Trim half if strong rally — lock in ~50% gain' },
+    ],
+    stopLoss: 1.10,
+    convertTo: null,
+    reviewTrigger: 'Fundamentals deteriorate — Malaysian healthcare sector news.',
+  },
+};
+
+// Compute sell ladder progress for a position
+function computeSellLadderStatus(pos, currentPrice, pnl) {
+  const ladder = SELL_LADDER[pos.symbol];
+  if (!ladder) return null;
+
+  const isMyrNative = pos.currency === 'MYR';
+  const priceCompare = currentPrice; // in native currency
+
+  // Find which tranches are triggered
+  const activeTranches = ladder.tranches.map(t => ({
+    ...t,
+    triggered: priceCompare >= t.atPrice,
+    distancePct: ((t.atPrice - priceCompare) / priceCompare) * 100,
+  }));
+
+  const nextTarget = activeTranches.find(t => !t.triggered);
+  const triggeredCount = activeTranches.filter(t => t.triggered).length;
+  const stopLossHit = ladder.stopLoss && priceCompare <= ladder.stopLoss;
+
+  return {
+    strategy: ladder.strategy,
+    label: ladder.label,
+    reasoning: ladder.reasoning,
+    tranches: activeTranches,
+    nextTarget,
+    triggeredCount,
+    totalTranches: ladder.tranches.length,
+    stopLoss: ladder.stopLoss,
+    stopLossHit,
+    convertTo: ladder.convertTo,
+    reviewTrigger: ladder.reviewTrigger,
+  };
+}
+
+// Strategy label styling
+function getStrategyStyle(strategy) {
+  const styles = {
+    'sell-ladder':    { color: 'var(--warn)',   bg: 'rgba(251,191,36,0.10)',  icon: '⇊', label: 'SELL LADDER' },
+    'hold-quality':   { color: 'var(--bull)',   bg: 'rgba(52,211,153,0.10)',  icon: '★', label: 'HOLD QUALITY' },
+    'convert-to-etf': { color: 'var(--cyan)',   bg: 'rgba(34,211,238,0.10)',  icon: '⇄', label: 'CONVERT TO ETF' },
+    'accumulate':     { color: 'var(--bull)',   bg: 'rgba(52,211,153,0.15)',  icon: '↑', label: 'ACCUMULATE' },
+    'hold-tiny':      { color: 'var(--dim)',    bg: 'rgba(120,120,120,0.10)', icon: '·', label: 'HOLD TINY' },
+  };
+  return styles[strategy] || styles['hold-quality'];
+}
+
 function loadPortfolio() {
   try {
     const raw = localStorage.getItem(PORTFOLIO_STORAGE_KEY);
@@ -5265,6 +5479,58 @@ function renderPortfolio() {
               <strong>▸ NOW:</strong> ${dynamic.contextLine}
             </div>
 
+            <!-- SELL LADDER / STRATEGY (NEW) -->
+            ${(() => {
+              const ladder = computeSellLadderStatus(p.pos, p.currentPrice, p);
+              if (!ladder) return '';
+              const stratStyle = getStrategyStyle(ladder.strategy);
+              const nativeCur = isMyrNative ? 'RM ' : '$';
+
+              let tranchesHtml = '';
+              if (ladder.tranches.length > 0) {
+                tranchesHtml = `
+                  <div class="mt-2 space-y-1">
+                    <div class="text-[10px] font-mono tracking-wider text-dim mb-1">SELL LADDER · ${ladder.triggeredCount}/${ladder.totalTranches} TRANCHES TRIGGERED</div>
+                    ${ladder.tranches.map(t => `
+                      <div class="text-[10px] flex items-center gap-2 ${t.triggered ? '' : 'opacity-70'}" style="padding: 4px 8px; background: ${t.triggered ? 'rgba(52,211,153,0.10)' : 'rgba(0,0,0,0.15)'}; border-left: 2px solid ${t.triggered ? 'var(--bull)' : 'var(--border)'};">
+                        <span class="font-mono" style="min-width: 20px; color: ${t.triggered ? 'var(--bull)' : 'var(--dim)'};">${t.triggered ? '✓' : '○'}</span>
+                        <span class="font-mono font-bold" style="color: ${t.triggered ? 'var(--bull)' : 'var(--text)'}; min-width: 60px;">${nativeCur}${t.atPrice}</span>
+                        <span class="font-mono" style="color: var(--warn); min-width: 45px;">SELL ${t.sellPct}%</span>
+                        <span class="text-muted flex-1">${t.note}</span>
+                        ${!t.triggered && Math.abs(t.distancePct) < 999 ? `<span class="font-mono text-[9px] text-dim">${t.distancePct > 0 ? '+' : ''}${t.distancePct.toFixed(1)}%</span>` : ''}
+                      </div>
+                    `).join('')}
+                  </div>
+                `;
+              }
+
+              const stopLossHtml = ladder.stopLoss
+                ? `<div class="text-[10px] mt-1 flex items-center gap-2" style="color: ${ladder.stopLossHit ? 'var(--bear)' : 'var(--dim)'};">
+                    <span>${ladder.stopLossHit ? '🚨' : '⚠'}</span>
+                    <span>Stop-loss: <strong>${nativeCur}${ladder.stopLoss}</strong>${ladder.stopLossHit ? ' — TRIGGERED, review immediately' : ''}</span>
+                  </div>`
+                : '';
+
+              const convertHtml = ladder.convertTo
+                ? `<div class="text-[10px] mt-1 text-cyan">→ Convert proceeds to <strong>${ladder.convertTo}</strong></div>`
+                : '';
+
+              return `
+                <details class="mt-3" ${ladder.strategy === 'sell-ladder' || ladder.strategy === 'convert-to-etf' ? 'open' : ''}>
+                  <summary class="cursor-pointer text-[10px] font-mono tracking-wider" style="color: ${stratStyle.color};">
+                    ${stratStyle.icon} STRATEGY: ${stratStyle.label} — click ${ladder.strategy === 'sell-ladder' || ladder.strategy === 'convert-to-etf' ? 'to collapse' : 'for sell plan'}
+                  </summary>
+                  <div class="mt-2 p-2" style="background: ${stratStyle.bg}; border-left: 2px solid ${stratStyle.color};">
+                    <div class="text-[10px] text-muted leading-relaxed">${ladder.reasoning}</div>
+                    ${tranchesHtml}
+                    ${stopLossHtml}
+                    ${convertHtml}
+                    <div class="text-[10px] text-dim mt-2 pt-1 border-t hair"><strong>Review trigger:</strong> ${ladder.reviewTrigger}</div>
+                  </div>
+                </details>
+              `;
+            })()}
+
             <!-- Long-term thesis (static, my written view) -->
             <details class="mt-2">
               <summary class="text-[10px] font-mono tracking-wider text-dim cursor-pointer">LONG-TERM THESIS · Click to expand</summary>
@@ -5310,6 +5576,47 @@ function renderPortfolio() {
         }).join('')}
       </div>
     </div>
+
+    <!-- MIGRATION ROADMAP (NEW) -->
+    ${(() => {
+      const ladderSummary = { holdQuality: [], sellLadder: [], convertToEtf: [], accumulate: [], holdTiny: [] };
+      let totalConvertibleValue = 0;
+      pnls.forEach(p => {
+        const ladder = SELL_LADDER[p.pos.symbol];
+        if (!ladder) return;
+        const val = displayCur === 'MYR' ? p.currentValueMYR : p.currentValueUSD;
+        const item = { symbol: p.pos.symbol, value: val, pnlPct: p.pnlPct };
+        if (ladder.strategy === 'hold-quality') ladderSummary.holdQuality.push(item);
+        else if (ladder.strategy === 'sell-ladder') ladderSummary.sellLadder.push(item);
+        else if (ladder.strategy === 'convert-to-etf') { ladderSummary.convertToEtf.push(item); totalConvertibleValue += val; }
+        else if (ladder.strategy === 'accumulate') ladderSummary.accumulate.push(item);
+        else ladderSummary.holdTiny.push(item);
+      });
+
+      const groupHtml = (label, color, items) => items.length === 0 ? '' : `
+        <div class="mb-2">
+          <div class="text-[10px] font-mono tracking-wider mb-1" style="color: ${color};">${label} · ${items.length} positions</div>
+          <div class="flex flex-wrap gap-1">
+            ${items.map(i => `<span class="text-[10px] font-mono px-2 py-0.5" style="background: rgba(0,0,0,0.25); border: 1px solid ${color}; color: ${color};" title="${curSym}${fmt.price(i.value)} · ${i.pnlPct >= 0 ? '+' : ''}${i.pnlPct.toFixed(1)}%">${i.symbol}</span>`).join('')}
+          </div>
+        </div>
+      `;
+
+      return `
+        <div class="panel-2 p-4 mt-6" style="border-left: 3px solid var(--purple);">
+          <div class="text-[10px] font-mono tracking-wider mb-3" style="color: var(--purple);">◆ MIGRATION ROADMAP · YOUR PATH TO 70% VOO CORE</div>
+          ${groupHtml('★ HOLD QUALITY — never sell voluntarily', 'var(--bull)', ladderSummary.holdQuality)}
+          ${groupHtml('↑ ACCUMULATE — DCA down, thesis intact', 'var(--bull)', ladderSummary.accumulate)}
+          ${groupHtml('⇊ SELL LADDER — trim winners in tranches', 'var(--warn)', ladderSummary.sellLadder)}
+          ${groupHtml('⇄ CONVERT TO ETF — migrate proceeds to VOO/SMH', 'var(--cyan)', ladderSummary.convertToEtf)}
+          ${totalConvertibleValue > 0 ? `
+            <div class="text-xs text-muted leading-relaxed mt-3 pt-2 border-t hair">
+              <strong style="color: var(--cyan);">${curSym}${fmt.price(totalConvertibleValue)}</strong> currently in "convert to ETF" bucket. Each sale here should redirect straight to VOO or the noted target — that's the migration path from individual stocks to your boring wealth engine.
+            </div>
+          ` : ''}
+        </div>
+      `;
+    })()}
 
     <!-- SIGNAL'S PORTFOLIO SUMMARY -->
     <div class="panel-2 p-4 mt-4" style="border-left: 3px solid var(--cyan);">
