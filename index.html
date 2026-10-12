@@ -970,22 +970,22 @@ const state = {
    ============================================================ */
 const UNIVERSE = [
   // ═══ US STOCKS — prices verified Aug 13-14, 2026 ═══
-  { symbol: 'NVDA',  name: 'NVIDIA Corporation',        type: 'stock', region: 'US', base: 239.24, sector: 'Semiconductors' },
+  { symbol: 'NVDA',  name: 'NVIDIA Corporation',        type: 'stock', region: 'US', base: 227.99, sector: 'Semiconductors' },
   { symbol: 'AAPL',  name: 'Apple Inc.',                type: 'stock', region: 'US', base: 302.25, sector: 'Consumer Tech' },
-  { symbol: 'MSFT',  name: 'Microsoft Corporation',     type: 'stock', region: 'US', base: 520.15, sector: 'Software' },
+  { symbol: 'MSFT',  name: 'Microsoft Corporation',     type: 'stock', region: 'US', base: 540.80, sector: 'Software' },
   { symbol: 'GOOGL', name: 'Alphabet Inc. Class A',     type: 'stock', region: 'US', base: 343.80, sector: 'Internet' },
   { symbol: 'META',  name: 'Meta Platforms',            type: 'stock', region: 'US', base: 539.03, sector: 'Internet' },
   { symbol: 'AMZN',  name: 'Amazon.com',                type: 'stock', region: 'US', base: 272.27, sector: 'E-Commerce' },
   { symbol: 'TSLA',  name: 'Tesla Inc.',                type: 'stock', region: 'US', base: 306.26, sector: 'Automotive' },
   { symbol: 'AMD',   name: 'Advanced Micro Devices',    type: 'stock', region: 'US', base: 483.01, sector: 'Semiconductors' },
-  { symbol: 'TSM',   name: 'Taiwan Semiconductor',      type: 'stock', region: 'US', base: 482.30, sector: 'Semiconductors' },
+  { symbol: 'TSM',   name: 'Taiwan Semiconductor',      type: 'stock', region: 'US', base: 450.80, sector: 'Semiconductors' },
   { symbol: 'AVGO',  name: 'Broadcom Inc.',             type: 'stock', region: 'US', base: 360.50, sector: 'Semiconductors' },
-  { symbol: 'GLW',   name: 'Corning Incorporated',      type: 'stock', region: 'US', base: 155.80, sector: 'Optical Comms' },
-  { symbol: 'MU',    name: 'Micron Technology',         type: 'stock', region: 'US', base: 520.40, sector: 'Semiconductors' },
+  { symbol: 'GLW',   name: 'Corning Incorporated',      type: 'stock', region: 'US', base: 150.70, sector: 'Optical Comms' },
+  { symbol: 'MU',    name: 'Micron Technology',         type: 'stock', region: 'US', base: 992.55, sector: 'Semiconductors' },
   { symbol: 'WDC',   name: 'Western Digital',           type: 'stock', region: 'US', base: 128.44, sector: 'Storage' },
   { symbol: 'STX',   name: 'Seagate Technology',        type: 'stock', region: 'US', base: 168.72, sector: 'Storage' },
   { symbol: 'COHR',  name: 'Coherent Corp.',            type: 'stock', region: 'US', base: 142.55, sector: 'Optical Comms' },
-  { symbol: 'MRVL',  name: 'Marvell Technology',        type: 'stock', region: 'US', base: 225.10, sector: 'Semiconductors' },
+  { symbol: 'MRVL',  name: 'Marvell Technology',        type: 'stock', region: 'US', base: 275.65, sector: 'Semiconductors' },
   { symbol: 'INTC',  name: 'Intel Corporation',         type: 'stock', region: 'US', base: 91.13,  sector: 'Semiconductors' },
   { symbol: 'JPM',   name: 'JPMorgan Chase',            type: 'stock', region: 'US', base: 363.25, sector: 'Banking' },
   { symbol: 'BAC',   name: 'Bank of America',           type: 'stock', region: 'US', base: 58.42,  sector: 'Banking' },
@@ -1008,8 +1008,8 @@ const UNIVERSE = [
   { symbol: 'COIN',  name: 'Coinbase Global',           type: 'stock', region: 'US', base: 148.68, sector: 'Fintech' },
   { symbol: 'MSTR',  name: 'MicroStrategy',             type: 'stock', region: 'US', base: 268.44, sector: 'Fintech' },
   { symbol: 'SMCI',  name: 'Super Micro Computer',      type: 'stock', region: 'US', base: 62.14,  sector: 'Hardware' },
-  { symbol: 'HBM',   name: 'Hudbay Minerals',            type: 'stock', region: 'US', base: 26.69,  sector: 'Copper Mining' },
-  { symbol: 'NBIS',  name: 'Nebius Group',               type: 'stock', region: 'US', base: 241.80, sector: 'AI Cloud' },
+  { symbol: 'HBM',   name: 'Hudbay Minerals',            type: 'stock', region: 'US', base: 25.86,  sector: 'Copper Mining' },
+  { symbol: 'NBIS',  name: 'Nebius Group',               type: 'stock', region: 'US', base: 212.97, sector: 'AI Cloud' },
 
   // ═══ MALAYSIAN STOCKS (Bursa Malaysia, prices in MYR) ═══
   { symbol: 'MAYBANK', name: 'Malayan Banking Bhd',     type: 'stock', region: 'MY', base: 10.42,  sector: 'Banking' },
@@ -1022,7 +1022,7 @@ const UNIVERSE = [
   { symbol: 'GENTING', name: 'Genting Berhad',          type: 'stock', region: 'MY', base: 3.88,   sector: 'Leisure' },
   { symbol: 'AXIATA',  name: 'Axiata Group',            type: 'stock', region: 'MY', base: 2.44,   sector: 'Telecom' },
   { symbol: 'MISC',    name: 'MISC Berhad',             type: 'stock', region: 'MY', base: 8.71,   sector: 'Shipping' },
-  { symbol: 'SUNMED',  name: 'Sunview Group / Sun Med (5555)', type: 'stock', region: 'MY', base: 1.55,  sector: 'Healthcare' },
+  { symbol: 'SUNMED',  name: 'Sunview Group / Sun Med (5555)', type: 'stock', region: 'MY', base: 2.15,  sector: 'Healthcare' },
 
   // ═══ UK / EU STOCKS ═══
   { symbol: 'SHEL', name: 'Shell plc',         type: 'stock', region: 'UK', base: 2842.44, sector: 'Energy' },
@@ -1042,7 +1042,7 @@ const UNIVERSE = [
   { symbol: 'BYD',    name: 'BYD Company',            type: 'stock', region: 'CN', base: 388.30, sector: 'Automotive' },
 
   // ═══ FUNDS / ETFs — prices verified Aug 13-14, 2026 ═══
-  { symbol: 'VOO',  name: 'Vanguard S&P 500 ETF',            type: 'fund', region: 'US', base: 708.20, sector: 'US Large-Cap' },
+  { symbol: 'VOO',  name: 'Vanguard S&P 500 ETF',            type: 'fund', region: 'US', base: 716.31, sector: 'US Large-Cap' },
   { symbol: 'SPY',  name: 'SPDR S&P 500 ETF Trust',          type: 'fund', region: 'US', base: 777.88, sector: 'US Large-Cap' },
   { symbol: 'QQQ',  name: 'Invesco QQQ Trust (Nasdaq 100)',  type: 'fund', region: 'US', base: 730.28, sector: 'US Tech' },
   { symbol: 'VTI',  name: 'Vanguard Total Stock Market',     type: 'fund', region: 'US', base: 388.71, sector: 'US Total Market' },
@@ -1062,7 +1062,7 @@ const UNIVERSE = [
   { symbol: 'EWT',  name: 'iShares MSCI Taiwan ETF',         type: 'fund', region: 'TW', base: 72.30,  sector: 'Taiwan' },
   { symbol: 'EWY',  name: 'iShares MSCI South Korea ETF',    type: 'fund', region: 'KR', base: 68.22,  sector: 'South Korea' },
   { symbol: 'EWA',  name: 'iShares MSCI Australia ETF',      type: 'fund', region: 'AU', base: 28.71,  sector: 'Australia' },
-  { symbol: 'SMH',  name: 'VanEck Semiconductor ETF',        type: 'fund', region: 'GBL',base: 629.75, sector: 'Semiconductors' },
+  { symbol: 'SMH',  name: 'VanEck Semiconductor ETF',        type: 'fund', region: 'GBL',base: 594.74, sector: 'Semiconductors' },
   { symbol: 'SOXX', name: 'iShares Semiconductor ETF',       type: 'fund', region: 'GBL',base: 548.41, sector: 'Semiconductors' },
   { symbol: 'XLK',  name: 'Technology Select Sector SPDR',   type: 'fund', region: 'US', base: 288.55, sector: 'Technology' },
   { symbol: 'XLF',  name: 'Financial Select Sector SPDR',    type: 'fund', region: 'US', base: 62.42,  sector: 'Financials' },
@@ -1073,7 +1073,7 @@ const UNIVERSE = [
   { symbol: 'XLP',  name: 'Consumer Staples SPDR',           type: 'fund', region: 'US', base: 82.44,  sector: 'Consumer Staples' },
   { symbol: 'XLY',  name: 'Consumer Discretionary SPDR',     type: 'fund', region: 'US', base: 238.30, sector: 'Consumer Discretionary' },
   { symbol: 'VNQ',  name: 'Vanguard Real Estate ETF',        type: 'fund', region: 'US', base: 88.12,  sector: 'Real Estate' },
-  { symbol: 'GLD',  name: 'SPDR Gold Shares',                type: 'fund', region: 'GBL',base: 412.60, sector: 'Gold' },
+  { symbol: 'GLD',  name: 'SPDR Gold Shares',                type: 'fund', region: 'GBL',base: 382.25, sector: 'Gold' },
   { symbol: 'SLV',  name: 'iShares Silver Trust',            type: 'fund', region: 'GBL',base: 59.06,  sector: 'Silver' },
   { symbol: 'IBB',  name: 'iShares Biotechnology ETF',       type: 'fund', region: 'US', base: 148.44, sector: 'Biotech' },
   { symbol: 'ARKK', name: 'ARK Innovation ETF',              type: 'fund', region: 'US', base: 82.30,  sector: 'Innovation' },
@@ -1084,7 +1084,7 @@ const UNIVERSE = [
   { symbol: 'ETHE', name: 'Grayscale Ethereum Trust',        type: 'fund', region: 'US', base: 18.44,  sector: 'Crypto' },
   { symbol: 'SOXL', name: 'Direxion Semiconductor Bull 3x',  type: 'fund', region: 'US', base: 139.80, sector: 'Leveraged Semi' },
   { symbol: 'TQQQ', name: 'ProShares UltraPro QQQ (3x)',     type: 'fund', region: 'US', base: 94.50,  sector: 'Leveraged Nasdaq' },
-  { symbol: 'XBI',  name: 'SPDR S&P Biotech ETF',            type: 'fund', region: 'US', base: 102.35, sector: 'Biotech' },
+  { symbol: 'XBI',  name: 'SPDR S&P Biotech ETF',            type: 'fund', region: 'US', base: 153.35, sector: 'Biotech' },
 
   // ═══ INDICES — prices verified Aug 13, 2026 close ═══
   { symbol: 'SPX',   name: 'S&P 500 Index',           type: 'index', region: 'US', base: 7708.55 },
@@ -4797,20 +4797,20 @@ const DEFAULT_PORTFOLIO = {
   usdMyrRate: 4.22,
   displayCurrency: 'MYR',
   positions: [
-    { symbol: 'GLW',    shares: 2,      avgCost: 172.35  }, // Added 1 share @ $154 Sept 25
+    // Oct 12 2026 — exact match to Moomoo portfolio
+    { symbol: 'GLD',    shares: 0.16,   avgCost: 392.063 },  // Hedge position
+    { symbol: 'GLW',    shares: 1,      avgCost: 190.70  },  // Original — DCA at $154 not executed
     { symbol: 'HBM',    shares: 10,     avgCost: 24.47   },
-    { symbol: 'MRVL',   shares: 5,      avgCost: 88.70   },
+    { symbol: 'MRVL',   shares: 5,      avgCost: 88.70   },  // STILL have 5 — trim ladder not executed
     { symbol: 'MSFT',   shares: 0.0276, avgCost: 486.594 },
     { symbol: 'MU',     shares: 0.06,   avgCost: 772.333 },
     { symbol: 'NBIS',   shares: 1,      avgCost: 109.30  },
-    { symbol: 'NVDA',   shares: 1,      avgCost: 123.36  },
-    { symbol: 'SMH',    shares: 0.032,  avgCost: 553.438 },
-    // SOXL (2.5 @ $41.55) SOLD Sept 2026 at ~$152 — profit redirected
-    // TQQQ (1 @ $43.43)   SOLD Sept 2026 at ~$80  — profit redirected
-    { symbol: 'SGOV',   shares: 1.09,   avgCost: 100.66  }, // Added Sept 25 from SOXL/TQQQ proceeds
-    { symbol: 'GLD',    shares: 0.17,   avgCost: 400.00  }, // Added Sept 25 inflation/geopolitical hedge
+    { symbol: 'NVDA',   shares: 1.5,    avgCost: 157.767 },  // Added 0.5 shares @ ~$227 — great DCA
+    { symbol: 'SGOV',   shares: 2.44,   avgCost: 100.648 },  // Grew from 1.09 — defensive core built
+    { symbol: 'SMH',    shares: 0.232,  avgCost: 565.517 },  // Added 0.2 more shares
     { symbol: 'TSM',    shares: 1,      avgCost: 277.56  },
-    { symbol: 'VOO',    shares: 0.418,  avgCost: 703.60  }, // Added ~0.37 shares Sept 25
+    { symbol: 'VOO',    shares: 0.4978, avgCost: 706.227 },  // DCA'd to 0.4978
+    { symbol: 'XBI',    shares: 3,      avgCost: 90.25   },
     { symbol: 'XBI',    shares: 3,      avgCost: 90.25   },
     { symbol: 'SUNMED', shares: 2000,   avgCost: 1.45, currency: 'MYR' },
   ],
@@ -4856,16 +4856,16 @@ const POSITION_ANALYSIS = {
   MRVL: {
     action: 'TRIM STRONGLY',
     conviction: 2,
-    view: 'OCT 12 UPDATE: MRVL dropped 10% on Q3 margin guidance miss — forecast adjusted gross margin BELOW consensus. The custom silicon thesis is intact but pricing power is weaker than expected. You\'re still up ~154% from your $88.70 entry even after the drop. The window to lock in the big win is closing.',
-    trigger: 'URGENT: Trim 2-3 shares at market now. The margin miss signals cycle maturity. Keep 2 shares as runner. Do not wait for recovery to pre-drop levels.',
-    risk: 'More guidance cuts likely in Q4 — hyperscaler custom silicon pricing competition intensifying (Broadcom AVGO took share). Downside from here could be 30-40% more.',
+    view: 'OCT 12 REALITY CHECK: MRVL is actually at $275.65 (recovered from the margin-miss dip to $225 and kept rallying). Your 5 shares @ $88.70 = position worth $1,378, UP 211%. The margin miss happened but market shrugged it off. This is the perfect window to take profits you missed last month.',
+    trigger: 'STILL URGENT: Trim 2-3 shares at $275+ now. The custom silicon thesis is real but you have a 211% gain on an asset with 1.6 beta. Lock it in while sentiment supports it.',
+    risk: 'Any renewed semi weakness + MRVL already showing margin pressure = 25-35% drawdown risk. You passed on the first trim at $225 — don\'t pass on $275.',
   },
   MU: {
-    action: 'HOLD (SMALL POSITION)',
-    conviction: 3,
-    view: 'REVISED (Sept 18): MU now around $480 (my earlier $875 was a stale data point). Your 0.06 shares cost basis at $772 means you\'re actually DOWN ~38% on paper. Management flagged "meaningful moderation in the rate of price increases" for Q4 — memory pricing peak may be in. HBM demand for AI still strong but cycle turn risk elevated. Earnings Sept 30 will be key.',
-    trigger: 'Position is tiny (~$29). Wait for Sept 30 earnings — either close it after or use as micro-DCA opportunity if oversold post-earnings.',
-    risk: 'Memory pricing cycle turn = 30-40% additional downside. But your $29 exposure is essentially trivial to the portfolio.',
+    action: 'HOLD (RUNNER)',
+    conviction: 4,
+    view: 'OCT 12 REALITY CHECK: MU is at $992.55 in your Moomoo (not $550 as site previously showed). Your 0.06 shares at $772 cost basis = position UP ~29%, worth ~$59.55. HBM memory for AI is still driving the surge. The "memory pricing peak" fear from September was completely wrong.',
+    trigger: 'Hold. Position too small to matter materially but is working. Consider adding 0.05 share if MU pulls back below $900 — would double your exposure cheaply.',
+    risk: 'Memory cycle will eventually turn. $992 is extreme — a 30-40% correction wouldn\'t break the long-term story but would hurt short-term.',
   },
   NBIS: {
     action: 'TRIM STRONGLY',
@@ -4875,11 +4875,11 @@ const POSITION_ANALYSIS = {
     risk: 'Convertible note dilution, neocloud sector rotation, Fed hike = growth multiple compression = 40%+ drawdown possible even with strong thesis.',
   },
   NVDA: {
-    action: 'HOLD (STRONG)',
+    action: 'HOLD',
     conviction: 4,
-    view: 'OCT 12 UPDATE: NVDA at $239 (+94% from your $123 entry). AI trade is in correction mode — AVGO down to $360, MRVL margins missed, broader semi reset. But NVDA fundamentals untouched — $108B Q3 guide + supply-constrained through FY28 still stands. The dip buyers keep showing up.',
-    trigger: 'Hold. If NVDA pulls back to $210 (10% drop) in current AI correction = add 0.5 share. Earnings next in Nov — key catalyst.',
-    risk: 'If broader AI selloff deepens (NVDA could test $200), the pain is real but temporary. Only sell if fundamentals break (no sign yet).',
+    view: 'OCT 12 UPDATE: ✓ Nice DCA move — you added 0.5 shares at ~$227, bringing total to 1.5 shares at $157.77 avg cost. NVDA at $227.99 now = position UP ~45% blended. The AI trade is choppy but NVDA fundamentals ($108B Q3 guide, supply-constrained FY28) still intact.',
+    trigger: 'Hold. If NVDA breaks $200 (12% drop) on broader AI selloff = add another 0.25 share. Nov earnings is key catalyst.',
+    risk: 'AI capex peak fears could push NVDA to $200. Your blended basis is $157 so there is cushion.',
   },
   SGOV: {
     action: 'ACCUMULATE',
@@ -4917,11 +4917,11 @@ const POSITION_ANALYSIS = {
     risk: 'China-Taiwan tensions = immediate 20%+ drop possible. Otherwise very solid.',
   },
   XBI: {
-    action: 'HOLD',
+    action: 'TRIM CANDIDATE',
     conviction: 3,
-    view: 'Biotech ETF, roughly flat from entry. Good diversifier away from your heavy tech concentration. Biotech has lagged for years — waiting for rate cuts + M&A cycle to reignite. Patient hold.',
-    trigger: 'Add on weakness below $85. This is a "wait for it" position.',
-    risk: 'Biotech dead money for another year if rates stay high.',
+    view: 'OCT 12 BIG WIN: XBI is at $153.35 (not $102 — biotech ETF ripped!). Your 3 shares at $90.25 cost = position worth $460, UP 70%. Biotech M&A cycle finally ignited. This was the "patient hold" that paid off.',
+    trigger: 'Trim 1 share at $155+ to lock in gain. Keep 2 as runners. Redirect proceeds to VOO.',
+    risk: 'Biotech is cyclical — if GLP-1 story fades or M&A slows, XBI can give back 25% quickly.',
   },
   SUNMED: {
     action: 'HOLD',
