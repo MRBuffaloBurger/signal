@@ -590,6 +590,24 @@
         <div id="ipo-content"><!-- rendered dynamically --></div>
       </section>
 
+      <!-- AI MARKET OVERVIEW · ENTRY VALIDATION -->
+      <section class="mt-8 panel p-6" id="ai-overview-section" style="border-top: 3px solid var(--cyan);">
+        <div class="flex items-end justify-between mb-3 flex-wrap gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              <div class="text-xs font-mono tracking-wider text-cyan">AI OVERVIEW · ENTRY VALIDATION</div>
+            </div>
+            <h2 class="text-2xl font-semibold tracking-tight">Should I Buy Now? — Market Context</h2>
+            <p class="text-sm text-muted mt-1">Cross-asset entry timing validation across stocks, ETFs, and bonds — updated with current regime, news, and your portfolio gaps.</p>
+          </div>
+          <button id="ai-overview-refresh" class="btn-ghost text-xs">↻ Refresh Analysis</button>
+        </div>
+        <div id="ai-overview-content"><!-- rendered dynamically --></div>
+      </section>
+
       <!-- NEWS-DRIVEN PICKS -->
       <section class="mt-8 panel p-6" id="news-picks-section" style="border-top: 3px solid var(--warn);">
         <div class="flex items-end justify-between mb-3 flex-wrap gap-3">
@@ -952,22 +970,22 @@ const state = {
    ============================================================ */
 const UNIVERSE = [
   // ═══ US STOCKS — prices verified Aug 13-14, 2026 ═══
-  { symbol: 'NVDA',  name: 'NVIDIA Corporation',        type: 'stock', region: 'US', base: 227.98, sector: 'Semiconductors' },
+  { symbol: 'NVDA',  name: 'NVIDIA Corporation',        type: 'stock', region: 'US', base: 239.24, sector: 'Semiconductors' },
   { symbol: 'AAPL',  name: 'Apple Inc.',                type: 'stock', region: 'US', base: 302.25, sector: 'Consumer Tech' },
-  { symbol: 'MSFT',  name: 'Microsoft Corporation',     type: 'stock', region: 'US', base: 508.00, sector: 'Software' },
+  { symbol: 'MSFT',  name: 'Microsoft Corporation',     type: 'stock', region: 'US', base: 520.15, sector: 'Software' },
   { symbol: 'GOOGL', name: 'Alphabet Inc. Class A',     type: 'stock', region: 'US', base: 343.80, sector: 'Internet' },
   { symbol: 'META',  name: 'Meta Platforms',            type: 'stock', region: 'US', base: 539.03, sector: 'Internet' },
   { symbol: 'AMZN',  name: 'Amazon.com',                type: 'stock', region: 'US', base: 272.27, sector: 'E-Commerce' },
   { symbol: 'TSLA',  name: 'Tesla Inc.',                type: 'stock', region: 'US', base: 306.26, sector: 'Automotive' },
   { symbol: 'AMD',   name: 'Advanced Micro Devices',    type: 'stock', region: 'US', base: 483.01, sector: 'Semiconductors' },
-  { symbol: 'TSM',   name: 'Taiwan Semiconductor',      type: 'stock', region: 'US', base: 403.31, sector: 'Semiconductors' },
-  { symbol: 'AVGO',  name: 'Broadcom Inc.',             type: 'stock', region: 'US', base: 387.84, sector: 'Semiconductors' },
-  { symbol: 'GLW',   name: 'Corning Incorporated',      type: 'stock', region: 'US', base: 160.25, sector: 'Optical Comms' },
-  { symbol: 'MU',    name: 'Micron Technology',         type: 'stock', region: 'US', base: 480.20, sector: 'Semiconductors' },
+  { symbol: 'TSM',   name: 'Taiwan Semiconductor',      type: 'stock', region: 'US', base: 482.30, sector: 'Semiconductors' },
+  { symbol: 'AVGO',  name: 'Broadcom Inc.',             type: 'stock', region: 'US', base: 360.50, sector: 'Semiconductors' },
+  { symbol: 'GLW',   name: 'Corning Incorporated',      type: 'stock', region: 'US', base: 155.80, sector: 'Optical Comms' },
+  { symbol: 'MU',    name: 'Micron Technology',         type: 'stock', region: 'US', base: 520.40, sector: 'Semiconductors' },
   { symbol: 'WDC',   name: 'Western Digital',           type: 'stock', region: 'US', base: 128.44, sector: 'Storage' },
   { symbol: 'STX',   name: 'Seagate Technology',        type: 'stock', region: 'US', base: 168.72, sector: 'Storage' },
   { symbol: 'COHR',  name: 'Coherent Corp.',            type: 'stock', region: 'US', base: 142.55, sector: 'Optical Comms' },
-  { symbol: 'MRVL',  name: 'Marvell Technology',        type: 'stock', region: 'US', base: 257.38, sector: 'Semiconductors' },
+  { symbol: 'MRVL',  name: 'Marvell Technology',        type: 'stock', region: 'US', base: 225.10, sector: 'Semiconductors' },
   { symbol: 'INTC',  name: 'Intel Corporation',         type: 'stock', region: 'US', base: 91.13,  sector: 'Semiconductors' },
   { symbol: 'JPM',   name: 'JPMorgan Chase',            type: 'stock', region: 'US', base: 363.25, sector: 'Banking' },
   { symbol: 'BAC',   name: 'Bank of America',           type: 'stock', region: 'US', base: 58.42,  sector: 'Banking' },
@@ -991,7 +1009,7 @@ const UNIVERSE = [
   { symbol: 'MSTR',  name: 'MicroStrategy',             type: 'stock', region: 'US', base: 268.44, sector: 'Fintech' },
   { symbol: 'SMCI',  name: 'Super Micro Computer',      type: 'stock', region: 'US', base: 62.14,  sector: 'Hardware' },
   { symbol: 'HBM',   name: 'Hudbay Minerals',            type: 'stock', region: 'US', base: 26.69,  sector: 'Copper Mining' },
-  { symbol: 'NBIS',  name: 'Nebius Group',               type: 'stock', region: 'US', base: 234.15, sector: 'AI Cloud' },
+  { symbol: 'NBIS',  name: 'Nebius Group',               type: 'stock', region: 'US', base: 241.80, sector: 'AI Cloud' },
 
   // ═══ MALAYSIAN STOCKS (Bursa Malaysia, prices in MYR) ═══
   { symbol: 'MAYBANK', name: 'Malayan Banking Bhd',     type: 'stock', region: 'MY', base: 10.42,  sector: 'Banking' },
@@ -1024,7 +1042,7 @@ const UNIVERSE = [
   { symbol: 'BYD',    name: 'BYD Company',            type: 'stock', region: 'CN', base: 388.30, sector: 'Automotive' },
 
   // ═══ FUNDS / ETFs — prices verified Aug 13-14, 2026 ═══
-  { symbol: 'VOO',  name: 'Vanguard S&P 500 ETF',            type: 'fund', region: 'US', base: 714.95, sector: 'US Large-Cap' },
+  { symbol: 'VOO',  name: 'Vanguard S&P 500 ETF',            type: 'fund', region: 'US', base: 708.20, sector: 'US Large-Cap' },
   { symbol: 'SPY',  name: 'SPDR S&P 500 ETF Trust',          type: 'fund', region: 'US', base: 777.88, sector: 'US Large-Cap' },
   { symbol: 'QQQ',  name: 'Invesco QQQ Trust (Nasdaq 100)',  type: 'fund', region: 'US', base: 730.28, sector: 'US Tech' },
   { symbol: 'VTI',  name: 'Vanguard Total Stock Market',     type: 'fund', region: 'US', base: 388.71, sector: 'US Total Market' },
@@ -1044,7 +1062,7 @@ const UNIVERSE = [
   { symbol: 'EWT',  name: 'iShares MSCI Taiwan ETF',         type: 'fund', region: 'TW', base: 72.30,  sector: 'Taiwan' },
   { symbol: 'EWY',  name: 'iShares MSCI South Korea ETF',    type: 'fund', region: 'KR', base: 68.22,  sector: 'South Korea' },
   { symbol: 'EWA',  name: 'iShares MSCI Australia ETF',      type: 'fund', region: 'AU', base: 28.71,  sector: 'Australia' },
-  { symbol: 'SMH',  name: 'VanEck Semiconductor ETF',        type: 'fund', region: 'GBL',base: 607.46, sector: 'Semiconductors' },
+  { symbol: 'SMH',  name: 'VanEck Semiconductor ETF',        type: 'fund', region: 'GBL',base: 629.75, sector: 'Semiconductors' },
   { symbol: 'SOXX', name: 'iShares Semiconductor ETF',       type: 'fund', region: 'GBL',base: 548.41, sector: 'Semiconductors' },
   { symbol: 'XLK',  name: 'Technology Select Sector SPDR',   type: 'fund', region: 'US', base: 288.55, sector: 'Technology' },
   { symbol: 'XLF',  name: 'Financial Select Sector SPDR',    type: 'fund', region: 'US', base: 62.42,  sector: 'Financials' },
@@ -1055,7 +1073,7 @@ const UNIVERSE = [
   { symbol: 'XLP',  name: 'Consumer Staples SPDR',           type: 'fund', region: 'US', base: 82.44,  sector: 'Consumer Staples' },
   { symbol: 'XLY',  name: 'Consumer Discretionary SPDR',     type: 'fund', region: 'US', base: 238.30, sector: 'Consumer Discretionary' },
   { symbol: 'VNQ',  name: 'Vanguard Real Estate ETF',        type: 'fund', region: 'US', base: 88.12,  sector: 'Real Estate' },
-  { symbol: 'GLD',  name: 'SPDR Gold Shares',                type: 'fund', region: 'GBL',base: 400.22, sector: 'Gold' },
+  { symbol: 'GLD',  name: 'SPDR Gold Shares',                type: 'fund', region: 'GBL',base: 412.60, sector: 'Gold' },
   { symbol: 'SLV',  name: 'iShares Silver Trust',            type: 'fund', region: 'GBL',base: 59.06,  sector: 'Silver' },
   { symbol: 'IBB',  name: 'iShares Biotechnology ETF',       type: 'fund', region: 'US', base: 148.44, sector: 'Biotech' },
   { symbol: 'ARKK', name: 'ARK Innovation ETF',              type: 'fund', region: 'US', base: 82.30,  sector: 'Innovation' },
@@ -1064,12 +1082,12 @@ const UNIVERSE = [
   { symbol: 'BND',  name: 'Vanguard Total Bond Market ETF',  type: 'fund', region: 'US', base: 72.30,  sector: 'Bonds' },
   { symbol: 'IBIT', name: 'iShares Bitcoin Trust',           type: 'fund', region: 'US', base: 36.13,  sector: 'Crypto' },
   { symbol: 'ETHE', name: 'Grayscale Ethereum Trust',        type: 'fund', region: 'US', base: 18.44,  sector: 'Crypto' },
-  { symbol: 'SOXL', name: 'Direxion Semiconductor Bull 3x',  type: 'fund', region: 'US', base: 151.95, sector: 'Leveraged Semi' },
-  { symbol: 'TQQQ', name: 'ProShares UltraPro QQQ (3x)',     type: 'fund', region: 'US', base: 80.83,  sector: 'Leveraged Nasdaq' },
-  { symbol: 'XBI',  name: 'SPDR S&P Biotech ETF',            type: 'fund', region: 'US', base: 98.40,  sector: 'Biotech' },
+  { symbol: 'SOXL', name: 'Direxion Semiconductor Bull 3x',  type: 'fund', region: 'US', base: 139.80, sector: 'Leveraged Semi' },
+  { symbol: 'TQQQ', name: 'ProShares UltraPro QQQ (3x)',     type: 'fund', region: 'US', base: 94.50,  sector: 'Leveraged Nasdaq' },
+  { symbol: 'XBI',  name: 'SPDR S&P Biotech ETF',            type: 'fund', region: 'US', base: 102.35, sector: 'Biotech' },
 
   // ═══ INDICES — prices verified Aug 13, 2026 close ═══
-  { symbol: 'SPX',   name: 'S&P 500 Index',           type: 'index', region: 'US', base: 7551.81 },
+  { symbol: 'SPX',   name: 'S&P 500 Index',           type: 'index', region: 'US', base: 7708.55 },
   { symbol: 'IXIC',  name: 'Nasdaq Composite',        type: 'index', region: 'US', base: 26803.03 },
   { symbol: 'DJI',   name: 'Dow Jones Industrial Avg',type: 'index', region: 'US', base: 53839.99 },
   { symbol: 'RUT',   name: 'Russell 2000 Index',      type: 'index', region: 'US', base: 3052.85 },
@@ -1084,7 +1102,7 @@ const UNIVERSE = [
   { symbol: 'KS11',  name: 'KOSPI Composite Index',   type: 'index', region: 'KR', base: 6813.34 },
   { symbol: 'AXJO',  name: 'S&P/ASX 200 Index',       type: 'index', region: 'AU', base: 9188.50 },
   { symbol: 'BSESN', name: 'BSE SENSEX Index',        type: 'index', region: 'IN', base: 82412.30 },
-  { symbol: 'VIX',   name: 'CBOE Volatility Index',   type: 'index', region: 'US', base: 17.10 },
+  { symbol: 'VIX',   name: 'CBOE Volatility Index',   type: 'index', region: 'US', base: 17.20 },
 
   // ═══ CRYPTO — prices verified Aug 13, 2026 ═══
   { symbol: 'BTC', name: 'Bitcoin', type: 'crypto', base: 63558.45 },
@@ -4779,7 +4797,7 @@ const DEFAULT_PORTFOLIO = {
   usdMyrRate: 4.22,
   displayCurrency: 'MYR',
   positions: [
-    { symbol: 'GLW',    shares: 1,      avgCost: 190.70  },
+    { symbol: 'GLW',    shares: 2,      avgCost: 172.35  }, // Added 1 share @ $154 Sept 25
     { symbol: 'HBM',    shares: 10,     avgCost: 24.47   },
     { symbol: 'MRVL',   shares: 5,      avgCost: 88.70   },
     { symbol: 'MSFT',   shares: 0.0276, avgCost: 486.594 },
@@ -4787,10 +4805,12 @@ const DEFAULT_PORTFOLIO = {
     { symbol: 'NBIS',   shares: 1,      avgCost: 109.30  },
     { symbol: 'NVDA',   shares: 1,      avgCost: 123.36  },
     { symbol: 'SMH',    shares: 0.032,  avgCost: 553.438 },
-    { symbol: 'SOXL',   shares: 2.5,    avgCost: 41.55   },
-    { symbol: 'TQQQ',   shares: 1,      avgCost: 43.425  },
+    // SOXL (2.5 @ $41.55) SOLD Sept 2026 at ~$152 — profit redirected
+    // TQQQ (1 @ $43.43)   SOLD Sept 2026 at ~$80  — profit redirected
+    { symbol: 'SGOV',   shares: 1.09,   avgCost: 100.66  }, // Added Sept 25 from SOXL/TQQQ proceeds
+    { symbol: 'GLD',    shares: 0.17,   avgCost: 400.00  }, // Added Sept 25 inflation/geopolitical hedge
     { symbol: 'TSM',    shares: 1,      avgCost: 277.56  },
-    { symbol: 'VOO',    shares: 0.0478, avgCost: 703.556 },
+    { symbol: 'VOO',    shares: 0.418,  avgCost: 703.60  }, // Added ~0.37 shares Sept 25
     { symbol: 'XBI',    shares: 3,      avgCost: 90.25   },
     { symbol: 'SUNMED', shares: 2000,   avgCost: 1.45, currency: 'MYR' },
   ],
@@ -4799,11 +4819,11 @@ const DEFAULT_PORTFOLIO = {
 // Per-position analysis — my custom view for each of user's holdings
 const POSITION_ANALYSIS = {
   GLW: {
-    action: 'ACCUMULATE',
+    action: 'HOLD (DCA DONE)',
     conviction: 4,
-    view: 'You entered above current market — you\'re down but the thesis is intact. Corning is a quiet AI-infrastructure play (optical fiber for data centers) with a growing dividend. DCA down to lower your basis rather than sell at a loss.',
-    trigger: 'Add on any weakness below $155. Full thesis reset only if optical segment revenue declines two quarters in a row.',
-    risk: 'Data center fiber orders decelerating would break the thesis.',
+    view: 'OCT 12 UPDATE: Nice work — you added 1 share @ $154 on Sept 25 trigger. New avg basis $172.35 across 2 shares. Current ~$156 means you\'re only down ~9% now (was -19%). The $2B equity offering overhang is being absorbed. Verizon fiber deal + ECOC AI optical momentum intact. Earnings Oct 26 is the next catalyst.',
+    trigger: 'Hold through Oct 26 earnings. If GLW breaks $145 pre-earnings, add 1 more share. If it recovers to $185 post-earnings, consider trimming 1 share back.',
+    risk: 'Earnings miss or dilution concerns reignite = $140 revisit possible. Apple foldable iPhone cancellation already priced in.',
   },
   MSFT: {
     action: 'ACCUMULATE',
@@ -4834,11 +4854,11 @@ const POSITION_ANALYSIS = {
     risk: 'Global growth slowdown = copper demand drop. China property overhang.',
   },
   MRVL: {
-    action: 'TRIM CANDIDATE',
-    conviction: 3,
-    view: 'MAJOR UPDATE (Sept 18): MRVL up ~150% YTD — CEO raised guidance for FY27 and FY28. You\'re up ~22% from your entry. This has run enormously. Custom silicon partner for hyperscalers is real but pricing is no longer cheap. Consider taking partial profits given the size of the move.',
-    trigger: 'Trim 25-33% (~1-2 shares) to lock in gains. Keep remainder as runner. Never let a 150%+ sector move fully evaporate.',
-    risk: 'Fed hike + hyperscaler capex any deceleration = 30%+ drawdown very possible from these levels.',
+    action: 'TRIM STRONGLY',
+    conviction: 2,
+    view: 'OCT 12 UPDATE: MRVL dropped 10% on Q3 margin guidance miss — forecast adjusted gross margin BELOW consensus. The custom silicon thesis is intact but pricing power is weaker than expected. You\'re still up ~154% from your $88.70 entry even after the drop. The window to lock in the big win is closing.',
+    trigger: 'URGENT: Trim 2-3 shares at market now. The margin miss signals cycle maturity. Keep 2 shares as runner. Do not wait for recovery to pre-drop levels.',
+    risk: 'More guidance cuts likely in Q4 — hyperscaler custom silicon pricing competition intensifying (Broadcom AVGO took share). Downside from here could be 30-40% more.',
   },
   MU: {
     action: 'HOLD (SMALL POSITION)',
@@ -4855,11 +4875,25 @@ const POSITION_ANALYSIS = {
     risk: 'Convertible note dilution, neocloud sector rotation, Fed hike = growth multiple compression = 40%+ drawdown possible even with strong thesis.',
   },
   NVDA: {
-    action: 'ACCUMULATE',
+    action: 'HOLD (STRONG)',
     conviction: 4,
-    view: 'UPGRADED (Sept 18): NVDA delivered blowout Q2 FY27 — $96B revenue, guided $108B for Q3, "supply-constrained through FY28" per Jensen. Your ~1 share (up ~85%) is now on a much clearer runway. The August "prefer SMH" hedge no longer applies — direct NVDA thesis reactivated with 2+ years of visibility.',
-    trigger: 'Add on any 5-10% pullback. This is a legitimate accumulate now, not just a hold. But size discipline — still concentrated single-name risk.',
-    risk: 'Fed HIKED = tech multiple compression is the real risk now, not fundamentals. Custom silicon (Google TPU, Amazon Trainium) chipping away at share.',
+    view: 'OCT 12 UPDATE: NVDA at $239 (+94% from your $123 entry). AI trade is in correction mode — AVGO down to $360, MRVL margins missed, broader semi reset. But NVDA fundamentals untouched — $108B Q3 guide + supply-constrained through FY28 still stands. The dip buyers keep showing up.',
+    trigger: 'Hold. If NVDA pulls back to $210 (10% drop) in current AI correction = add 0.5 share. Earnings next in Nov — key catalyst.',
+    risk: 'If broader AI selloff deepens (NVDA could test $200), the pain is real but temporary. Only sell if fundamentals break (no sign yet).',
+  },
+  SGOV: {
+    action: 'ACCUMULATE',
+    conviction: 5,
+    view: 'OCT 12: Perfect timing on your Sept 25 buy. Fed holding at 3.5-3.75% but Warsh is pushing hawkish. 10Y yield at 4.72% — SGOV yield locked in ~4.5-5%. This is your "get paid to wait" position. Every dollar here earns monthly dividends while staying zero-risk.',
+    trigger: 'Add here every month alongside your VOO DCA. Target 15-20% of portfolio for defensive dry powder. Deploy chunks into VOO on any 5%+ SPX pullback.',
+    risk: 'None material. SGOV price stays near $100 by design.',
+  },
+  GLD: {
+    action: 'HOLD',
+    conviction: 4,
+    view: 'OCT 12: Gold at $412 (+3% from your Sept 25 entry at $400). Iran tensions easing with phased deal talks but inflation still sticky, Fed won\'t cut. Central bank buying continues at record pace. Your 0.17 share is a small but meaningful hedge.',
+    trigger: 'Hold. If GLD breaks $450 — consider trimming 50% to capture gain. If GLD drops to $380 — add 0.1 share.',
+    risk: 'Rapid Iran de-escalation + Fed signals cuts = short-term 5-10% drop. Long-term thesis intact.',
   },
   SOXL: {
     action: 'CONTINUE REDUCING',
@@ -4933,16 +4967,15 @@ const SELL_LADDER = {
   },
   MRVL: {
     strategy: 'sell-ladder',
-    label: 'TRIM winner — up ~150% YTD',
-    reasoning: 'Massive run in 2026. Custom silicon story is real but pricing extended. Lock in gains in tranches.',
+    label: 'URGENT TRIM — margin miss triggered',
+    reasoning: 'OCT 12: MRVL dropped 10% on Q3 adjusted gross margin forecast BELOW consensus. This is the "reviewTrigger" from previous ladder — margin guidance down means trim faster regardless of price. You are still up ~154% from $88.70 entry.',
     tranches: [
-      { atPrice: 255, sellPct: 33, note: 'First trim — takes ~1-2 shares off, locks in gain' },
-      { atPrice: 290, sellPct: 33, note: 'Second trim — if AI capex momentum continues' },
-      { atPrice: 340, sellPct: 34, note: 'Full exit — extreme extension zone' },
+      { atPrice: 225, sellPct: 60, note: 'URGENT — trim 3 shares at current market (~$225). Lock in the win.' },
+      { atPrice: 260, sellPct: 40, note: 'If MRVL recovers to $260 — close remaining position entirely.' },
     ],
-    stopLoss: 175,
+    stopLoss: 180,
     convertTo: 'VOO',
-    reviewTrigger: 'MRVL guides Q3 FY27 below street = trim faster regardless of price.',
+    reviewTrigger: 'TRIGGERED Oct 10. Execute first tranche this week.',
   },
   MSFT: {
     strategy: 'hold-quality',
@@ -4999,28 +5032,27 @@ const SELL_LADDER = {
     convertTo: null,
     reviewTrigger: 'Two consecutive quarters of hyperscaler capex cuts = trim aggressively.',
   },
-  SOXL: {
-    strategy: 'convert-to-etf',
-    label: 'EXIT NOW → SMH or VOO (up 265% already)',
-    reasoning: '🚨 URGENT: SOXL is now around $152 vs your $41.55 entry — you are up ~265%. Every additional day of holding = leverage decay eating this gift. Close all 2.5 shares at market price today and redirect proceeds. If bullish semis, use SMH (1x, no decay).',
-    tranches: [
-      { atPrice: 140, sellPct: 100, note: 'Any price above $140 = close immediately. This is a "sell now" position, not "wait for ladder"' },
-    ],
-    stopLoss: 120,
-    convertTo: 'SMH',
-    reviewTrigger: 'Close today at market — do not wait for a specific price. Leverage decay + Fed hike environment = risk far outweighs remaining upside.',
-  },
-  TQQQ: {
-    strategy: 'convert-to-etf',
-    label: 'CLOSE remaining share NOW → VOO',
-    reasoning: 'TQQQ around $80 vs your $43.43 entry = up ~86%. You already took 75% profits smartly. The last 1 share is small but same leverage decay math still applies. Simple to close now, redirect to VOO.',
-    tranches: [
-      { atPrice: 75, sellPct: 100, note: 'Close final share at market price today → buy ~0.11 shares of VOO' },
-    ],
-    stopLoss: 60,
+  SGOV: {
+    strategy: 'hold-quality',
+    label: 'DEFENSIVE CORE — never sell',
+    reasoning: 'OCT 12: Yielding ~4.8% monthly. Fed Chair Warsh signals more hikes possible if inflation sticks. Your dry powder for market pullbacks. Hold until you deploy into VOO on a drawdown.',
+    tranches: [],
+    stopLoss: null,
     convertTo: 'VOO',
-    reviewTrigger: 'Close today at market — the last share is not worth managing separately.',
+    reviewTrigger: 'Any SPX pullback of 5%+ → redeploy 50% of SGOV into VOO. If 10%+ pullback → redeploy 80%.',
   },
+  GLD: {
+    strategy: 'hold-quality',
+    label: 'GEOPOLITICAL HEDGE — hold',
+    reasoning: 'OCT 12: Up ~3% from $400 entry. Iran de-escalation talks ongoing but inflation sticky + Fed hawkish keep gold bid. Small position working as designed.',
+    tranches: [
+      { atPrice: 450, sellPct: 50, note: 'Trim half if GLD rallies 12% from entry — rebalance profit' },
+    ],
+    stopLoss: 370,
+    convertTo: null,
+    reviewTrigger: 'Iran peace deal signed + Fed signals cuts = exit catalyst.',
+  },
+  // SOXL and TQQQ removed from ladder — fully sold September 2026 at ~$152 and ~$80 respectively
   TSM: {
     strategy: 'hold-quality',
     label: 'HOLD FOREVER — quality core',
@@ -5633,27 +5665,25 @@ function renderPortfolio() {
 
     <!-- SIGNAL'S PORTFOLIO SUMMARY -->
     <div class="panel-2 p-4 mt-4" style="border-left: 3px solid var(--cyan);">
-      <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">SIGNAL'S OVERALL VIEW · UPDATED SEPT 18 2026</div>
+      <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">SIGNAL'S OVERALL VIEW · UPDATED OCT 12 2026</div>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        <strong class="text-warn">MAJOR REGIME CHANGE:</strong> Fed HIKED 25bps to 3.75-4.00% on Sept 16 (first hike since 2023). Chair Warsh said inflation "running too hot". Dot plot median 4.1% year-end. Iran conflict re-escalated. VIX at 17. This changes several of my August views — see updated position notes.
+        <strong class="text-bull">✓ EXCELLENT September execution:</strong> You sold SOXL at $152 (+266%), closed TQQQ at $80 (+85%), added 1 GLW share at $154 (DCA'd basis to $172), bought SGOV + GLD + VOO for defensive gaps. Portfolio migrated from leveraged-tech-heavy to properly balanced. This is textbook discipline.
       </p>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        <strong class="text-bull">✓ Great execution so far:</strong> You took TQQQ profits, halved SOXL, started VOO DCA, added MSFT + SMH. That August playbook was correct. Your portfolio is meaningfully healthier than 6 weeks ago.
+        <strong class="text-warn">OCT 10 EVENT:</strong> MRVL dropped 10% on Q3 adjusted gross margin guidance BELOW consensus. This is the exact "review trigger" from the Sept sell ladder — margin cuts mean the custom silicon pricing war is real. AVGO at $360 (down from $390), broader AI sector reset. Fed holding 3.5-3.75% but Chair Warsh pushing hike bias — 10Y yield at 4.72% (multi-year high).
       </p>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        <strong>September priority actions (new setup):</strong>
+        <strong>October priority actions:</strong>
       </p>
       <ol class="text-xs text-muted leading-relaxed space-y-1 ml-4 list-decimal">
-        <li><strong class="text-warn">Trim MRVL 25-33%</strong> — up 150% YTD, take some off the table before Fed volatility hits.</li>
-        <li><strong class="text-warn">Trim NBIS 33-50%</strong> — still your biggest paper win, protect it.</li>
-        <li><strong class="text-bull">Grow SGOV position</strong> — Fed HIKING = 5% locked-in yield with zero risk is genuinely competitive with equities now.</li>
-        <li><strong class="text-bull">Increase VOO DCA to RM 500/month</strong> — recurring buy on Moomoo, boring wins.</li>
-        <li><strong class="text-cyan">MU earnings Sept 30</strong> — decide about your 0.06 shares after (price dropped from $875 to $480, position now down ~38%).</li>
-        <li><strong class="text-warn">Continue reducing SOXL</strong> — 3x leverage decay accumulates every day.</li>
-        <li><strong class="text-bull">NVDA thesis reactivated</strong> — Q2 blowout, "supply constrained through FY28". Your 1 share can stay, add on 5%+ pullbacks.</li>
+        <li><strong class="text-bear">URGENT — Trim MRVL 2-3 shares</strong> this week. Margin miss triggered sell ladder. Still up 154% from entry even after drop. Redirect proceeds to VOO.</li>
+        <li><strong class="text-bull">Set VOO monthly recurring buy</strong> — RM 500 every 1st of month on Moomoo. Non-negotiable discipline.</li>
+        <li><strong class="text-cyan">GLW earnings Oct 26</strong> — hold through the print. Your averaged basis $172 is now workable.</li>
+        <li><strong class="text-bull">Grow SGOV toward 15% target</strong> — 10Y at 4.72% means every dollar earns real yield. Deploy chunks to VOO on any SPX 5%+ pullback.</li>
+        <li><strong class="text-warn">NBIS at $242 — still trim trigger</strong> at $240 is live. Protect the 120%+ gain before AI correction deepens.</li>
       </ol>
       <p class="text-[10px] text-dim mt-3 italic">
-        Analysis updated Sept 18, 2026 for Fed hike + NVDA blowout + Middle East escalation. Cross-check with your own research. Not financial advice.
+        Analysis updated Oct 12, 2026. Fed holding hawkish, AI sector in correction, MRVL margin miss is the key event this week. Cross-check with your own research. Not financial advice.
       </p>
     </div>
 
@@ -6637,6 +6667,199 @@ async function initNewsPicks() {
 
 
 /* ============================================================
+   AI OVERVIEW · ENTRY VALIDATION
+   Cross-asset analysis combining regime + news + portfolio gaps
+   to validate "should I buy now?" for stocks, ETFs, and bonds
+   ============================================================ */
+
+// Asset-class validation rules
+const ASSET_CLASS_RULES = {
+  'equities-core': {
+    label: 'US EQUITIES (CORE)',
+    examples: ['VOO', 'SPY', 'VTI', 'QQQ'],
+    checkRegime: (regime) => {
+      if (regime.regime === 'RISK-OFF') return { verdict: 'WAIT', reason: 'Risk-off regime — DCA tranches smaller than usual', color: 'var(--warn)' };
+      if (regime.regime === 'CAUTIOUS') return { verdict: 'DCA SLOWLY', reason: 'Choppy market — ideal DCA conditions, no lump-sum', color: 'var(--cyan)' };
+      if (regime.regime === 'RISK-ON') return { verdict: 'DCA ONLY', reason: 'Markets elevated — never lump-sum at highs', color: 'var(--warn)' };
+      return { verdict: 'DCA', reason: 'Neutral regime — standard monthly DCA cadence', color: 'var(--bull)' };
+    },
+    newsFactors: ['Fed decisions', 'Jobs reports', 'CPI/PCE prints', 'Earnings season'],
+  },
+  'equities-growth': {
+    label: 'GROWTH / AI / SEMI',
+    examples: ['NVDA', 'TSM', 'AVGO', 'SMH', 'MRVL'],
+    checkRegime: (regime) => {
+      if (regime.regime === 'RISK-OFF') return { verdict: 'AVOID NEW ENTRIES', reason: 'Growth hit hardest in risk-off — wait for stabilization', color: 'var(--bear)' };
+      if (regime.vix > 20) return { verdict: 'CAUTIOUS', reason: 'VIX elevated — growth tends to overshoot both ways', color: 'var(--warn)' };
+      return { verdict: 'SELECTIVE', reason: 'Quality names only (NVDA, TSM, MSFT). Avoid chasing 2nd-tier.', color: 'var(--cyan)' };
+    },
+    newsFactors: ['Hyperscaler capex', 'Earnings guidance', 'AI capacity utilization', 'Custom silicon competition'],
+  },
+  'bonds-short': {
+    label: 'SHORT BONDS / CASH',
+    examples: ['SGOV', 'BIL', 'USFR'],
+    checkRegime: (regime) => {
+      if (regime.vix > 20) return { verdict: 'BUY MORE', reason: 'Flight to safety + 5% yield = perfect combo', color: 'var(--bull)' };
+      return { verdict: 'BUY', reason: 'Fed holding/hawkish → 5% yield locked in → always a buy', color: 'var(--bull)' };
+    },
+    newsFactors: ['Fed decisions', 'Treasury yields', 'Inflation prints'],
+  },
+  'bonds-long': {
+    label: 'LONG DURATION BONDS',
+    examples: ['TLT', 'IEF', 'BND'],
+    checkRegime: (regime) => {
+      return { verdict: 'AVOID', reason: '10Y at 4.7%+, Fed hawkish — long bonds still falling. Wait for Fed pivot signal.', color: 'var(--bear)' };
+    },
+    newsFactors: ['Fed pivot timing', 'Recession indicators', 'Treasury auction demand'],
+  },
+  'commodities-gold': {
+    label: 'GOLD / PRECIOUS METALS',
+    examples: ['GLD', 'IAU', 'SLV'],
+    checkRegime: (regime) => {
+      if (regime.vix > 18) return { verdict: 'BUY', reason: 'Elevated fear + central bank buying + sticky inflation = full tailwind', color: 'var(--bull)' };
+      return { verdict: 'ACCUMULATE', reason: 'Structural tailwind intact: de-dollarization + geopolitics + fiscal', color: 'var(--bull)' };
+    },
+    newsFactors: ['Middle East', 'Dollar strength', 'Central bank buying', 'Real yields'],
+  },
+  'crypto': {
+    label: 'CRYPTO',
+    examples: ['IBIT', 'COIN', 'BTC', 'ETH'],
+    checkRegime: (regime) => {
+      if (regime.regime === 'RISK-OFF') return { verdict: 'AVOID', reason: 'Crypto sells off in risk-off events — wait', color: 'var(--bear)' };
+      return { verdict: 'DCA SMALL', reason: 'Fed hawkish is headwind. Max 2-5% of portfolio. Halving cycle supportive long-term.', color: 'var(--cyan)' };
+    },
+    newsFactors: ['BTC price action', 'ETF flows', 'Regulatory shifts', 'Dollar strength'],
+  },
+};
+
+function renderAIOverview() {
+  const content = document.getElementById('ai-overview-content');
+  if (!content) return;
+
+  const regime = (typeof computeMarketRegime === 'function') ? computeMarketRegime() : { regime: 'NEUTRAL', vix: 17, color: 'var(--cyan)', description: 'Mixed signals' };
+  const portfolio = loadPortfolio();
+  const now = new Date();
+  const timeStr = now.toLocaleString('en-MY', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+  // Compute portfolio concentration
+  let pnls = [];
+  let totalValue = 0;
+  if (portfolio) {
+    pnls = portfolio.positions.map(pos => ({ pos, ...computePositionValue(pos, portfolio) })).filter(x => x.asset);
+    totalValue = pnls.reduce((s, p) => s + p.currentValueMYR, 0);
+  }
+  const aiSemiSymbols = ['NVDA','MRVL','MU','NBIS','SMH','TSM','GLW','AVGO','SMCI'];
+  const aiSemiValue = pnls.filter(p => aiSemiSymbols.includes(p.pos.symbol)).reduce((s, p) => s + p.currentValueMYR, 0);
+  const aiSemiPct = totalValue > 0 ? (aiSemiValue / totalValue) * 100 : 0;
+  const voo = pnls.find(p => p.pos.symbol === 'VOO');
+  const vooPct = voo && totalValue > 0 ? (voo.currentValueMYR / totalValue) * 100 : 0;
+  const sgov = pnls.find(p => p.pos.symbol === 'SGOV');
+  const sgovPct = sgov && totalValue > 0 ? (sgov.currentValueMYR / totalValue) * 100 : 0;
+
+  // Priority recommendations based on gaps
+  const gaps = [];
+  if (vooPct < 30) gaps.push({ priority: 'HIGH', ticker: 'VOO', action: 'INCREASE DCA', reason: `Only ${vooPct.toFixed(1)}% in core — target 60-70%` });
+  if (sgovPct < 10) gaps.push({ priority: 'MEDIUM', ticker: 'SGOV', action: 'BUILD DEFENSIVE', reason: `Only ${sgovPct.toFixed(1)}% in cash equiv — target 10-15%` });
+  if (aiSemiPct > 50) gaps.push({ priority: 'HIGH', ticker: 'AI/SEMI', action: 'REDUCE CONCENTRATION', reason: `${aiSemiPct.toFixed(0)}% in AI/semis — trim MRVL per sell ladder` });
+
+  content.innerHTML = `
+    <!-- Market snapshot -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      <div class="stat" style="border-left: 2px solid ${regime.color};">
+        <div class="stat-label">MARKET REGIME</div>
+        <div class="stat-value" style="color: ${regime.color};">${regime.regime}</div>
+        <div class="text-[10px] text-dim mt-1">VIX ${regime.vix.toFixed(1)}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">FED STANCE</div>
+        <div class="stat-value text-warn">HAWKISH</div>
+        <div class="text-[10px] text-dim mt-1">Hold 3.5-3.75%, hike bias</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">10Y YIELD</div>
+        <div class="stat-value text-bear">4.72%</div>
+        <div class="text-[10px] text-dim mt-1">Multi-year high</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">CORE MIGRATION</div>
+        <div class="stat-value" style="color: ${vooPct >= 30 ? 'var(--bull)' : 'var(--warn)'};">${vooPct.toFixed(0)}%</div>
+        <div class="text-[10px] text-dim mt-1">Target 60-70% VOO</div>
+      </div>
+    </div>
+
+    <!-- Priority action gaps -->
+    ${gaps.length > 0 ? `
+      <div class="text-[10px] font-mono tracking-wider text-warn mb-2">◆ YOUR PORTFOLIO GAPS · ${gaps.length} PRIORITIES</div>
+      <div class="space-y-2 mb-5">
+        ${gaps.map(g => `
+          <div class="panel-2 p-3" style="border-left: 3px solid ${g.priority === 'HIGH' ? 'var(--bear)' : 'var(--warn)'};">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <div class="flex items-center gap-2">
+                <span class="text-[9px] font-mono px-2 py-0.5" style="background: ${g.priority === 'HIGH' ? 'rgba(248,113,113,0.20)' : 'rgba(251,191,36,0.15)'}; color: ${g.priority === 'HIGH' ? 'var(--bear)' : 'var(--warn)'};">${g.priority}</span>
+                <span class="font-mono font-bold">${g.ticker}</span>
+                <span class="font-mono text-[10px]" style="color: ${g.priority === 'HIGH' ? 'var(--bear)' : 'var(--warn)'};">${g.action}</span>
+              </div>
+              <div class="text-[11px] text-muted">${g.reason}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+
+    <!-- Asset class entry validation -->
+    <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">◆ ENTRY VALIDATION BY ASSET CLASS</div>
+    <div class="space-y-2 mb-5">
+      ${Object.entries(ASSET_CLASS_RULES).map(([key, rule]) => {
+        const verdict = rule.checkRegime(regime);
+        return `
+          <div class="panel-2 p-3" style="border-left: 3px solid ${verdict.color};">
+            <div class="flex items-center justify-between gap-2 flex-wrap mb-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-mono font-bold text-xs">${rule.label}</span>
+                <span class="text-[9px] text-dim">${rule.examples.join(' · ')}</span>
+              </div>
+              <span class="font-mono text-[10px] px-2 py-0.5" style="background: rgba(0,0,0,0.3); color: ${verdict.color}; border: 1px solid ${verdict.color};">${verdict.verdict}</span>
+            </div>
+            <div class="text-[11px] text-muted leading-relaxed">${verdict.reason}</div>
+            <div class="text-[10px] text-dim mt-1">Watch: ${rule.newsFactors.join(' · ')}</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <!-- Current week's analytical summary -->
+    <div class="panel-2 p-4" style="border-left: 3px solid var(--purple);">
+      <div class="text-[10px] font-mono tracking-wider mb-2" style="color: var(--purple);">◆ THIS WEEK'S ANALYTICAL SUMMARY · UPDATED ${now.toLocaleDateString()}</div>
+      <p class="text-xs text-muted leading-relaxed mb-2">
+        <strong class="text-warn">AI trade is in correction mode.</strong> AVGO down to $360, MRVL dropped 10% on margin miss (Oct 10), broader semi reset after summer rally. NVDA fundamentals untouched ($108B Q3 guide holds) but short-term volatility elevated.
+      </p>
+      <p class="text-xs text-muted leading-relaxed mb-2">
+        <strong class="text-bull">Fed Chair Warsh is leaning hawkish</strong> — Jackson Hole speech boosted rate hike probability to 57%. 10Y at 4.72% (highest in months). This favors SGOV/short duration, hurts long bonds (TLT), neutral for VOO on DCA basis.
+      </p>
+      <p class="text-xs text-muted leading-relaxed mb-2">
+        <strong class="text-cyan">Your three priority actions this week:</strong>
+      </p>
+      <ol class="text-xs text-muted leading-relaxed space-y-1 ml-4 list-decimal">
+        <li><strong class="text-bear">Execute MRVL trim</strong> — margin miss triggered sell ladder. Sell 2-3 shares at ~$225 while still up 150%+.</li>
+        <li><strong class="text-bull">Continue VOO DCA</strong> — SPX chopping sideways is ideal for monthly adds. RM 500 recurring on Moomoo.</li>
+        <li><strong class="text-cyan">Keep SGOV growing</strong> — building toward 15% target. 10Y at 4.72% means every dollar here earns real yield.</li>
+      </ol>
+      <p class="text-[10px] text-dim mt-3 italic">
+        Analysis refreshed ${timeStr} MYT · Based on current regime + Fed stance + your portfolio composition. Not financial advice.
+      </p>
+    </div>
+  `;
+}
+
+function initAIOverview() {
+  document.getElementById('ai-overview-refresh').addEventListener('click', renderAIOverview);
+  renderAIOverview();
+  // Auto-refresh every 10 min (regime data updates)
+  setInterval(renderAIOverview, 10 * 60 * 1000);
+}
+
+
+/* ============================================================
    INIT
    ============================================================ */
 function init() {
@@ -6685,6 +6908,9 @@ function init() {
 
   // News-driven trending picks
   initNewsPicks();
+
+  // AI Overview — entry validation across asset classes
+  initAIOverview();
 
   // Faster news sentiment refresh — every 30 min (was 60) for fresher signals
   if (state.apiKey) {
