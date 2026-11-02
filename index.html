@@ -590,6 +590,29 @@
         <div id="ipo-content"><!-- rendered dynamically --></div>
       </section>
 
+      <!-- DAILY AI BRIEF (auto-generated via GitHub Actions + Gemini) -->
+      <section class="mt-8 panel p-6" id="daily-brief-section" style="border-top: 3px solid var(--purple);">
+        <div class="flex items-end justify-between mb-3 flex-wrap gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+              <div class="text-xs font-mono tracking-wider" style="color: var(--purple);">DAILY BRIEF · AI-POWERED · AUTO-UPDATED</div>
+            </div>
+            <h2 class="text-2xl font-semibold tracking-tight">Today's SIGNAL Brief</h2>
+            <p class="text-sm text-muted mt-1" id="brief-timestamp">Last analyzed by Gemini — see schedule below</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button id="brief-refresh" class="btn-ghost text-xs">↻ Reload</button>
+          </div>
+        </div>
+        <div id="brief-content">
+          <div class="panel-2 p-4 text-center text-sm text-dim">Loading daily brief…</div>
+        </div>
+      </section>
+
       <!-- AI MARKET OVERVIEW · ENTRY VALIDATION -->
       <section class="mt-8 panel p-6" id="ai-overview-section" style="border-top: 3px solid var(--cyan);">
         <div class="flex items-end justify-between mb-3 flex-wrap gap-3">
@@ -1087,7 +1110,7 @@ const UNIVERSE = [
   { symbol: 'XBI',  name: 'SPDR S&P Biotech ETF',            type: 'fund', region: 'US', base: 153.35, sector: 'Biotech' },
 
   // ═══ INDICES — prices verified Aug 13, 2026 close ═══
-  { symbol: 'SPX',   name: 'S&P 500 Index',           type: 'index', region: 'US', base: 7708.55 },
+  { symbol: 'SPX',   name: 'S&P 500 Index',           type: 'index', region: 'US', base: 7695.40 },
   { symbol: 'IXIC',  name: 'Nasdaq Composite',        type: 'index', region: 'US', base: 26803.03 },
   { symbol: 'DJI',   name: 'Dow Jones Industrial Avg',type: 'index', region: 'US', base: 53839.99 },
   { symbol: 'RUT',   name: 'Russell 2000 Index',      type: 'index', region: 'US', base: 3052.85 },
@@ -1102,7 +1125,7 @@ const UNIVERSE = [
   { symbol: 'KS11',  name: 'KOSPI Composite Index',   type: 'index', region: 'KR', base: 6813.34 },
   { symbol: 'AXJO',  name: 'S&P/ASX 200 Index',       type: 'index', region: 'AU', base: 9188.50 },
   { symbol: 'BSESN', name: 'BSE SENSEX Index',        type: 'index', region: 'IN', base: 82412.30 },
-  { symbol: 'VIX',   name: 'CBOE Volatility Index',   type: 'index', region: 'US', base: 17.20 },
+  { symbol: 'VIX',   name: 'CBOE Volatility Index',   type: 'index', region: 'US', base: 18.45 },
 
   // ═══ CRYPTO — prices verified Aug 13, 2026 ═══
   { symbol: 'BTC', name: 'Bitcoin', type: 'crypto', base: 63558.45 },
@@ -4809,7 +4832,7 @@ const DEFAULT_PORTFOLIO = {
     { symbol: 'SGOV',   shares: 2.44,   avgCost: 100.648 },  // Grew from 1.09 — defensive core built
     { symbol: 'SMH',    shares: 0.232,  avgCost: 565.517 },  // Added 0.2 more shares
     { symbol: 'TSM',    shares: 1,      avgCost: 277.56  },
-    { symbol: 'VOO',    shares: 0.4978, avgCost: 706.227 },  // DCA'd to 0.4978
+    { symbol: 'VOO',    shares: 0.667,  avgCost: 707.75  },  // DCA + SKACAP refund redeployed Nov 1
     { symbol: 'XBI',    shares: 3,      avgCost: 90.25   },
     { symbol: 'XBI',    shares: 3,      avgCost: 90.25   },
     { symbol: 'SUNMED', shares: 2000,   avgCost: 1.45, currency: 'MYR' },
@@ -4819,11 +4842,11 @@ const DEFAULT_PORTFOLIO = {
 // Per-position analysis — my custom view for each of user's holdings
 const POSITION_ANALYSIS = {
   GLW: {
-    action: 'HOLD (DCA DONE)',
+    action: 'HOLD — EARNINGS THIS WEEK',
     conviction: 4,
-    view: 'OCT 12 UPDATE: Nice work — you added 1 share @ $154 on Sept 25 trigger. New avg basis $172.35 across 2 shares. Current ~$156 means you\'re only down ~9% now (was -19%). The $2B equity offering overhang is being absorbed. Verizon fiber deal + ECOC AI optical momentum intact. Earnings Oct 26 is the next catalyst.',
-    trigger: 'Hold through Oct 26 earnings. If GLW breaks $145 pre-earnings, add 1 more share. If it recovers to $185 post-earnings, consider trimming 1 share back.',
-    risk: 'Earnings miss or dilution concerns reignite = $140 revisit possible. Apple foldable iPhone cancellation already priced in.',
+    view: 'OCT 26 UPDATE: 🚨 GLW earnings reporting this week (around Oct 28). Note: you decided to hold 1 share @ $190.70 (did not DCA at $154). Still down ~20% from entry. This earnings print is the key catalyst — Verizon fiber deal + AI optical demos should show up in Q3 numbers.',
+    trigger: 'DO NOTHING pre-earnings. After the print: (1) BEAT & guides up → hold firm, maybe add on weakness; (2) IN-LINE → hold, dead money; (3) MISS → reassess exit at $130-140 range.',
+    risk: 'Dilution overhang + any optical slowdown = another leg down to $140. Upside case: beat + raised guide = $180+.',
   },
   MSFT: {
     action: 'ACCUMULATE',
@@ -5665,25 +5688,29 @@ function renderPortfolio() {
 
     <!-- SIGNAL'S PORTFOLIO SUMMARY -->
     <div class="panel-2 p-4 mt-4" style="border-left: 3px solid var(--cyan);">
-      <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">SIGNAL'S OVERALL VIEW · UPDATED OCT 12 2026</div>
+      <div class="text-[10px] font-mono tracking-wider text-cyan mb-2">SIGNAL'S OVERALL VIEW · UPDATED NOV 2 2026</div>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        <strong class="text-bull">✓ EXCELLENT September execution:</strong> You sold SOXL at $152 (+266%), closed TQQQ at $80 (+85%), added 1 GLW share at $154 (DCA'd basis to $172), bought SGOV + GLD + VOO for defensive gaps. Portfolio migrated from leveraged-tech-heavy to properly balanced. This is textbook discipline.
+        <strong class="text-bear">🔥 BIG EVENT OCT 29-30:</strong> Alphabet missed revenue + refused to raise AI capex. ALPHABET -13% worst day ever. Microsoft also flat on capex. "AI payoff doubted". Your AI positions hit: MRVL/NBIS/NVDA/TSM/SMH/MU all -3 to -10%. VIX elevated ~22.
       </p>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        <strong class="text-warn">OCT 10 EVENT:</strong> MRVL dropped 10% on Q3 adjusted gross margin guidance BELOW consensus. This is the exact "review trigger" from the Sept sell ladder — margin cuts mean the custom silicon pricing war is real. AVGO at $360 (down from $390), broader AI sector reset. Fed holding 3.5-3.75% but Chair Warsh pushing hike bias — 10Y yield at 4.72% (multi-year high).
+        <strong class="text-warn">📅 MIDTERMS NOV 3 (tomorrow):</strong> US midterm elections create short-term volatility. Trump even floated "cancelling midterms". Markets chaotic this week — don\'t trade on election day.
       </p>
       <p class="text-xs text-muted leading-relaxed mb-2">
-        <strong>October priority actions:</strong>
+        <strong class="text-bull">✓ Great recent execution:</strong> Did NOT panic-sell AI positions during selloff. SKACAP ballot FAILED → RM 500 redeployed to VOO at the dip (0.17 shares added). Applied BCG 15 lots @ RM 1.08 (defensive Main Market healthcare, hold strategy). MyDCD 25 lots + IMPACT 20 lots still pending.
+      </p>
+      <p class="text-xs text-muted leading-relaxed mb-2">
+        <strong>November watchlist (NOT an action list):</strong>
       </p>
       <ol class="text-xs text-muted leading-relaxed space-y-1 ml-4 list-decimal">
-        <li><strong class="text-bear">URGENT — Trim MRVL 2-3 shares</strong> this week. Margin miss triggered sell ladder. Still up 154% from entry even after drop. Redirect proceeds to VOO.</li>
-        <li><strong class="text-bull">Set VOO monthly recurring buy</strong> — RM 500 every 1st of month on Moomoo. Non-negotiable discipline.</li>
-        <li><strong class="text-cyan">GLW earnings Oct 26</strong> — hold through the print. Your averaged basis $172 is now workable.</li>
-        <li><strong class="text-bull">Grow SGOV toward 15% target</strong> — 10Y at 4.72% means every dollar earns real yield. Deploy chunks to VOO on any SPX 5%+ pullback.</li>
-        <li><strong class="text-warn">NBIS at $242 — still trim trigger</strong> at $240 is live. Protect the 120%+ gain before AI correction deepens.</li>
+        <li><strong class="text-bear">NVDA earnings Nov 19</strong> — THE catalyst that resets or deepens AI selloff. Hold through.</li>
+        <li><strong class="text-warn">Mental stops armed</strong> — MRVL $200, NBIS $170, XBI $135. Set alerts on Moomoo if not done.</li>
+        <li><strong class="text-bull">DEC 1 VOO DCA</strong> — RM 500 regardless of market mood. Non-negotiable.</li>
+        <li><strong class="text-purple">IPO ballot results coming</strong> — BCG + MyDCD + IMPACT over next 1-2 weeks. Different strategies: BCG=hold, MyDCD=hybrid, IMPACT=flip.</li>
+        <li><strong class="text-bull">SGOV dry powder</strong> — stays loaded. Deploy to VOO if SPX drops below 7,500 (~3% more).</li>
+        <li><strong class="text-cyan">Defensive healthcare pair</strong> — SUNMED + BCG diversifies you from AI concentration.</li>
       </ol>
       <p class="text-[10px] text-dim mt-3 italic">
-        Analysis updated Oct 12, 2026. Fed holding hawkish, AI sector in correction, MRVL margin miss is the key event this week. Cross-check with your own research. Not financial advice.
+        Analysis updated Nov 2, 2026. AI capex worry + midterm volatility ahead. Defensive stance correct, DCA discipline paying off. Not financial advice.
       </p>
     </div>
 
@@ -5985,6 +6012,74 @@ function renderVOODCA() {
 
 // Real Bursa IPO pipeline data (Aug 2026) — curated from BursaMalaysia + rates.my
 const IPO_UPCOMING = [
+  {
+    ticker: 'BCG',
+    name: 'Big Caring Group Bhd',
+    listingDate: '2026-Q4 (TBA)',
+    board: 'Main Market',
+    sector: 'Pharmacy / Healthcare Retail',
+    ipoPrice: 'RM 1.08',
+    marketCap: '~RM 8B',
+    subscriptionClose: 'APPLIED 15 lots · RM 1,620 locked',
+    status: 'Pending allotment',
+    analystView: {
+      conviction: 4,
+      action: 'HOLD 6-12 MONTHS',
+      rationale: '668 pharmacy outlets. Revenue RM 4B FY26 (53% CAGR). PAT RM 231.8M (75% CAGR). P/E ~34x, PEG 0.45. Main Market defensive growth. Do NOT flip. Target exit RM 1.40-1.80 in 12 months. Diversifies from your tech-heavy book.',
+      color: '#86EFAC',
+    }
+  },
+  {
+    ticker: 'MYDCD',
+    name: 'MyDCD Bhd',
+    listingDate: '2026-Q4 (TBA)',
+    board: 'ACE Market',
+    sector: 'Data Center MEPF Engineering',
+    ipoPrice: 'RM 0.56',
+    marketCap: 'Mid-cap',
+    subscriptionClose: 'APPLIED 25 lots · RM 1,400 locked',
+    status: 'Pending allotment',
+    analystView: {
+      conviction: 4,
+      action: 'FLIP 50% / HOLD 50%',
+      rationale: 'Data center MEPF — pure play on Malaysian data center boom. Revenue RM 372M FY25. On listing: flip half on day-1 pop +60%+, hold half for 1-3 months. Benefits from Johor + Cyberjaya data center expansion.',
+      color: '#86EFAC',
+    }
+  },
+  {
+    ticker: 'IMPACT',
+    name: 'Impact Capital Holdings Bhd',
+    listingDate: '2026-Q4 (TBA)',
+    board: 'ACE Market',
+    sector: 'ICT Solutions / Networks',
+    ipoPrice: 'RM 0.22',
+    marketCap: 'Small-cap',
+    subscriptionClose: 'APPLIED 20 lots · RM 440 locked',
+    status: 'Pending allotment',
+    analystView: {
+      conviction: 3,
+      action: 'FLIP SELL ON LISTING',
+      rationale: 'ICT solutions for data centers / enterprise networks. 20+ years experience. Small retail tranche (24M shares) = low allocation expected. Flip on listing day regardless of price action.',
+      color: 'var(--cyan)',
+    }
+  },
+  {
+    ticker: 'SKACAP',
+    name: 'SKA Capital Bhd',
+    listingDate: '2026 (TBA)',
+    board: 'ACE Market',
+    sector: 'Power Infrastructure Engineering',
+    ipoPrice: 'RM 0.XX',
+    marketCap: 'Small-cap',
+    subscriptionClose: '❌ NOT ALLOCATED — RM 500 redeployed to VOO',
+    status: 'Ballot failed',
+    analystView: {
+      conviction: 2,
+      action: 'MOVED ON — PROCEEDS TO VOO',
+      rationale: 'Did not get allocation. Refund RM 500 redeployed into VOO on Nov 1 (buy-the-dip). Nothing lost. Good outcome.',
+      color: 'var(--dim)',
+    }
+  },
   {
     ticker: 'UNIPAC',
     name: 'United Asiapac Energy Bhd',
@@ -6860,6 +6955,142 @@ function initAIOverview() {
 
 
 /* ============================================================
+   DAILY BRIEF LOADER
+   Fetches daily_brief.json (generated by GitHub Actions + Gemini)
+   and renders it at the top of the dashboard.
+   ============================================================ */
+async function loadDailyBrief() {
+  const content = document.getElementById('brief-content');
+  const stamp = document.getElementById('brief-timestamp');
+  if (!content) return;
+
+  try {
+    // Cache-bust so we always see the latest commit
+    const res = await fetch(`daily_brief.json?t=${Date.now()}`);
+    if (!res.ok) throw new Error('No brief file yet');
+    const brief = await res.json();
+
+    const generated = brief.generated_at ? new Date(brief.generated_at) : null;
+    const ageHours = generated ? (Date.now() - generated.getTime()) / 3_600_000 : null;
+    const ageStr = !ageHours ? 'just now'
+      : ageHours < 1 ? `${Math.round(ageHours * 60)}m ago`
+      : ageHours < 24 ? `${ageHours.toFixed(1)}h ago`
+      : `${Math.round(ageHours / 24)}d ago`;
+
+    const regimeColor = {
+      'risk-on': 'var(--bull)',
+      'constructive': '#86EFAC',
+      'neutral': 'var(--cyan)',
+      'cautious': 'var(--warn)',
+      'risk-off': 'var(--bear)',
+    }[brief.market_regime] || 'var(--cyan)';
+
+    const healthColor = {
+      'healthy': 'var(--bull)',
+      'mixed': 'var(--cyan)',
+      'concerning': 'var(--warn)',
+    }[brief.portfolio_health] || 'var(--cyan)';
+
+    const snap = brief.snapshot_data || {};
+    const pnl = snap.total_pnl_myr ?? 0;
+
+    stamp.innerHTML = `Analyzed by <strong>Gemini</strong> · Generated <strong>${ageStr}</strong>${generated ? ` (${generated.toLocaleString()})` : ''}`;
+
+    const actionsHtml = (brief.top_actions || []).map(a => {
+      const pri = a.priority === 'high' ? { bg: 'rgba(248,113,113,0.20)', color: 'var(--bear)', label: 'HIGH' }
+                : a.priority === 'medium' ? { bg: 'rgba(251,191,36,0.15)', color: 'var(--warn)', label: 'MED' }
+                : { bg: 'rgba(34,211,238,0.10)', color: 'var(--cyan)', label: 'LOW' };
+      return `
+        <div class="panel-2 p-3" style="border-left: 3px solid ${pri.color};">
+          <div class="flex items-center gap-2 flex-wrap mb-1">
+            <span class="text-[9px] font-mono px-2 py-0.5" style="background: ${pri.bg}; color: ${pri.color};">${pri.label}</span>
+            <span class="font-mono font-bold">${a.ticker || 'PORTFOLIO'}</span>
+            <span class="font-mono text-xs" style="color: ${pri.color};">${a.action}</span>
+          </div>
+          <div class="text-xs text-muted leading-relaxed">${a.reason}</div>
+          ${a.specific_steps ? `<div class="text-[10px] font-mono mt-1" style="color: ${pri.color};">▸ ${a.specific_steps}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    const alertsHtml = (snap.trigger_alerts || []).filter(x => x.hit || x.distancePct < 5).map(x => `
+      <span class="text-[10px] font-mono px-2 py-0.5" style="background: ${x.hit ? 'rgba(248,113,113,0.20)' : 'rgba(251,191,36,0.15)'}; color: ${x.hit ? 'var(--bear)' : 'var(--warn)'}; border: 1px solid ${x.hit ? 'var(--bear)' : 'var(--warn)'};">
+        ${x.hit ? '🚨' : '⚠'} ${x.symbol} ${x.hit ? 'HIT' : `${x.distancePct.toFixed(1)}% away`}
+      </span>
+    `).join('');
+
+    content.innerHTML = `
+      <!-- Status pills -->
+      <div class="flex items-center gap-2 flex-wrap mb-3">
+        <span class="text-[10px] font-mono px-2 py-0.5" style="background: rgba(0,0,0,0.3); color: ${regimeColor}; border: 1px solid ${regimeColor};">
+          REGIME: ${(brief.market_regime || 'N/A').toUpperCase()}
+        </span>
+        <span class="text-[10px] font-mono px-2 py-0.5" style="background: rgba(0,0,0,0.3); color: ${healthColor}; border: 1px solid ${healthColor};">
+          PORTFOLIO: ${(brief.portfolio_health || 'N/A').toUpperCase()}
+        </span>
+        ${brief.do_nothing_recommendation ? '<span class="text-[10px] font-mono px-2 py-0.5" style="background: rgba(52,211,153,0.15); color: var(--bull); border: 1px solid var(--bull);">✓ NO ACTION NEEDED</span>' : ''}
+        ${alertsHtml}
+      </div>
+
+      ${brief.regime_reasoning ? `<div class="text-xs text-dim mb-3">${brief.regime_reasoning}</div>` : ''}
+
+      <!-- Written summary -->
+      <div class="panel-2 p-4 mb-4" style="border-left: 3px solid var(--purple);">
+        <div class="text-[10px] font-mono tracking-wider mb-2" style="color: var(--purple);">◆ TODAY'S READ</div>
+        <p class="text-sm text-muted leading-relaxed">${brief.written_summary || 'No summary available'}</p>
+      </div>
+
+      <!-- Snapshot -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <div class="stat">
+          <div class="stat-label">Total Value</div>
+          <div class="stat-value">RM ${(snap.total_value_myr || 0).toFixed(2)}</div>
+        </div>
+        <div class="stat" style="border-left: 2px solid ${pnl >= 0 ? 'var(--bull)' : 'var(--bear)'};">
+          <div class="stat-label">Unrealized P&amp;L</div>
+          <div class="stat-value ${pnl >= 0 ? 'text-bull' : 'text-bear'}">${pnl >= 0 ? '+' : ''}RM ${pnl.toFixed(2)}</div>
+          <div class="text-[10px] ${pnl >= 0 ? 'text-bull' : 'text-bear'} mt-1">${(snap.total_pnl_pct || 0).toFixed(2)}%</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">News Scanned</div>
+          <div class="stat-value">${snap.news_count || 0}</div>
+          <div class="text-[10px] text-dim mt-1">Last 6 hours</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Model</div>
+          <div class="stat-value" style="font-size: 14px;">Gemini 2.0</div>
+          <div class="text-[10px] text-dim mt-1">Free tier</div>
+        </div>
+      </div>
+
+      ${brief.top_actions && brief.top_actions.length > 0 ? `
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-2">◆ TOP ACTIONS (RANKED)</div>
+        <div class="space-y-2 mb-4">${actionsHtml}</div>
+      ` : ''}
+
+      ${brief.watchlist_notes && brief.watchlist_notes.length > 0 ? `
+        <div class="text-[10px] font-mono tracking-wider text-dim mb-2">◆ WATCHLIST NOTES</div>
+        <div class="space-y-1 mb-3">
+          ${brief.watchlist_notes.map(w => `
+            <div class="text-xs text-muted"><span class="font-mono font-bold">${w.ticker}:</span> ${w.note}</div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <div class="text-[10px] text-dim italic mt-3">${brief.disclaimer || 'Not financial advice.'}</div>
+    `;
+  } catch (err) {
+    content.innerHTML = `
+      <div class="panel-2 p-4 text-center">
+        <div class="text-sm text-dim mb-2">No daily brief available yet.</div>
+        <div class="text-[10px] text-dim">GitHub Actions runs the brief daily. If this is your first setup, trigger it manually from the Actions tab in your GitHub repo.</div>
+      </div>
+    `;
+  }
+}
+
+
+/* ============================================================
    INIT
    ============================================================ */
 function init() {
@@ -6905,6 +7136,13 @@ function init() {
 
   // VOO DCA + Malaysian IPO tracker
   initVOOandIPO();
+
+  // Daily AI brief (auto-generated by GitHub Actions)
+  loadDailyBrief();
+  const refreshBtn = document.getElementById('brief-refresh');
+  if (refreshBtn) refreshBtn.addEventListener('click', loadDailyBrief);
+  // Reload every 30 minutes in case a new brief was committed
+  setInterval(loadDailyBrief, 30 * 60 * 1000);
 
   // News-driven trending picks
   initNewsPicks();
