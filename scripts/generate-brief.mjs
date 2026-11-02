@@ -317,7 +317,7 @@ RULES:
 
 Return ONLY the JSON object. Nothing else.`;
 
-const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const geminiRes = await fetch(geminiUrl, {
   method: 'POST',
@@ -374,7 +374,7 @@ const output = {
     current_mode: dynRules?.currentMode || 'normal',
   },
   _meta: {
-    model: 'gemini-2.0-flash',
+    model: 'gemini-3.8-flash',
     prices_source: 'finnhub + yahoo',
     cost: 'free tier',
   },
