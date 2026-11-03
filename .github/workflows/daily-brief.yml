@@ -2,7 +2,13 @@ name: Daily Portfolio Brief
 
 on:
   schedule:
-    - cron: '0 21 * * *'
+    # 5 AM MYT (post US close) + every 2 hours during US market hours MYT
+    # US market = 9:30 PM to 4:00 AM MYT = 13:30 to 20:00 UTC
+    - cron: '0 21 * * *'      # 5 AM MYT (US close + morning summary)
+    - cron: '30 13 * * 1-5'   # 9:30 PM MYT (US open)
+    - cron: '30 15 * * 1-5'   # 11:30 PM MYT
+    - cron: '30 17 * * 1-5'   # 1:30 AM MYT
+    - cron: '30 19 * * 1-5'   # 3:30 AM MYT (US close -30min)
   workflow_dispatch:
 
 permissions:
