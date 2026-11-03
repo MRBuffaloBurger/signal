@@ -1,78 +1,49 @@
 {
-  "generated_at": "2026-11-02T08:41:49.320Z",
-  "market_regime": "risk-off",
-  "regime_reasoning": "Broad sell-off in high-beta tech and semiconductor names ahead of the US Midterm Elections, paired with rising geopolitical friction.",
-  "portfolio_health": "concerning",
+  "generated_at": "2026-11-03T02:25:20.540Z",
+  "market_regime": "neutral",
+  "portfolio_health": "mixed",
   "top_actions": [
     {
-      "priority": "high",
-      "ticker": "MRVL",
-      "action": "TRIM",
-      "reason": "Mental stop breached at $200 during sharp -10.05% drop; locking in +121% gains and cutting excessive tech concentration.",
-      "specific_steps": "Place limit or market order to sell 2 shares of MRVL on Moomoo."
-    },
-    {
-      "priority": "high",
-      "ticker": "NBIS",
-      "action": "TRIM",
-      "reason": "Mental stop violated at $170 after a -10.38% tumble to $154.14; rules strictly require de-risking.",
-      "specific_steps": "Sell 0.5 share of NBIS on Moomoo to honor stop-loss parameter."
-    },
-    {
-      "priority": "medium",
-      "ticker": "XBI",
-      "action": "TRIM",
-      "reason": "Adjusted profit ladder target of $155 reached with price at $155.98, securing profits on biotech strength.",
-      "specific_steps": "Place limit sell order for 1 share of XBI at or above $155.00 on Moomoo."
+      "priority": "low",
+      "ticker": "N/A",
+      "action": "HOLD",
+      "reason": "Gemini parse failed, defaulting to no-action",
+      "specific_steps": null
     }
   ],
-  "watchlist_notes": [
-    {
-      "ticker": "GLW",
-      "note": "Down 35.34% from entry; hold for now without panic selling, but review post-earnings guidance to verify if thesis is broken."
-    },
-    {
-      "ticker": "VOO",
-      "note": "Core allocation remains far below the 70% target; next RM500 DCA scheduled for 2026-12-01 remains mandatory."
-    },
-    {
-      "ticker": "NVDA",
-      "note": "Earnings on 2026-11-19 will dictate semi sentiment; hold through the volatility."
-    }
-  ],
-  "written_summary": "Today brings a heavy momentum flush across your semiconductor heavyweights (MRVL, NBIS, SMH, TSM all down 5-10%), triggering your pre-set risk controls. Both MRVL and NBIS breached mental stops, while XBI cleanly crossed its profit ladder; executing these trims preserves capital and locks in substantial gains. Ignore daily macro noise around oil and elections—your mandate tomorrow is strict rule compliance, not speculative dip-buying. Cash raised will help de-risk ahead of tomorrow's US Midterms and fund your migration toward the 70% VOO target.",
-  "do_nothing_recommendation": false,
-  "disclaimer": "Not financial advice. Review before executing.",
+  "written_summary": "Automated brief failed to parse. Check logs. No action recommended.",
+  "do_nothing_recommendation": true,
+  "disclaimer": "Not financial advice.",
   "snapshot_data": {
-    "total_value_myr": 19443.99,
+    "total_value_myr": 18687.27,
     "total_cost_myr": 14481.83,
-    "total_pnl_myr": 4962.16,
-    "total_pnl_pct": 34.26,
+    "total_pnl_myr": 4205.43,
+    "total_pnl_pct": 29.04,
     "positions": [
       {
         "symbol": "GLD",
         "shares": 0.16,
         "avgCost": 392.063,
-        "currentPrice": 355.78,
+        "currentPrice": 361.65,
         "costNative": 62.73,
-        "valueNative": 56.92,
-        "pnlNative": -5.81,
-        "pnlPct": -9.25,
+        "valueNative": 57.86,
+        "pnlNative": -4.87,
+        "pnlPct": -7.76,
         "currency": "USD",
-        "dayChangePct": -3.4702,
+        "dayChangePct": 1.6499,
         "priceSource": "finnhub"
       },
       {
         "symbol": "GLW",
         "shares": 1,
         "avgCost": 190.7,
-        "currentPrice": 123.31,
+        "currentPrice": 123.2,
         "costNative": 190.7,
-        "valueNative": 123.31,
-        "pnlNative": -67.39,
-        "pnlPct": -35.34,
+        "valueNative": 123.2,
+        "pnlNative": -67.5,
+        "pnlPct": -35.4,
         "currency": "USD",
-        "dayChangePct": -4.3218,
+        "dayChangePct": -0.0892,
         "priceSource": "finnhub"
       },
       {
@@ -85,148 +56,148 @@
         "pnlNative": -27.7,
         "pnlPct": -11.32,
         "currency": "USD",
-        "dayChangePct": -7.1062,
+        "dayChangePct": 0,
         "priceSource": "finnhub"
       },
       {
         "symbol": "MRVL",
         "shares": 5,
         "avgCost": 88.7,
-        "currentPrice": 196.4,
+        "currentPrice": 171.41,
         "costNative": 443.5,
-        "valueNative": 982,
-        "pnlNative": 538.5,
-        "pnlPct": 121.42,
+        "valueNative": 857.05,
+        "pnlNative": 413.55,
+        "pnlPct": 93.25,
         "currency": "USD",
-        "dayChangePct": -10.0485,
+        "dayChangePct": -12.724,
         "priceSource": "finnhub"
       },
       {
         "symbol": "MSFT",
         "shares": 0.0276,
         "avgCost": 486.594,
-        "currentPrice": 521.91,
+        "currentPrice": 507.12,
         "costNative": 13.43,
-        "valueNative": 14.4,
-        "pnlNative": 0.97,
-        "pnlPct": 7.26,
+        "valueNative": 14,
+        "pnlNative": 0.57,
+        "pnlPct": 4.22,
         "currency": "USD",
-        "dayChangePct": -1.5524,
+        "dayChangePct": -2.8338,
         "priceSource": "finnhub"
       },
       {
         "symbol": "MU",
         "shares": 0.06,
         "avgCost": 772.333,
-        "currentPrice": 884.74,
+        "currentPrice": 833.59,
         "costNative": 46.34,
-        "valueNative": 53.08,
-        "pnlNative": 6.74,
-        "pnlPct": 14.55,
+        "valueNative": 50.02,
+        "pnlNative": 3.68,
+        "pnlPct": 7.93,
         "currency": "USD",
-        "dayChangePct": -5.3015,
+        "dayChangePct": -5.7814,
         "priceSource": "finnhub"
       },
       {
         "symbol": "NBIS",
         "shares": 1,
         "avgCost": 109.3,
-        "currentPrice": 154.14,
+        "currentPrice": 141.39,
         "costNative": 109.3,
-        "valueNative": 154.14,
-        "pnlNative": 44.84,
-        "pnlPct": 41.02,
+        "valueNative": 141.39,
+        "pnlNative": 32.09,
+        "pnlPct": 29.36,
         "currency": "USD",
-        "dayChangePct": -10.3785,
+        "dayChangePct": -8.2717,
         "priceSource": "finnhub"
       },
       {
         "symbol": "NVDA",
         "shares": 1.5,
         "avgCost": 157.767,
-        "currentPrice": 204.64,
+        "currentPrice": 202.06,
         "costNative": 236.65,
-        "valueNative": 306.96,
-        "pnlNative": 70.31,
-        "pnlPct": 29.71,
+        "valueNative": 303.09,
+        "pnlNative": 66.44,
+        "pnlPct": 28.07,
         "currency": "USD",
-        "dayChangePct": -4.2217,
+        "dayChangePct": -1.2608,
         "priceSource": "finnhub"
       },
       {
         "symbol": "SGOV",
         "shares": 2.44,
         "avgCost": 100.648,
-        "currentPrice": 100.73,
+        "currentPrice": 100.43,
         "costNative": 245.58,
-        "valueNative": 245.78,
-        "pnlNative": 0.2,
-        "pnlPct": 0.08,
+        "valueNative": 245.05,
+        "pnlNative": -0.53,
+        "pnlPct": -0.22,
         "currency": "USD",
-        "dayChangePct": 0.0199,
+        "dayChangePct": -0.2978,
         "priceSource": "finnhub"
       },
       {
         "symbol": "SMH",
         "shares": 0.232,
         "avgCost": 565.517,
-        "currentPrice": 522.49,
+        "currentPrice": 508.31,
         "costNative": 131.2,
-        "valueNative": 121.22,
-        "pnlNative": -9.98,
-        "pnlPct": -7.61,
+        "valueNative": 117.93,
+        "pnlNative": -13.27,
+        "pnlPct": -10.12,
         "currency": "USD",
-        "dayChangePct": -6.9756,
+        "dayChangePct": -2.7139,
         "priceSource": "finnhub"
       },
       {
         "symbol": "TSM",
         "shares": 1,
         "avgCost": 277.56,
-        "currentPrice": 406.13,
+        "currentPrice": 398.63,
         "costNative": 277.56,
-        "valueNative": 406.13,
-        "pnlNative": 128.57,
-        "pnlPct": 46.32,
+        "valueNative": 398.63,
+        "pnlNative": 121.07,
+        "pnlPct": 43.62,
         "currency": "USD",
-        "dayChangePct": -5.9471,
+        "dayChangePct": -1.8467,
         "priceSource": "finnhub"
       },
       {
         "symbol": "VOO",
         "shares": 0.667,
         "avgCost": 707.75,
-        "currentPrice": 694.81,
+        "currentPrice": 691.32,
         "costNative": 472.07,
-        "valueNative": 463.44,
-        "pnlNative": -8.63,
-        "pnlPct": -1.83,
+        "valueNative": 461.11,
+        "pnlNative": -10.96,
+        "pnlPct": -2.32,
         "currency": "USD",
-        "dayChangePct": -1.7686,
+        "dayChangePct": -0.5023,
         "priceSource": "finnhub"
       },
       {
         "symbol": "XBI",
         "shares": 3,
         "avgCost": 90.25,
-        "currentPrice": 155.98,
+        "currentPrice": 152.05,
         "costNative": 270.75,
-        "valueNative": 467.94,
-        "pnlNative": 197.19,
-        "pnlPct": 72.83,
+        "valueNative": 456.15,
+        "pnlNative": 185.4,
+        "pnlPct": 68.48,
         "currency": "USD",
-        "dayChangePct": -1.1471,
+        "dayChangePct": -2.5196,
         "priceSource": "finnhub"
       },
       {
         "symbol": "SUNMED",
         "shares": 2000,
         "avgCost": 1.45,
-        "currentPrice": 2.1,
+        "currentPrice": 2.08,
         "costNative": 2900,
-        "valueNative": 4200,
-        "pnlNative": 1300,
-        "pnlPct": 44.83,
+        "valueNative": 4160,
+        "pnlNative": 1260,
+        "pnlPct": 43.45,
         "currency": "MYR",
         "dayChangePct": 0,
         "priceSource": "yahoo"
@@ -235,48 +206,55 @@
     "trigger_alerts": [
       {
         "symbol": "MRVL",
-        "currentPrice": 196.4,
+        "currentPrice": 171.41,
         "stopPrice": 200,
-        "distancePct": -1.8,
+        "distancePct": -14.3,
         "action": "Sell 2 shares if hit",
         "hit": true
       },
       {
         "symbol": "NBIS",
-        "currentPrice": 154.14,
+        "currentPrice": 141.39,
         "stopPrice": 170,
-        "distancePct": -9.3,
+        "distancePct": -16.8,
         "action": "Sell 0.5 share if hit",
         "hit": true
+      },
+      {
+        "symbol": "XBI",
+        "currentPrice": 152.05,
+        "stopPrice": 135,
+        "distancePct": 12.6,
+        "action": "Sell 1 share if hit",
+        "hit": false
       }
     ],
-    "news_count": 5,
+    "news_count": 2,
     "dynamic_ladders": {
       "MRVL": {
         "mode": "normal",
         "modeMultiplier": 1,
         "vixMultiplier": 1,
-        "posMultiplier": 0.864,
-        "combinedMultiplier": 0.864,
+        "posMultiplier": 0.9,
+        "combinedMultiplier": 0.9,
         "activeOverlays": [
-          "21% concentration",
-          "gain +121%"
+          "19% concentration"
         ],
         "tranches": [
           {
             "base": 275,
-            "adjusted": 237.6,
+            "adjusted": 247.5,
             "sellShares": 2,
-            "currentPrice": 196.4,
-            "distanceToAdjustedPct": 21,
+            "currentPrice": 171.41,
+            "distanceToAdjustedPct": 44.4,
             "hit": false
           },
           {
             "base": 290,
-            "adjusted": 250.56,
+            "adjusted": 261,
             "sellShares": 2,
-            "currentPrice": 196.4,
-            "distanceToAdjustedPct": 27.6,
+            "currentPrice": 171.41,
+            "distanceToAdjustedPct": 52.3,
             "hit": false
           }
         ]
@@ -293,16 +271,16 @@
             "base": 240,
             "adjusted": 240,
             "sellShares": 0.5,
-            "currentPrice": 154.14,
-            "distanceToAdjustedPct": 55.7,
+            "currentPrice": 141.39,
+            "distanceToAdjustedPct": 69.7,
             "hit": false
           },
           {
             "base": 300,
             "adjusted": 300,
             "sellShares": 0.3,
-            "currentPrice": 154.14,
-            "distanceToAdjustedPct": 94.6,
+            "currentPrice": 141.39,
+            "distanceToAdjustedPct": 112.2,
             "hit": false
           }
         ]
@@ -319,9 +297,9 @@
             "base": 155,
             "adjusted": 155,
             "sellShares": 1,
-            "currentPrice": 155.98,
-            "distanceToAdjustedPct": -0.6,
-            "hit": true
+            "currentPrice": 152.05,
+            "distanceToAdjustedPct": 1.9,
+            "hit": false
           }
         ]
       }
