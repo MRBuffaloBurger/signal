@@ -1,36 +1,36 @@
 {
   "usdMyrRate": 4.22,
-  "lastUpdated": "2026-11-02",
+  "lastUpdated": "2026-11-06",
   "positions": [
     { "symbol": "GLD",    "shares": 0.16,   "avgCost": 392.063, "currency": "USD" },
     { "symbol": "GLW",    "shares": 1,      "avgCost": 190.70,  "currency": "USD" },
     { "symbol": "HBM",    "shares": 10,     "avgCost": 24.47,   "currency": "USD" },
-    { "symbol": "MRVL",   "shares": 5,      "avgCost": 88.70,   "currency": "USD" },
+    { "symbol": "MRVL",   "shares": 4,      "avgCost": 88.70,   "currency": "USD", "note": "Holding all 4 — MRVL dropped to $138 Nov 6, trim economics no longer attractive. Long-term hold through Dec 4 earnings." },
     { "symbol": "MSFT",   "shares": 0.0276, "avgCost": 486.594, "currency": "USD" },
-    { "symbol": "MU",     "shares": 0.06,   "avgCost": 772.333, "currency": "USD" },
     { "symbol": "NBIS",   "shares": 1,      "avgCost": 109.30,  "currency": "USD" },
     { "symbol": "NVDA",   "shares": 1.5,    "avgCost": 157.767, "currency": "USD" },
     { "symbol": "SGOV",   "shares": 2.44,   "avgCost": 100.648, "currency": "USD" },
     { "symbol": "SMH",    "shares": 0.232,  "avgCost": 565.517, "currency": "USD" },
     { "symbol": "TSM",    "shares": 1,      "avgCost": 277.56,  "currency": "USD" },
-    { "symbol": "VOO",    "shares": 0.667,  "avgCost": 707.75,  "currency": "USD" },
+    { "symbol": "VOO",    "shares": 1.2178, "avgCost": 707.785, "currency": "USD" },
     { "symbol": "XBI",    "shares": 3,      "avgCost": 90.25,   "currency": "USD" },
     { "symbol": "SUNMED", "shares": 2000,   "avgCost": 1.45,    "currency": "MYR", "exchange": "KLSE" }
   ],
   "pending_ipos": [
-    { "ticker": "BCG",    "name": "Big Caring Group",     "lots": 15, "pricePerShare": 1.08, "cashLocked": 1620, "strategy": "HOLD 6-12 months" },
-    { "ticker": "MYDCD",  "name": "MyDCD Bhd",            "lots": 25, "pricePerShare": 0.56, "cashLocked": 1400, "strategy": "Flip 50% / hold 50%" },
-    { "ticker": "IMPACT", "name": "Impact Capital",       "lots": 20, "pricePerShare": 0.22, "cashLocked": 440,  "strategy": "Flip 100% on listing" }
+    { "ticker": "BCG",     "name": "Big Caring Group",        "lots": 15, "pricePerShare": 1.08, "cashLocked": 1620, "strategy": "HOLD 6-12 months", "status": "awaiting-allotment" },
+    { "ticker": "IMPACT",  "name": "Impact Capital",          "lots": 20, "pricePerShare": 0.22, "cashLocked": 440,  "strategy": "Flip 100% on listing", "status": "awaiting-allotment" },
+    { "ticker": "IOIREIT", "name": "IOI Properties REIT",     "lots": 40, "pricePerShare": 0.96, "cashLocked": 3840, "strategy": "HOLD for dividends 3-5+ years", "status": "applied" },
+    { "ticker": "YES",     "name": "YES Group Management",    "lots": 25, "pricePerShare": 0.18, "cashLocked": 450,  "strategy": "Flip on listing day", "status": "applied" }
   ],
   "rules": {
     "mentalStops": {
-      "MRVL": { "price": 200, "action": "Sell 2 shares if hit" },
+      "MRVL": { "price": 100, "action": "NEW STOP at $120 (near cost basis $88.70). If breached, sell 2 shares to protect principal. Else hold all 4 through Dec 4 earnings." },
       "NBIS": { "price": 170, "action": "Sell 0.5 share if hit" },
       "XBI":  { "price": 135, "action": "Sell 1 share if hit" }
     },
     "sellLadders": {
       "MRVL": [
-        { "atPrice": 275, "sellShares": 2, "status": "triggered-not-executed" },
+        { "atPrice": 275, "sellShares": 2, "status": "far-from-current" },
         { "atPrice": 290, "sellShares": 2 }
       ],
       "NBIS": [
@@ -50,39 +50,33 @@
     },
     "dynamicAdjustments": {
       "enabled": true,
-      "note": "Sell ladders automatically adjust based on your currentMode + market conditions. Edit currentMode to change your stance. All multipliers compound.",
-      "currentMode": "normal",
+      "currentMode": "defensive",
       "availableModes": {
-        "defensive":     { "multiplier": 0.85, "description": "Trim 15% earlier — protect gains, scared market" },
-        "normal":        { "multiplier": 1.00, "description": "Standard sell ladders — default calm conditions" },
-        "opportunistic": { "multiplier": 1.10, "description": "Trim 10% later — let runners run, bullish confidence" }
+        "defensive":     { "multiplier": 0.85 },
+        "normal":        { "multiplier": 1.00 },
+        "opportunistic": { "multiplier": 1.10 }
       },
       "marketOverlays": {
-        "vix_above_30":           { "multiplier": 0.80, "description": "Panic mode — tighten triggers 20% to lock gains fast" },
-        "vix_above_25":           { "multiplier": 0.90, "description": "Fear elevated — tighten triggers 10%" },
-        "vix_below_14":           { "multiplier": 1.05, "description": "Complacency — slightly looser, let gains compound" }
+        "vix_above_30": { "multiplier": 0.80 },
+        "vix_above_25": { "multiplier": 0.90 },
+        "vix_below_14": { "multiplier": 1.05 }
       },
       "positionOverlays": {
-        "concentration_above_15pct": { "multiplier": 0.90, "description": "Over-concentrated position — tighten 10%" },
-        "gain_above_200pct":         { "multiplier": 0.92, "description": "Massive winner — lock big win earlier" },
-        "gain_above_100pct":         { "multiplier": 0.96, "description": "Big winner — slight tightening" }
+        "concentration_above_15pct": { "multiplier": 0.90 },
+        "gain_above_200pct":         { "multiplier": 0.92 },
+        "gain_above_100pct":         { "multiplier": 0.96 }
       }
     }
   },
   "watchlist": {
     "upcomingEarnings": [
-      { "ticker": "NVDA", "approxDate": "2026-11-19", "importance": "CRITICAL",  "action": "Hold through — defines AI narrative for next quarter" },
-      { "ticker": "GLW",  "approxDate": "2026-10-28", "importance": "important", "action": "Already reported — review guidance" }
-    ],
-    "upcomingIPOs": [
-      { "ticker": "BCG",    "note": "Applied 15 lots. Main Market. HOLD 6-12 months post-listing." },
-      { "ticker": "MYDCD",  "note": "Applied 25 lots. ACE Market. Hybrid flip-50-hold-50 on listing." },
-      { "ticker": "IMPACT", "note": "Applied 20 lots. ACE Market. Flip on listing day." }
+      { "ticker": "NVDA", "approxDate": "2026-11-19", "importance": "CRITICAL" },
+      { "ticker": "MRVL", "approxDate": "2026-12-04", "importance": "HIGH" }
     ],
     "macroEvents": [
-      { "date": "2026-11-03", "event": "US Midterm Elections", "impact": "HIGH VOLATILITY — don't trade" },
-      { "date": "2026-11-19", "event": "NVDA Earnings",        "impact": "Portfolio-moving" },
-      { "date": "2026-12-01", "event": "Monthly VOO DCA",      "impact": "Non-negotiable execution" }
+      { "date": "2026-11-19", "event": "NVDA Earnings" },
+      { "date": "2026-12-01", "event": "Monthly VOO DCA" },
+      { "date": "2026-12-04", "event": "MRVL Earnings" }
     ]
   },
   "profile": {
@@ -91,6 +85,6 @@
     "broker": "Moomoo MY",
     "strategy": "70% VOO core / 30% individual bucket migration plan",
     "riskTolerance": "moderate-high",
-    "horizon": "20+ years for core, flexible for bucket"
+    "horizon": "5-10 years, target RM 100k by late 2029"
   }
 }
