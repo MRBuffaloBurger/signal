@@ -317,12 +317,14 @@ RULES:
 
 Return ONLY the JSON object. Nothing else.`;
 
+const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${GEMINI_API_KEY}`;
+
 async function callGeminiWithRetry(url, body, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       console.log(`Gemini attempt ${attempt}/${maxRetries}...`);
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 sec timeout
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
 
       const res = await fetch(url, {
         method: 'POST',
@@ -335,7 +337,6 @@ async function callGeminiWithRetry(url, body, maxRetries = 3) {
       if (res.ok) return res;
 
       const errText = await res.text();
-      // 503/429 = overloaded, retry. 4xx other = fatal.
       if (res.status === 503 || res.status === 429) {
         console.log(`Gemini ${res.status}, retrying in ${attempt * 5}s...`);
         await new Promise(r => setTimeout(r, attempt * 5000));
