@@ -356,35 +356,48 @@ async function callGeminiWithRetry(url, body, maxRetries = 3) {
   throw new Error('Gemini failed after all retries');
 }
 
-const geminiRes = await callGeminiWithRetry(geminiUrl, {
-  contents: [{ parts: [{ text: prompt }] }],
-  generationConfig: {
-    temperature: 0.4,
-    maxOutputTokens: 2048,
-    responseMimeType: 'application/json',
-  },
-});
-
-const geminiData = await geminiRes.json();
-const geminiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-if (!geminiText) throw new Error('Gemini returned empty response');
-
 let brief;
 try {
+  const geminiRes = await callGeminiWithRetry(geminiUrl, {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.4,
+      maxOutputTokens: 2048,
+      responseMimeType: 'application/json',
+    },
+  });
+
+  const geminiData = await geminiRes.json();
+  const geminiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!geminiText) throw new Error('Gemini returned empty response');
+
   brief = JSON.parse(geminiText);
+  console.log('✓ Gemini brief generated successfully');
 } catch (err) {
-  console.error('Failed to parse Gemini JSON:', geminiText);
+  console.error('⚠ Gemini unavailable, writing prices-only fallback:', err.message);
   brief = {
     generated_at: new Date().toISOString(),
-    market_regime: 'neutral',
-    portfolio_health: 'mixed',
-    top_actions: [{ priority: 'low', ticker: 'N/A', action: 'HOLD', reason: 'Gemini parse failed, defaulting to no-action', specific_steps: null }],
-    written_summary: 'Automated brief failed to parse. Check logs. No action recommended.',
+    market_regime: 'unknown',
+    portfolio_health: 'see positions for details',
+    top_actions: [
+      {
+        priority: 'low',
+        ticker: 'N/A',
+        action: 'HOLD',
+        reason: `Gemini API unavailable (${err.message}). Prices refreshed. No AI analysis today.`,
+        specific_steps: null,
+      },
+    ],
+    written_summary: 'Gemini API was unavailable during this run. Price data IS current. Review positions manually using mental stops and sell ladders. Automated brief will retry next scheduled run.',
     do_nothing_recommendation: true,
-    disclaimer: 'Not financial advice.',
+    disclaimer: 'Not financial advice. Automated analysis failed — prices only.',
+    _meta: {
+      gemini_status: 'failed',
+      model: 'gemini-3.8-flash',
+      error: err.message,
+    },
   };
 }
-
 // --- 6. Attach snapshot data ----------------------------------------
 const output = {
   ...brief,
