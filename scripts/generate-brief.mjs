@@ -317,25 +317,52 @@ RULES:
 
 Return ONLY the JSON object. Nothing else.`;
 
-const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${GEMINI_API_KEY}`;
+async function callGeminiWithRetry(url, body, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`Gemini attempt ${attempt}/${maxRetries}...`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 sec timeout
 
-const geminiRes = await fetch(geminiUrl, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: {
-      temperature: 0.4,
-      maxOutputTokens: 2048,
-      responseMimeType: 'application/json',
-    },
-  }),
-});
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
 
-if (!geminiRes.ok) {
-  const errText = await geminiRes.text();
-  throw new Error(`Gemini API failed ${geminiRes.status}: ${errText}`);
+      if (res.ok) return res;
+
+      const errText = await res.text();
+      // 503/429 = overloaded, retry. 4xx other = fatal.
+      if (res.status === 503 || res.status === 429) {
+        console.log(`Gemini ${res.status}, retrying in ${attempt * 5}s...`);
+        await new Promise(r => setTimeout(r, attempt * 5000));
+        continue;
+      }
+      throw new Error(`Gemini API failed ${res.status}: ${errText}`);
+    } catch (err) {
+      if (err.name === 'AbortError' || err.code === 'UND_ERR_HEADERS_TIMEOUT') {
+        console.log(`Gemini timeout, retrying in ${attempt * 5}s...`);
+        if (attempt === maxRetries) throw err;
+        await new Promise(r => setTimeout(r, attempt * 5000));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Gemini failed after all retries');
 }
+
+const geminiRes = await callGeminiWithRetry(geminiUrl, {
+  contents: [{ parts: [{ text: prompt }] }],
+  generationConfig: {
+    temperature: 0.4,
+    maxOutputTokens: 2048,
+    responseMimeType: 'application/json',
+  },
+});
 
 const geminiData = await geminiRes.json();
 const geminiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
