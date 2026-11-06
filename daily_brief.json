@@ -1,24 +1,29 @@
 {
-  "generated_at": "2026-11-06T06:46:52.737Z",
-  "market_regime": "neutral",
-  "portfolio_health": "mixed",
+  "generated_at": "2026-11-06T13:00:13.678Z",
+  "market_regime": "unknown",
+  "portfolio_health": "see positions for details",
   "top_actions": [
     {
       "priority": "low",
       "ticker": "N/A",
       "action": "HOLD",
-      "reason": "Gemini parse failed, defaulting to no-action",
+      "reason": "Gemini API unavailable (This operation was aborted). Prices refreshed. No AI analysis today.",
       "specific_steps": null
     }
   ],
-  "written_summary": "Automated brief failed to parse. Check logs. No action recommended.",
+  "written_summary": "Gemini API was unavailable during this run. Price data IS current. Review positions manually using mental stops and sell ladders. Automated brief will retry next scheduled run.",
   "do_nothing_recommendation": true,
-  "disclaimer": "Not financial advice.",
+  "disclaimer": "Not financial advice. Automated analysis failed — prices only.",
+  "_meta": {
+    "model": "gemini-3.8-flash",
+    "prices_source": "finnhub + yahoo",
+    "cost": "free tier"
+  },
   "snapshot_data": {
-    "total_value_myr": 17997.8,
+    "total_value_myr": 18017.8,
     "total_cost_myr": 15557.21,
-    "total_pnl_myr": 2440.59,
-    "total_pnl_pct": 15.69,
+    "total_pnl_myr": 2460.59,
+    "total_pnl_pct": 15.82,
     "positions": [
       {
         "symbol": "GLD",
@@ -180,11 +185,11 @@
         "symbol": "SUNMED",
         "shares": 2000,
         "avgCost": 1.45,
-        "currentPrice": 2.08,
+        "currentPrice": 2.09,
         "costNative": 2900,
-        "valueNative": 4160,
-        "pnlNative": 1260,
-        "pnlPct": 43.45,
+        "valueNative": 4180,
+        "pnlNative": 1280,
+        "pnlPct": 44.14,
         "currency": "MYR",
         "dayChangePct": 0,
         "priceSource": "yahoo"
@@ -208,7 +213,7 @@
         "hit": false
       }
     ],
-    "news_count": 2,
+    "news_count": 5,
     "dynamic_ladders": {
       "MRVL": {
         "mode": "defensive",
@@ -283,10 +288,5 @@
     },
     "vix_level": null,
     "current_mode": "defensive"
-  },
-  "_meta": {
-    "model": "gemini-3.8-flash",
-    "prices_source": "finnhub + yahoo",
-    "cost": "free tier"
   }
 }
