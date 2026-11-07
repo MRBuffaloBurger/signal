@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T23:47:05.266Z",
+  "generated_at": "2026-11-07T00:52:20.660Z",
   "market_regime": "unknown",
   "portfolio_health": "see positions for details",
   "top_actions": [
@@ -7,7 +7,7 @@
       "priority": "low",
       "ticker": "N/A",
       "action": "HOLD",
-      "reason": "Gemini API unavailable (This operation was aborted). Prices refreshed. No AI analysis today.",
+      "reason": "Gemini API unavailable (Gemini failed after all retries). Prices refreshed. No AI analysis today.",
       "specific_steps": null
     }
   ],
