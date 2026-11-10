@@ -1,48 +1,24 @@
 {
-  "generated_at": "2026-11-10T21:22:38.158Z",
-  "market_regime": "cautious",
-  "regime_reasoning": "Hot inflation data and Fed rhetoric reopening 50 bps hike risks alongside Middle East escalation pressure broad market multiples.",
-  "portfolio_health": "mixed",
+  "generated_at": "2026-11-10T22:27:24.786Z",
+  "market_regime": "unknown",
+  "portfolio_health": "see positions for details",
   "top_actions": [
     {
-      "priority": "high",
-      "ticker": "XBI",
-      "action": "TRIM",
-      "reason": "Price ($155.06) reached both defensive trigger ($131.75) and base ladder ($155.00), locking gains on a +71.8% run before rate-hike headwinds hit biotech.",
-      "specific_steps": "Sell 1 share of XBI via Limit Order at $155.00 or market on open."
-    },
-    {
-      "priority": "medium",
-      "ticker": "NBIS",
-      "action": "WATCH",
-      "reason": "Alert flagged stop at $170 while trading at $134; verify if $170 was an upside profit-taking trigger or a breached trailing stop before executing.",
-      "specific_steps": "Review trade journal to confirm whether $170 was an upper ladder or stop-loss before submitting order for 0.5 share."
-    },
-    {
       "priority": "low",
-      "ticker": "VOO",
+      "ticker": "N/A",
       "action": "HOLD",
-      "reason": "Maintain core holding discipline and preserve allocated cash for the scheduled Dec 1 DCA.",
-      "specific_steps": "Keep RM 500 cash reserved in account for Dec 1 execution."
+      "reason": "Gemini API unavailable (Gemini failed after all retries). Prices refreshed. No AI analysis today.",
+      "specific_steps": null
     }
   ],
-  "watchlist_notes": [
-    {
-      "ticker": "NVDA",
-      "note": "Down 5.47% today with critical earnings on Nov 19; rate fears and tech multiple compression increase binary event risk."
-    },
-    {
-      "ticker": "GLW",
-      "note": "Deep unrealized loss (-41.2%); thesis review required to determine if structural breakdown warrants tax-loss harvest into VOO."
-    },
-    {
-      "ticker": "MRVL",
-      "note": "Mental stop active at $120 to protect cost basis ($88.70); hold remaining 4 shares ahead of Dec 4 earnings."
-    }
-  ],
-  "written_summary": "Macro headwinds are re-emerging with Fed officials floating 50 bps hikes on hot inflation, hitting rate-sensitive sectors. XBI has triggered your pre-set sell ladder at $155—execute the single-share trim to bank profits and de-risk. Ignore geopolitical noise around Iran, but watch NVDA closely into its Nov 19 earnings as semiconductor volatility spills into SMH and MRVL.",
-  "do_nothing_recommendation": false,
-  "disclaimer": "Not financial advice. Review before executing.",
+  "written_summary": "Gemini API was unavailable during this run. Price data IS current. Review positions manually using mental stops and sell ladders. Automated brief will retry next scheduled run.",
+  "do_nothing_recommendation": true,
+  "disclaimer": "Not financial advice. Automated analysis failed — prices only.",
+  "_meta": {
+    "model": "gemini-3.8-flash",
+    "prices_source": "finnhub + yahoo",
+    "cost": "free tier"
+  },
   "snapshot_data": {
     "total_value_myr": 18839.86,
     "total_cost_myr": 15557.21,
@@ -312,10 +288,5 @@
     },
     "vix_level": null,
     "current_mode": "defensive"
-  },
-  "_meta": {
-    "model": "gemini-3.8-flash",
-    "prices_source": "finnhub + yahoo",
-    "cost": "free tier"
   }
 }
