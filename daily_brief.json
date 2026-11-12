@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T01:37:38.099Z",
+  "generated_at": "2026-11-12T02:13:34.844Z",
   "market_regime": "unknown",
   "portfolio_health": "see positions for details",
   "top_actions": [
@@ -20,10 +20,10 @@
     "cost": "free tier"
   },
   "snapshot_data": {
-    "total_value_myr": 19346.77,
+    "total_value_myr": 19366.77,
     "total_cost_myr": 15557.21,
-    "total_pnl_myr": 3789.55,
-    "total_pnl_pct": 24.36,
+    "total_pnl_myr": 3809.55,
+    "total_pnl_pct": 24.49,
     "positions": [
       {
         "symbol": "GLD",
@@ -185,11 +185,11 @@
         "symbol": "SUNMED",
         "shares": 2000,
         "avgCost": 1.45,
-        "currentPrice": 2.08,
+        "currentPrice": 2.09,
         "costNative": 2900,
-        "valueNative": 4160,
-        "pnlNative": 1260,
-        "pnlPct": 43.45,
+        "valueNative": 4180,
+        "pnlNative": 1280,
+        "pnlPct": 44.14,
         "currency": "MYR",
         "dayChangePct": 0,
         "priceSource": "yahoo"
@@ -205,7 +205,7 @@
         "hit": true
       }
     ],
-    "news_count": 9,
+    "news_count": 7,
     "dynamic_ladders": {
       "MRVL": {
         "mode": "defensive",
