@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T22:58:43.740Z",
+  "generated_at": "2026-11-16T23:49:26.148Z",
   "market_regime": "unknown",
   "portfolio_health": "see positions for details",
   "top_actions": [
@@ -139,8 +139,8 @@
         "pnlNative": -24.04,
         "pnlPct": -18.32,
         "currency": "USD",
-        "dayChangePct": 0,
-        "priceSource": "yahoo"
+        "dayChangePct": -5.1053,
+        "priceSource": "finnhub"
       },
       {
         "symbol": "TSM",
@@ -213,7 +213,7 @@
         "hit": false
       }
     ],
-    "news_count": 9,
+    "news_count": 7,
     "dynamic_ladders": {
       "MRVL": {
         "mode": "defensive",
