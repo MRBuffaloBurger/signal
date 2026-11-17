@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T23:49:26.148Z",
+  "generated_at": "2026-11-17T00:58:43.962Z",
   "market_regime": "unknown",
   "portfolio_health": "see positions for details",
   "top_actions": [
@@ -213,7 +213,7 @@
         "hit": false
       }
     ],
-    "news_count": 7,
+    "news_count": 13,
     "dynamic_ladders": {
       "MRVL": {
         "mode": "defensive",
