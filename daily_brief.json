@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T23:03:10.237Z",
+  "generated_at": "2026-11-17T23:56:46.982Z",
   "market_regime": "unknown",
   "portfolio_health": "see positions for details",
   "top_actions": [
@@ -7,7 +7,7 @@
       "priority": "low",
       "ticker": "N/A",
       "action": "HOLD",
-      "reason": "Gemini API unavailable (Expected double-quoted property name in JSON at position 243). Prices refreshed. No AI analysis today.",
+      "reason": "Gemini API unavailable (This operation was aborted). Prices refreshed. No AI analysis today.",
       "specific_steps": null
     }
   ],
