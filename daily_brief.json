@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-19T23:41:19.362Z",
+  "generated_at": "2026-11-20T01:23:37.121Z",
   "market_regime": "unknown",
   "portfolio_health": "see positions for details",
   "top_actions": [
@@ -7,7 +7,7 @@
       "priority": "low",
       "ticker": "N/A",
       "action": "HOLD",
-      "reason": "Gemini API unavailable (Expected property name or '}' in JSON at position 980). Prices refreshed. No AI analysis today.",
+      "reason": "Gemini API unavailable (Gemini failed after all retries). Prices refreshed. No AI analysis today.",
       "specific_steps": null
     }
   ],
@@ -213,7 +213,7 @@
         "hit": false
       }
     ],
-    "news_count": 12,
+    "news_count": 7,
     "dynamic_ladders": {
       "MRVL": {
         "mode": "defensive",
