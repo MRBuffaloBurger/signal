@@ -1,48 +1,24 @@
 {
-  "generated_at": "2026-11-24T23:10:30.063Z",
-  "market_regime": "cautious",
-  "regime_reasoning": "Broad semiconductor pullback and geopolitical/regulatory headlines outweigh isolated strength in biotech.",
-  "portfolio_health": "mixed",
+  "generated_at": "2026-11-25T00:01:34.902Z",
+  "market_regime": "unknown",
+  "portfolio_health": "see positions for details",
   "top_actions": [
     {
-      "priority": "high",
-      "ticker": "XBI",
-      "action": "TRIM",
-      "reason": "Price ($156.82) has cleared the adjusted ladder ($131.75) and base target ($155.00), triggering profit taking.",
-      "specific_steps": "Place limit order to sell 1 share of XBI at or above $156.00 on Moomoo."
-    },
-    {
-      "priority": "medium",
-      "ticker": "MRVL",
-      "action": "WATCH",
-      "reason": "Dropped 9.10% today to $131.57, nearing the strict $120 mental stop ahead of Dec 4 earnings.",
-      "specific_steps": "Set price alert at $120.00; prepare to sell 2 shares to protect cost basis ($88.70) only if breached."
-    },
-    {
       "priority": "low",
-      "ticker": "VOO",
-      "action": "DCA",
-      "reason": "Upcoming scheduled non-negotiable RM 500 monthly allocation on 2026-12-01.",
-      "specific_steps": "Ensure RM 500 cash is settled and ready to execute buy order on 2026-12-01."
+      "ticker": "N/A",
+      "action": "HOLD",
+      "reason": "Gemini API unavailable (This operation was aborted). Prices refreshed. No AI analysis today.",
+      "specific_steps": null
     }
   ],
-  "watchlist_notes": [
-    {
-      "ticker": "NBIS",
-      "note": "Down 10.73% to $87.31; legacy stop parameter ($170) is stale/deeply breached, hold current 1 share unless fundamental thesis is broken."
-    },
-    {
-      "ticker": "NVDA",
-      "note": "Under export probe pressure and down 5.86% to $155.38; hold through volatility without panic selling."
-    },
-    {
-      "ticker": "SUNMED",
-      "note": "Unchanged at RM2.09 (+44.14% unrealized); stable defensive anchor while US tech undergoes correction."
-    }
-  ],
-  "written_summary": "Semis took a coordinated hit today with MRVL, NBIS, and SMH sliding sharply, but XBI bucked the trend to breach its take-profit ladder at $156.82. Execute the pre-planned 1-share trim on XBI to bank gains and build cash reserves. Do not panic-sell tech losers at troughs; MRVL's line in the sand remains $120. Tomorrow, watch whether semiconductor selling stabilizes around NVDA's headline risk.",
-  "do_nothing_recommendation": false,
-  "disclaimer": "Not financial advice. Review before executing.",
+  "written_summary": "Gemini API was unavailable during this run. Price data IS current. Review positions manually using mental stops and sell ladders. Automated brief will retry next scheduled run.",
+  "do_nothing_recommendation": true,
+  "disclaimer": "Not financial advice. Automated analysis failed — prices only.",
+  "_meta": {
+    "model": "gemini-3.8-flash",
+    "prices_source": "finnhub + yahoo",
+    "cost": "free tier"
+  },
   "snapshot_data": {
     "total_value_myr": 17478.82,
     "total_cost_myr": 15557.21,
@@ -304,10 +280,5 @@
     },
     "vix_level": null,
     "current_mode": "defensive"
-  },
-  "_meta": {
-    "model": "gemini-3.8-flash",
-    "prices_source": "finnhub + yahoo",
-    "cost": "free tier"
   }
 }
