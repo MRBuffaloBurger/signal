@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-26T02:21:01.767Z",
+  "generated_at": "2026-11-26T03:30:34.551Z",
   "market_regime": "unknown",
   "portfolio_health": "see positions for details",
   "top_actions": [
@@ -7,7 +7,7 @@
       "priority": "low",
       "ticker": "N/A",
       "action": "HOLD",
-      "reason": "Gemini API unavailable (This operation was aborted). Prices refreshed. No AI analysis today.",
+      "reason": "Gemini API unavailable (Gemini failed after all retries). Prices refreshed. No AI analysis today.",
       "specific_steps": null
     }
   ],
@@ -20,10 +20,10 @@
     "cost": "free tier"
   },
   "snapshot_data": {
-    "total_value_myr": 17386.03,
+    "total_value_myr": 17406.03,
     "total_cost_myr": 15557.21,
-    "total_pnl_myr": 1828.81,
-    "total_pnl_pct": 11.76,
+    "total_pnl_myr": 1848.81,
+    "total_pnl_pct": 11.88,
     "positions": [
       {
         "symbol": "GLD",
@@ -185,11 +185,11 @@
         "symbol": "SUNMED",
         "shares": 2000,
         "avgCost": 1.45,
-        "currentPrice": 2.09,
+        "currentPrice": 2.1,
         "costNative": 2900,
-        "valueNative": 4180,
-        "pnlNative": 1280,
-        "pnlPct": 44.14,
+        "valueNative": 4200,
+        "pnlNative": 1300,
+        "pnlPct": 44.83,
         "currency": "MYR",
         "dayChangePct": 0,
         "priceSource": "yahoo"
